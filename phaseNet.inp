@@ -1,0 +1,44 @@
+# ::::::::::::::::::::::::::::::
+# waveform query params
+# ::::::::::::::::::::::::::::::
+
+# if download can be True, true, yes, Y, Yes
+download = True
+
+# for waveform extraction
+ip_fdsn = http://10.100.100.232
+port_fdsn = 8091
+# seiscomp server for phase times query
+host = 10.100.100.232
+
+# for event query
+event_id = SGC2020czvlgy
+
+# common parameters between event query and station query
+data_list = dataset/train_mesetas.csv
+data_dir = /home/sgc/train_data/mesetas
+# if is event query then put in stations no, N, False or comment the
+# station line
+stations = 'CLEJA', 'URMC', 'CLBC', 'PRA', 'VIL', 'TAPM', 'PIRM', 'MACC'
+
+init_time = 2020-01-01 00:00:00
+end_time = 2020-03-04 23:59:59
+lat_min = 3.3
+lat_max = 3.57
+lon_min = -74.366
+lon_max = -73.907
+# total number of waveforms to download (in case of stations query)
+limit = 10000
+
+# ::::::::::::::::::::::::::::::
+# phaseNet params
+# ::::::::::::::::::::::::::::::
+
+# Can be pred, train or test
+mode = train
+model_dir = model/190703-214543
+output_dir = out_mesetas_prueba_train
+batch_size = 20
+input_length = 15
+
+
