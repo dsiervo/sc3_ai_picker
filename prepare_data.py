@@ -14,6 +14,8 @@ class Picks:
                 host='10.100.100.232',
                 wf_file='my_waveforms.csv',
                 data_dir='dataset/waveform_pred/',
+                magnitude=10.0,
+                input_length=3000,
                 **kwargs
                 ):
         
@@ -24,6 +26,8 @@ class Picks:
         self.data_dir = data_dir
         self.wf_file = wf_file
         self.host = host
+        self.magnitude = magnitude
+        self.input_length = float(input_length)
         
         self.__dict__.update(kwargs)
         
@@ -95,9 +99,10 @@ class Picks:
         AND Origin.time_value between '{0}' and '{1}' \
 		AND Origin.latitude_value between {2} and {3} \
         AND Origin.longitude_value between {4} AND {5} \
-        AND pick_p.waveformID_stationCode in ({6}) LIMIT {7}\
+        AND pick_p.waveformID_stationCode in ({6}) \
+        AND Magnitude.magnitude_value <= {8} LIMIT {7} \
             ".format(self.init_time, self.end_time, self.lat_min, self.lat_max,
-                     self.lon_min, self.lon_max, self.stations, self.limit)
+                     self.lon_min, self.lon_max, self.stations, self.limit, self.magnitude)
         
         self.download_picks(quer)
 
@@ -131,10 +136,10 @@ class Picks:
 
             # en 100 hz: Una ventana que empieza de 5 a 15 segundos
             # antes de la P de tamaño 5000 (muestras)
-            sample_1 = 1000 + np.random.uniform(-1, 1)*500
+            #sample_1 = 1000 + np.random.uniform(-1, 1)*500
             # se divide en la frecuencia de muestreo para obtener segundos
-            dt1 = sample_1/df
-            dt2 = (5000-sample_1)/df 
+            dt1 = 3001/df
+            dt2 = (self.input_length-3001)/df 
             
             t_ = row[6]
             t_ms_ = row[7]
@@ -188,7 +193,6 @@ class Picks:
             npz_name = f"{net}_{station}_{t.strftime('%Y%m%d%H%M%S%f')[:-4]}.npz"
             data_float = data.astype('float64')
             
-            #print(station)
             if self.write_phase_times:
 
                 ch_list = []
@@ -207,15 +211,19 @@ class Picks:
                 n_p = self.phase_point(t, t_i, df)
                 n_s = self.phase_point(t_s, t_i, df)
 
-                np.savez_compressed(self.data_dir+npz_name,
+                if self.mode in ('train', 'tune', 'test'):
+                    if data_float.shape != (9001, 3):
+                        continue
+
+                np.savez_compressed(os.path.join(self.data_dir,npz_name),
                                     data=data_float,
                                     itp=n_p,
                                     its=n_s,
                                     channels=channels)
-            
-                ph_file.append([npz_name, n_p, n_p, channels])
+
+                ph_file.append([npz_name, n_p, n_s, channels])
             else:
-                np.savez_compressed(self.data_dir+npz_name, data=data_float)
+                np.savez_compressed(os.path.join(self.data_dir, npz_name), data=data_float)
 
                 ph_file.append([npz_name])
         
@@ -254,6 +262,7 @@ if __name__ == "__main__":
                      lat_max=3.57,#
                      lon_min=-74.366,#
                      lon_max=-73.907,
-                     limit=100)#
+                     limit=100,
+                     mode='train')#
     print('\n\t\tObteniendo formas de onda y tiempo de arribo')
     my_picks.get_picks()

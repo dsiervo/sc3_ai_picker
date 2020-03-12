@@ -1,7 +1,7 @@
-#!/home/sgc/anaconda3/envs/tf_2.0/bin/ python
+#!/home/sgc/anaconda3/envs/phaseNet/bin/python
 # -*- coding: utf-8 -*-
 """
-Created on Wed Oct 23 11:25:33 2019
+Created on Mar 5 11:25:33 2020
 
 @author: Daniel Siervo, emetdan@gmail.com
 """
@@ -44,15 +44,38 @@ def init():
                     lat_max=params['lat_max'],
                     lon_min=params['lon_min'],
                     lon_max=params['lon_max'],
-                    limit=params['limit'])
+                    magnitude=params['magnitude'],
+                    limit=params['limit'],
+                    mode=params['mode'],
+                    input_length=params['input_length'])
 
         my_picks.get_picks()
 
     print('\n\tExcecuting PhaseNet\n')
-    command = f"python run.py --mode={params['mode']} --model_dir={params['model_dir']} \
-        --data_dir={params['data_dir']} --data_list={params['data_list']} \
-        --output_dir={params['output_dir']} --plot_figure --save_result \
-        --batch_size={params['batch_size']} --input_length={params['input_length']}"
+    if params['mode'] == 'train':
+        command = f"python run.py --mode={params['mode']} \
+            --train_dir={params['data_dir']} --train_list={params['data_list']} \
+            --output_dir={params['output_dir']} --plot_figure --save_result \
+            --batch_size={params['batch_size']} --input_length={params['input_length']}\
+            --epochs={params['epochs']} --learning_rate={params['learning_rate']} \
+            --log_dir={params['log_dir']}"
+    
+    elif params['mode'] in ('pred', 'test'):
+        command = f"python run.py --mode={params['mode']} --model_dir={params['model_dir']} \
+            --data_dir={params['data_dir']} --data_list={params['data_list']} \
+            --output_dir={params['output_dir']} --plot_figure --save_result \
+            --batch_size={params['batch_size']} --input_length={params['input_length']}\
+            --epochs={params['epochs']} --learning_rate={params['learning_rate']} \
+            --log_dir={params['log_dir']}"
+
+    elif params['mode'] == 'tune':
+        command = f"python run.py --mode=train --model_dir={params['model_dir']} \
+            --train_dir={params['data_dir']} --train_list={params['data_list']} \
+            --output_dir={params['output_dir']} --plot_figure --save_result \
+            --batch_size={params['batch_size']} --input_length={params['input_length']}\
+            --epochs={params['epochs']} --learning_rate={params['learning_rate']} \
+            --log_dir={params['log_dir']}" #--fine_tune
+
     print('\n', command, '\n')
     os.system(command)
 

@@ -3,7 +3,7 @@
 # ::::::::::::::::::::::::::::::
 
 # if download can be True, true, yes, Y, Yes
-download = True
+download = no
 
 # for waveform extraction
 ip_fdsn = http://10.100.100.232
@@ -12,21 +12,24 @@ port_fdsn = 8091
 host = 10.100.100.232
 
 # for event query
-event_id = SGC2020czvlgy
+event_id = SGC2020aicxhi
 
 # common parameters between event query and station query
+#data_list = dataset/test_mesetas.csv
+#data_dir = /home/sgc/test_data/mesetas
 data_list = dataset/train_mesetas.csv
 data_dir = /home/sgc/train_data/mesetas
-# if is event query then put in stations no, N, False or comment the
-# station line
+# if is event query then put in stations no, N, False
+#stations = no
 stations = 'CLEJA', 'URMC', 'CLBC', 'PRA', 'VIL', 'TAPM', 'PIRM', 'MACC'
 
-init_time = 2020-01-01 00:00:00
-end_time = 2020-03-04 23:59:59
+init_time = 2020-03-05 00:00:00
+end_time = 2020-03-11 23:59:59
 lat_min = 3.3
 lat_max = 3.57
 lon_min = -74.366
 lon_max = -73.907
+magnitude = 10.0
 # total number of waveforms to download (in case of stations query)
 limit = 10000
 
@@ -34,11 +37,17 @@ limit = 10000
 # phaseNet params
 # ::::::::::::::::::::::::::::::
 
-# Can be pred, train or test
-mode = train
+# Can be pred, train, tune or test
+mode = tune
+#model_dir = /home/sgc/mesetas/PhaseNet/log_mesetas/200310-162445
+#model_dir = /home/sgc/mesetas/PhaseNet/log_from_scratch/200310-191414
 model_dir = model/190703-214543
-output_dir = out_mesetas_prueba_train
-batch_size = 20
-input_length = 15
+output_dir = test_mesetas_tunning
 
+#log_dir = log_from_scratch
+log_dir = log_mesetas_tune
+batch_size = 128
+input_length = 9001
+epochs = 10
+learning_rate = 0.01
 
