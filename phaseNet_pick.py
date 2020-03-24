@@ -47,7 +47,8 @@ def init():
                     magnitude=params['magnitude'],
                     limit=params['limit'],
                     mode=params['mode'],
-                    input_length=params['input_length'])
+                    input_length=params['input_length'],
+                    filter=params['filter'])
 
         my_picks.get_picks()
 

@@ -48,6 +48,6 @@ output_dir = test_mesetas_tunning
 log_dir = log_mesetas_tune
 batch_size = 128
 input_length = 9001
-epochs = 10
+epochs = 1
 learning_rate = 0.01
 

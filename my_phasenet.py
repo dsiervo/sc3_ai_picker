@@ -21,10 +21,12 @@ keras.backend.clear_session()  # For easy reset of notebook state.
 class PhaseNet:
 
   def __init__(self, trace_size,
-               loss = 'cross_entropy'):
+               loss = 'cross_entropy',
+               lstm = False):
     
     self.trace_size = trace_size
     self.inputs = keras.Input(shape=(self.trace_size,1,3))
+    self.lstm = lstm
 
 
     """Definimos las arquitecturas principales capas de la red"""
@@ -115,9 +117,26 @@ class PhaseNet:
 
     ## 
     c5 = self.conv_stride_relu(64, 'Down_3_out')(c4)  # -> 64
-    # 4 down -> 64
-    c5 = self.conv_relu(128, name='Down_4')(c5) # -> 128
+    #print(c5.shape)
 
+    if not self.lstm:
+      # 4 down -> 64
+      c5 = self.conv_relu(128, name='Down_4')(c5) # -> 128
+
+    else:
+    # adding 5th dimension
+      c5 = tf.keras.layers.Reshape(target_shape=(1,12,1,64))(c5)
+      c5 = tf.keras.layers.ConvLSTM2D(
+                                  filters=128,
+                                  kernel_size=(self.size,1), 
+                                  name='ConvLSTM',
+                                  padding='same',
+                                  recurrent_activation='hard_sigmoid',
+                                  activation=self.activation,
+                                  kernel_initializer=self.init,
+                                  return_sequences=False)(c5)
+
+    #print(c5.shape)
     ## 3 up -> 128
     u4 = self.deconv_relu(64, name='Up_3_inp', pad='same')(c5)
     u4 = self.slice_and_concat(u4, c4)
@@ -149,17 +168,18 @@ class PhaseNet:
     model = keras.Model(inputs=self.inputs, outputs=self.Outputs)
     
     model.compile(optimizer='adam',
-                  loss='categorical_crossentropy')
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy'])
     
     return model
 
 
 if __name__ == "__main__":
   import numpy as np
-  m = PhaseNet()
+  m = PhaseNet(3000, lstm=True)
   my_model = m.create_model()
 
   c_ = my_model.layers[1]
-  print(np.array(c_.get_weights()[0]).shape)
+  #print(np.array(c_.get_weights()[0]).shape)
   my_model.summary()
   keras.utils.plot_model(my_model, show_shapes=True,show_layer_names=True)

@@ -159,11 +159,16 @@ class Picks:
 
             st.trim(t-dt1, t+dt2-0.01)
             st.merge(fill_value="interpolate")
-            #st.filter('highpass', freq=0.1)
+
+            if self.filter in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE'):
+                st.detrend('linear')
+                #st.taper(max_percentage=0.05, type="hann")
+                #st.filter('bandpass', freqmin=5, freqmax=10)
+                #st.filter('highpass', freq=1.1)
 
             tr = st[0]
             
-            #st.write('/home/sgc/mesetas_article/PhaseNet/dataset/mseed/'+f"{net}_{station}_{t.strftime('%Y%m%d%H%M%S%f')[:-4]}.mseed", 'mseed')
+            st.write('/home/sgc/mesetas/PhaseNet/dataset/mseed/'+f"{net}_{station}_{t.strftime('%Y%m%d%H%M%S%f')[:-4]}.mseed", 'mseed')
             
             #t_i = tr.stats.starttime
             #df = tr.stats.sampling_rate
@@ -263,6 +268,7 @@ if __name__ == "__main__":
                      lon_min=-74.366,#
                      lon_max=-73.907,
                      limit=100,
-                     mode='train')#
+                     mode='train',
+                     filter=False)#
     print('\n\t\tObteniendo formas de onda y tiempo de arribo')
     my_picks.get_picks()
