@@ -48,7 +48,8 @@ def init():
                     limit=params['limit'],
                     mode=params['mode'],
                     input_length=params['input_length'],
-                    filter=params['filter'])
+                    filter=params['filter'],
+                    filter_only_this=params['filter_only_this'])
 
         my_picks.get_picks()
 

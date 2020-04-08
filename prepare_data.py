@@ -161,14 +161,25 @@ class Picks:
             st.merge(fill_value="interpolate")
 
             if self.filter in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE'):
-                st.detrend('linear')
-                #st.taper(max_percentage=0.05, type="hann")
-                #st.filter('bandpass', freqmin=5, freqmax=10)
-                #st.filter('highpass', freq=1.1)
+                if self.filter_only_this in ('no', 'No', 'NO', 'N', 'n' 'False', 'false'):
+                    st.detrend('linear')
+                    st.taper(max_percentage=0.05, type="hann")
+                    #st.filter('bandpass', freqmin=5, freqmax=10)
+                    st.filter('highpass', freq=1.3)
+                else:
+                    # lista de estaciones a filtrar
+                    sta_to_fil = self.filter_only_this.replace(' ', '').split(',')
+                    if station in sta_to_fil:
+                        #print(f'\n\n\t\t filtrando {station}!!')
+                        st.detrend('linear')
+                        st.taper(max_percentage=0.05, type="hann")
+                        #st.filter('bandpass', freqmin=5, freqmax=10)
+                        st.filter('highpass', freq=0.8)
+                    else: pass
 
             tr = st[0]
             
-            st.write('/home/sgc/mesetas/PhaseNet/dataset/mseed/'+f"{net}_{station}_{t.strftime('%Y%m%d%H%M%S%f')[:-4]}.mseed", 'mseed')
+            #st.write('/home/sgc/mesetas/PhaseNet/dataset/mseed/'+f"{net}_{station}_{t.strftime('%Y%m%d%H%M%S%f')[:-4]}.mseed", 'mseed')
             
             #t_i = tr.stats.starttime
             #df = tr.stats.sampling_rate
@@ -195,7 +206,8 @@ class Picks:
                 re_data = data.reshape((N,1))
                 data = np.concatenate((re_data, z), axis=1)
 
-            npz_name = f"{net}_{station}_{t.strftime('%Y%m%d%H%M%S%f')[:-4]}.npz"
+            t_i = tr.stats.starttime
+            npz_name = f"{net}_{station}_{t_i.strftime('%Y%m%d%H%M%S%f')[:-4]}_{int(tr.stats.sampling_rate)}_{loc}_{ch[:2]+'Z'}.npz"
             data_float = data.astype('float64')
             
             if self.write_phase_times:
@@ -207,7 +219,6 @@ class Picks:
                 
                 #print(channels) 
                 
-                t_i = tr.stats.starttime
                 df = tr.stats.sampling_rate
                 t_s = UTCDateTime(
                     row[9]+datetime.timedelta(milliseconds=float(row[10])/1000)
@@ -269,6 +280,7 @@ if __name__ == "__main__":
                      lon_max=-73.907,
                      limit=100,
                      mode='train',
-                     filter=False)#
+                     filter=False,
+                     filter_only_this='no')#
     print('\n\t\tObteniendo formas de onda y tiempo de arribo')
     my_picks.get_picks()
