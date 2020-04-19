@@ -90,10 +90,29 @@ def picks2xml(pick_list):
   </EventParameters>
 </seiscomp>'''
 
+    xml_S_bottom = '''<comment>
+        <text>{}</text>
+        <id>RefPickID</id>
+      </comment>
+    </pick>'''
+
     xml_file = xml_top
 
+    pick_dic = {}
     for pick in pick_list:
-        xml_file += pick.toxml()
+        if pick.phaseHint == 'S':
+            try:
+                P_pick = pick_dic[pick.station+'_'+'P']
+            except KeyError:
+                print('No se encontro fase P de referencia para:')
+                print(f'\t{pick.publicID}')
+                continue
+            xml_file += pick.toxml()+xml_S_bottom.format(P_pick.publicID)
+        elif pick.phaseHint == 'P':
+            # se crea un diccionario para almacenar las fases P a las que
+            # luego se relacionaran las fases S. (Seiscomp lo exige)
+            pick_dic[pick.station+'_'+pick.phaseHint] = pick 
+            xml_file += pick.toxml()
     
     xml_file += xml_bottom
 
@@ -135,7 +154,7 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob):
                 # se transforma las cuentas asociadas al pick en tiempo
                 pick_time, creation_time = sample2time(pick, to, df)
                 # se crea el Id usando el tiempo del pick
-                ID = id_maker(pick_time, net, station, loc, ch)    
+                ID = id_maker(pick_time, net, station, loc, ch, ph_type)    
 
                 # Se crea el objeto Pick
                 p = Pick(ID, pick_time, net, station,
@@ -172,7 +191,7 @@ def sample2time(sample, to, df):
     return pick_time, creation_time
 
 
-def id_maker(pick_time, net, station, loc, ch):
+def id_maker(pick_time, net, station, loc, ch, phaseHint):
     """Creates the seiscomp Pick PublicID
     
     Parameters
@@ -186,7 +205,10 @@ def id_maker(pick_time, net, station, loc, ch):
        Seiscomp pick PublicID 
     """
     dateID = pick_time.strftime('%Y%m%d.%H%M%S.%f')[:-4]
-    publicID = dateID+f'-AIC-{net}.{station}.{loc}.{ch}'
+    if phaseHint == 'P':
+        publicID = dateID+f'-AIC-{net}.{station}.{loc}.{ch}'
+    elif phaseHint == 'S':
+        publicID = dateID+f'-S-L2-{net}.{station}.{loc}.{ch}'
     return publicID
 
 
@@ -196,7 +218,7 @@ class Pick:
 
     Atributes
     ---------
-    xml_block : str
+    xml_P_block : str
         Template of a pick XML block
 
     Methods
@@ -204,12 +226,12 @@ class Pick:
     toxml()
         Create seiscomp3 xml block
     '''
-    xml_block = '''
+    xml_P_block = '''
     <pick publicID="{publicID}">
       <time>
         <value>{pick_time}</value>
       </time>
-      <waveformID networkCode="{net}" stationCode="{station}" locationCode="{loc}" channelCode="{ch}"
+      <waveformID networkCode="{net}" stationCode="{station}" locationCode="{loc}" channelCode="{ch}"/>
       <filterID>BW(4,1.00,10.00)</filterID>
       <methodID>AIC</methodID>
       <phaseHint>{phaseHint}</phaseHint>
@@ -220,6 +242,24 @@ class Pick:
         <creationTime>{creation_time}</creationTime>
       </creationInfo>
     </pick>'''
+
+    xml_S_block = '''
+    <pick publicID="{publicID}">
+      <time>
+        <value>{pick_time}</value>
+      </time>
+      <waveformID networkCode="{net}" stationCode="{station}" locationCode="{loc}" channelCode="{ch}"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>L2-AIC</methodID>
+      <phaseHint>{phaseHint}</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>{creation_time}</creationTime>
+      </creationInfo>
+      '''
+
     def __init__(self, publicID, pick_time,
                 net, station, loc, ch,
                 phaseHint, creation_time):
@@ -255,16 +295,29 @@ class Pick:
     def toxml(self):
         """Create a seiscomp xml block
         """
-        return self.xml_block.format(
-            publicID = self.publicID,
-            pick_time = self.pick_time,
-            net = self.net,
-            station = self.station,
-            loc = self.loc,
-            ch = self.ch,
-            phaseHint = self.phaseHint,
-            creation_time = self.creation_time
-        )
+
+        if self.phaseHint == 'P':
+            return self.xml_P_block.format(
+                publicID = self.publicID,
+                pick_time = self.pick_time,
+                net = self.net,
+                station = self.station,
+                loc = self.loc,
+                ch = self.ch,
+                phaseHint = self.phaseHint,
+                creation_time = self.creation_time
+                )
+        elif self.phaseHint == 'S':
+            return self.xml_S_block.format(
+                publicID = self.publicID,
+                pick_time = self.pick_time,
+                net = self.net,
+                station = self.station,
+                loc = self.loc,
+                ch = self.ch,
+                phaseHint = self.phaseHint,
+                creation_time = self.creation_time
+                )
 
 
 if __name__=='__main__':
