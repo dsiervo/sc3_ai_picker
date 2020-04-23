@@ -5,7 +5,7 @@ from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
 import numpy as np
 import os 
-
+  
 
 class Picks:
     def __init__(self, event_ID='SGC2020aicxhi', stations='False', 
