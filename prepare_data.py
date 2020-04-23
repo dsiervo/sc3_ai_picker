@@ -4,7 +4,7 @@ import csv
 from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
 import numpy as np
-import os
+import os 
 
 
 class Picks:
