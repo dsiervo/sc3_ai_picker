@@ -9,7 +9,7 @@ import csv
 from obspy import UTCDateTime
 
 
-def main(input_file='picks.csv', output_file='picks.xml', min_prob=0.3):
+def main(input_file='picks.csv', output_file='picks_final.xml', min_prob=0.3):
     """Transform PhaseNet picks.csv file into Seiscomp XML file
 
     Parameters
@@ -31,6 +31,8 @@ def main(input_file='picks.csv', output_file='picks.xml', min_prob=0.3):
     # Writting in the output file
     with open(output_file, 'w') as f:
         f.write(xml_text)
+    
+    print(f'\nOutput file: {output_file}')
 
 
 def read_picks(phaseNet_picks,
@@ -54,17 +56,20 @@ def read_picks(phaseNet_picks,
         reader = csv.reader(csvfile, delimiter=',') 
         for i, row in enumerate(reader): 
             if i != 0: 
-
+                print(row)
                 wf_name = row[0]
-                picks_p = row[1].strip('[]').split(' ') 
-                prob_p = row[2].strip('[]').split(' ') 
-                picks_s = row[3].strip('[]').split(' ') 
-                prob_s = row[4].strip('[]').split(' ') 
-            
+                picks_p = row[1].strip('[]').strip().split() 
+                prob_p = row[2].strip('[]').strip().split() 
+                picks_s = row[3].strip('[]').strip().split() 
+                prob_s = row[4].strip('[]').strip().split() 
+
                 P_picks = pick_constructor(picks_p, prob_p, wf_name, 'P', min_prob)
                 S_picks = pick_constructor(picks_s, prob_s, wf_name, 'S', min_prob)
             
                 picks += P_picks + S_picks
+                
+                print(f'{len(P_picks)} P picks')
+                print(f'{len(S_picks)} S picks')
 
     return picks
 
@@ -144,7 +149,6 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob):
     if picks != ['']:
         for pick, prob in zip(picks, prob):
             if float(prob) >= min_prob:
-                print(pick, prob, '\n')
 
                 #----------
                 # se obtienen los parámetros para la creación del objeto pick

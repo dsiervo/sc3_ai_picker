@@ -4,11 +4,12 @@ import csv
 from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
 import numpy as np
-import os 
-  
+import os
+
 
 class Picks:
-    def __init__(self, event_ID='SGC2020aicxhi', stations='False', 
+    def __init__(self, event_ID='SGC2020aicxhi',
+                stations='False', 
                 ip_fdsn="http://10.100.100.232",
                 port_fdsn="8091",
                 host='10.100.100.232',
@@ -16,8 +17,7 @@ class Picks:
                 data_dir='dataset/waveform_pred/',
                 magnitude=10.0,
                 input_length=3000,
-                **kwargs
-                ):
+                **kwargs):
         
         self.event_ID = event_ID
         self.stations = stations
