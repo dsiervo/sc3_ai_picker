@@ -1,3 +1,6 @@
+
+mode = pred
+
 # ::::::::::::::::::::::::::::::
 # waveform query params
 # ::::::::::::::::::::::::::::::
@@ -12,7 +15,9 @@ port_fdsn = 8091
 host = 10.100.100.232
 
 # for event query
-event_id = SGC2020aicxhi
+event_id = SGC2020knulir
+
+PhaseNet_dir = /home/sgc/mesetas/PhaseNet
 
 # common parameters between event query and station query
 data_list = dataset/pred_mesetas_far.csv
@@ -47,11 +52,10 @@ filter_only_this = PRA, VIL, TAPM, PIRM, MACC
 # ::::::::::::::::::::::::::::::
 
 # Can be pred, train, tune or test
-mode = pred
 #model_dir = /home/sgc/mesetas/PhaseNet/log_mesetas/200310-162445
 #model_dir = /home/sgc/mesetas/PhaseNet/log_from_scratch/200310-191414
 model_dir = model/190703-214543
-output_dir = mesetas_pred_event_filter_1.3
+output_dir = mesetas_pred_event_filter_2.3
 #output_dir = mesetas_test_filtered
 
 #log_dir = log_from_scratch
