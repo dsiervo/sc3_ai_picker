@@ -1,0 +1,11 @@
+####################################################### TO RUN PNET #######################################################
+
+PhaseNet_dir= /mnt/almacenamiento/Emmanuel_Castillo/PhaseNet
+prepare= Prep_Ev
+mode= pred
+data_dir= /mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/UNAL/Tesis/mseed_PhaseNet/mseed_wavs
+data_list= /mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/UNAL/Tesis/mseed_PhaseNet/mseed_wavs/fname.csv
+model_dir = /mnt/almacenamiento/Emmanuel_Castillo/PhaseNet/model/190703-214543
+output_dir = /mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/UNAL/Tesis/mseed_PhaseNet/Output
+batch_size = 20
+#input_length = 9001
