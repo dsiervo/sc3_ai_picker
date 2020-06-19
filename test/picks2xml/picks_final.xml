@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10" version="0.10">
   <EventParameters>
-    <pick publicID="20200529.033909.02-AIC-CM.VIL.20.EHZ">
+    <pick publicID="20200529.033824.02-AIC-CM.VIL.20.EHZ">
       <time>
-        <value>2020-05-29T03:39:09.020000Z</value>
+        <value>2020-05-29T03:38:24.020000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="VIL" locationCode="20" channelCode="EHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -13,12 +13,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.909108Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.117589Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033919.76-S-L2-CM.VIL.20.EHZ">
+    <pick publicID="20200529.033834.76-S-L2-CM.VIL.20.EHZ">
       <time>
-        <value>2020-05-29T03:39:19.760000Z</value>
+        <value>2020-05-29T03:38:34.760000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="VIL" locationCode="20" channelCode="EHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -28,16 +28,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.909257Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.117727Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033909.02-AIC-CM.VIL.20.EHZ</text>
+        <text>20200529.033824.02-AIC-CM.VIL.20.EHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033920.28-S-L2-CM.VIL.20.EHZ">
+    <pick publicID="20200529.033835.28-S-L2-CM.VIL.20.EHZ">
       <time>
-        <value>2020-05-29T03:39:20.280000Z</value>
+        <value>2020-05-29T03:38:35.280000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="VIL" locationCode="20" channelCode="EHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -47,16 +47,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.909378Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.117836Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033909.02-AIC-CM.VIL.20.EHZ</text>
+        <text>20200529.033824.02-AIC-CM.VIL.20.EHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033859.64-AIC-CM.URMC.00.HHZ">
+    <pick publicID="20200529.033814.64-AIC-CM.URMC.00.HHZ">
       <time>
-        <value>2020-05-29T03:38:59.640000Z</value>
+        <value>2020-05-29T03:38:14.640000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="URMC" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -66,12 +66,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.909528Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.118008Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033904.11-S-L2-CM.URMC.00.HHZ">
+    <pick publicID="20200529.033819.11-S-L2-CM.URMC.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:04.110000Z</value>
+        <value>2020-05-29T03:38:19.110000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="URMC" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -81,16 +81,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.909645Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.118115Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033859.64-AIC-CM.URMC.00.HHZ</text>
+        <text>20200529.033814.64-AIC-CM.URMC.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033916.15-AIC-CM.CHI.00.HHZ">
+    <pick publicID="20200529.033831.15-AIC-CM.CHI.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:16.150000Z</value>
+        <value>2020-05-29T03:38:31.150000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="CHI" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -100,12 +100,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.909785Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.118257Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033907.08-AIC-CM.PRA.00.HHZ">
+    <pick publicID="20200529.033822.08-AIC-CM.PRA.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:07.080000Z</value>
+        <value>2020-05-29T03:38:22.080000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="PRA" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -115,12 +115,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.909910Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.118401Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033917.37-S-L2-CM.PRA.00.HHZ">
+    <pick publicID="20200529.033832.37-S-L2-CM.PRA.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:17.370000Z</value>
+        <value>2020-05-29T03:38:32.370000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="PRA" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -130,16 +130,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910003Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.118504Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033907.08-AIC-CM.PRA.00.HHZ</text>
+        <text>20200529.033822.08-AIC-CM.PRA.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033918.22-AIC-CM.MACC.00.HHZ">
+    <pick publicID="20200529.033833.22-AIC-CM.MACC.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:18.220000Z</value>
+        <value>2020-05-29T03:38:33.220000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="MACC" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -149,12 +149,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910123Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.118647Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033936.20-S-L2-CM.MACC.00.HHZ">
+    <pick publicID="20200529.033851.20-S-L2-CM.MACC.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:36.200000Z</value>
+        <value>2020-05-29T03:38:51.200000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="MACC" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -164,16 +164,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910220Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.118752Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033918.22-AIC-CM.MACC.00.HHZ</text>
+        <text>20200529.033833.22-AIC-CM.MACC.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033850.17-AIC-CM.BET.20.EHZ">
+    <pick publicID="20200529.033805.17-AIC-CM.BET.20.EHZ">
       <time>
-        <value>2020-05-29T03:38:50.170000Z</value>
+        <value>2020-05-29T03:38:05.170000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="BET" locationCode="20" channelCode="EHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -183,12 +183,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910343Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.118892Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033920.46-AIC-CM.BET.20.EHZ">
+    <pick publicID="20200529.033835.46-AIC-CM.BET.20.EHZ">
       <time>
-        <value>2020-05-29T03:39:20.460000Z</value>
+        <value>2020-05-29T03:38:35.460000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="BET" locationCode="20" channelCode="EHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -198,12 +198,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910439Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.118993Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033940.28-S-L2-CM.BET.20.EHZ">
+    <pick publicID="20200529.033855.28-S-L2-CM.BET.20.EHZ">
       <time>
-        <value>2020-05-29T03:39:40.280000Z</value>
+        <value>2020-05-29T03:38:55.280000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="BET" locationCode="20" channelCode="EHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -213,16 +213,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910534Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.119100Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033920.46-AIC-CM.BET.20.EHZ</text>
+        <text>20200529.033835.46-AIC-CM.BET.20.EHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033857.22-AIC-CM.MARO.00.HHZ">
+    <pick publicID="20200529.033812.22-AIC-CM.MARO.00.HHZ">
       <time>
-        <value>2020-05-29T03:38:57.220000Z</value>
+        <value>2020-05-29T03:38:12.220000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="MARO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -232,12 +232,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910654Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.119240Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033927.35-AIC-CM.MARO.00.HHZ">
+    <pick publicID="20200529.033842.35-AIC-CM.MARO.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:27.350000Z</value>
+        <value>2020-05-29T03:38:42.350000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="MARO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -247,12 +247,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910744Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.119346Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033952.60-S-L2-CM.MARO.00.HHZ">
+    <pick publicID="20200529.033907.60-S-L2-CM.MARO.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:52.600000Z</value>
+        <value>2020-05-29T03:39:07.600000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="MARO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -262,16 +262,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910838Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.119446Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033927.35-AIC-CM.MARO.00.HHZ</text>
+        <text>20200529.033842.35-AIC-CM.MARO.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033926.51-AIC-CM.GARC.00.HHZ">
+    <pick publicID="20200529.033841.51-AIC-CM.GARC.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:26.510000Z</value>
+        <value>2020-05-29T03:38:41.510000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="GARC" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -281,12 +281,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.910981Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.119589Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033949.82-S-L2-CM.GARC.00.HHZ">
+    <pick publicID="20200529.033904.82-S-L2-CM.GARC.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:49.820000Z</value>
+        <value>2020-05-29T03:39:04.820000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="GARC" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -296,16 +296,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.911094Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.119689Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033926.51-AIC-CM.GARC.00.HHZ</text>
+        <text>20200529.033841.51-AIC-CM.GARC.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033925.64-AIC-CM.PIRM.00.HHZ">
+    <pick publicID="20200529.033840.64-AIC-CM.PIRM.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:25.640000Z</value>
+        <value>2020-05-29T03:38:40.640000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="PIRM" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -315,12 +315,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.911213Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.119825Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033948.85-S-L2-CM.PIRM.00.HHZ">
+    <pick publicID="20200529.033903.85-S-L2-CM.PIRM.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:48.850000Z</value>
+        <value>2020-05-29T03:39:03.850000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="PIRM" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -330,16 +330,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.911303Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.119931Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033925.64-AIC-CM.PIRM.00.HHZ</text>
+        <text>20200529.033840.64-AIC-CM.PIRM.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033924.09-AIC-CM.BELO.00.HHZ">
+    <pick publicID="20200529.033839.09-AIC-CM.BELO.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:24.090000Z</value>
+        <value>2020-05-29T03:38:39.090000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="BELO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -349,12 +349,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.911432Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.120067Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033948.47-S-L2-CM.BELO.00.HHZ">
+    <pick publicID="20200529.033903.47-S-L2-CM.BELO.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:48.470000Z</value>
+        <value>2020-05-29T03:39:03.470000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="BELO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -364,16 +364,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.911534Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.120168Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033924.09-AIC-CM.BELO.00.HHZ</text>
+        <text>20200529.033839.09-AIC-CM.BELO.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033931.58-AIC-CM.NOR.00.HHZ">
+    <pick publicID="20200529.033846.58-AIC-CM.NOR.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:31.580000Z</value>
+        <value>2020-05-29T03:38:46.580000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="NOR" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -383,12 +383,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.911683Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.120308Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033959.74-S-L2-CM.NOR.00.HHZ">
+    <pick publicID="20200529.033914.74-S-L2-CM.NOR.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:59.740000Z</value>
+        <value>2020-05-29T03:39:14.740000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="NOR" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -398,16 +398,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.911800Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.120409Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033931.58-AIC-CM.NOR.00.HHZ</text>
+        <text>20200529.033846.58-AIC-CM.NOR.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033930.52-AIC-CM.GUY2C.00.HHZ">
+    <pick publicID="20200529.033845.52-AIC-CM.GUY2C.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:30.520000Z</value>
+        <value>2020-05-29T03:38:45.520000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="GUY2C" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -417,12 +417,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.911939Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.120543Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033957.69-S-L2-CM.GUY2C.00.HHZ">
+    <pick publicID="20200529.033912.69-S-L2-CM.GUY2C.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:57.690000Z</value>
+        <value>2020-05-29T03:39:12.690000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="GUY2C" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -432,16 +432,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.912059Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.120643Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033930.52-AIC-CM.GUY2C.00.HHZ</text>
+        <text>20200529.033845.52-AIC-CM.GUY2C.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033938.64-AIC-CM.COBO.00.HHZ">
+    <pick publicID="20200529.033853.64-AIC-CM.COBO.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:38.640000Z</value>
+        <value>2020-05-29T03:38:53.640000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="COBO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -451,12 +451,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.912202Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.120790Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.034011.62-S-L2-CM.COBO.00.HHZ">
+    <pick publicID="20200529.033926.62-S-L2-CM.COBO.00.HHZ">
       <time>
-        <value>2020-05-29T03:40:11.620000Z</value>
+        <value>2020-05-29T03:39:26.620000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="COBO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -466,16 +466,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.912291Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.120890Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033938.64-AIC-CM.COBO.00.HHZ</text>
+        <text>20200529.033853.64-AIC-CM.COBO.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033936.70-AIC-CM.JAMC.00.HHZ">
+    <pick publicID="20200529.033851.70-AIC-CM.JAMC.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:36.700000Z</value>
+        <value>2020-05-29T03:38:51.700000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="JAMC" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -485,12 +485,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.912408Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.121024Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033937.59-AIC-CM.PAL.00.HHZ">
+    <pick publicID="20200529.033852.59-AIC-CM.PAL.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:37.590000Z</value>
+        <value>2020-05-29T03:38:52.590000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="PAL" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -500,12 +500,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.912529Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.121168Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.034011.35-S-L2-CM.PAL.00.HHZ">
+    <pick publicID="20200529.033926.35-S-L2-CM.PAL.00.HHZ">
       <time>
-        <value>2020-05-29T03:40:11.350000Z</value>
+        <value>2020-05-29T03:39:26.350000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="PAL" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -515,16 +515,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.912619Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.121270Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033937.59-AIC-CM.PAL.00.HHZ</text>
+        <text>20200529.033852.59-AIC-CM.PAL.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033935.69-AIC-CM.FLO2.00.HHZ">
+    <pick publicID="20200529.033850.69-AIC-CM.FLO2.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:35.690000Z</value>
+        <value>2020-05-29T03:38:50.690000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="FLO2" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -534,12 +534,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.912750Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.121405Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.034006.70-S-L2-CM.FLO2.00.HHZ">
+    <pick publicID="20200529.033921.70-S-L2-CM.FLO2.00.HHZ">
       <time>
-        <value>2020-05-29T03:40:06.700000Z</value>
+        <value>2020-05-29T03:39:21.700000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="FLO2" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -549,16 +549,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.912864Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.121504Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033935.69-AIC-CM.FLO2.00.HHZ</text>
+        <text>20200529.033850.69-AIC-CM.FLO2.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.033939.40-AIC-CM.RUS.00.HHZ">
+    <pick publicID="20200529.033854.40-AIC-CM.RUS.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:39.400000Z</value>
+        <value>2020-05-29T03:38:54.400000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="RUS" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -568,12 +568,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.913113Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.121647Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033911.01-AIC-CM.SOTO.00.HHZ">
+    <pick publicID="20200529.033826.01-AIC-CM.SOTO.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:11.010000Z</value>
+        <value>2020-05-29T03:38:26.010000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="SOTO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -583,12 +583,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.913258Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.121951Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033941.22-AIC-CM.SOTO.00.HHZ">
+    <pick publicID="20200529.033856.22-AIC-CM.SOTO.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:41.220000Z</value>
+        <value>2020-05-29T03:38:56.220000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="SOTO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -598,12 +598,12 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.913350Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.122053Z</creationTime>
       </creationInfo>
     </pick>
-    <pick publicID="20200529.033944.51-S-L2-CM.SOTO.00.HHZ">
+    <pick publicID="20200529.033859.51-S-L2-CM.SOTO.00.HHZ">
       <time>
-        <value>2020-05-29T03:39:44.510000Z</value>
+        <value>2020-05-29T03:38:59.510000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="SOTO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -613,16 +613,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.913441Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.122153Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033941.22-AIC-CM.SOTO.00.HHZ</text>
+        <text>20200529.033856.22-AIC-CM.SOTO.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.034020.25-S-L2-CM.SOTO.00.HHZ">
+    <pick publicID="20200529.033935.25-S-L2-CM.SOTO.00.HHZ">
       <time>
-        <value>2020-05-29T03:40:20.250000Z</value>
+        <value>2020-05-29T03:39:35.250000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="SOTO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -632,16 +632,16 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.913530Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.122250Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033941.22-AIC-CM.SOTO.00.HHZ</text>
+        <text>20200529.033856.22-AIC-CM.SOTO.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>
-    <pick publicID="20200529.034027.96-S-L2-CM.SOTO.00.HHZ">
+    <pick publicID="20200529.033942.96-S-L2-CM.SOTO.00.HHZ">
       <time>
-        <value>2020-05-29T03:40:27.960000Z</value>
+        <value>2020-05-29T03:39:42.960000Z</value>
       </time>
       <waveformID networkCode="CM" stationCode="SOTO" locationCode="00" channelCode="HHZ"/>
       <filterID>BW(4,1.00,10.00)</filterID>
@@ -651,10 +651,10 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:32:16.913619Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.122348Z</creationTime>
       </creationInfo>
       <comment>
-        <text>20200529.033941.22-AIC-CM.SOTO.00.HHZ</text>
+        <text>20200529.033856.22-AIC-CM.SOTO.00.HHZ</text>
         <id>RefPickID</id>
       </comment>
     </pick>

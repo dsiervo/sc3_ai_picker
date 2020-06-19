@@ -13,7 +13,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.844094Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.124019Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033834.76-S-L2-CM.VIL.20.EHZ">
@@ -28,7 +28,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.844234Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.124162Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033824.02-AIC-CM.VIL.20.EHZ</text>
@@ -47,7 +47,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.844373Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.124268Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033824.02-AIC-CM.VIL.20.EHZ</text>
@@ -66,7 +66,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.844542Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.124413Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033819.11-S-L2-CM.URMC.00.HHZ">
@@ -81,7 +81,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.844671Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.124517Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033814.64-AIC-CM.URMC.00.HHZ</text>
@@ -100,7 +100,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.844856Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.124657Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033822.08-AIC-CM.PRA.00.HHZ">
@@ -115,7 +115,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.845021Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.124814Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033832.37-S-L2-CM.PRA.00.HHZ">
@@ -130,7 +130,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.845147Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.124919Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033822.08-AIC-CM.PRA.00.HHZ</text>
@@ -149,7 +149,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.845316Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.125058Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033851.20-S-L2-CM.MACC.00.HHZ">
@@ -164,7 +164,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.845442Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.125159Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033833.22-AIC-CM.MACC.00.HHZ</text>
@@ -183,7 +183,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.845605Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.125299Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033835.46-AIC-CM.BET.20.EHZ">
@@ -198,7 +198,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.845728Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.125400Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033855.28-S-L2-CM.BET.20.EHZ">
@@ -213,7 +213,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.845860Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.125499Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033835.46-AIC-CM.BET.20.EHZ</text>
@@ -232,7 +232,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.846021Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.125636Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033842.35-AIC-CM.MARO.00.HHZ">
@@ -247,7 +247,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.846146Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.125735Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033907.60-S-L2-CM.MARO.00.HHZ">
@@ -262,7 +262,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.846272Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.125834Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033842.35-AIC-CM.MARO.00.HHZ</text>
@@ -281,7 +281,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.846429Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.125969Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033904.82-S-L2-CM.GARC.00.HHZ">
@@ -296,7 +296,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.846552Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.126069Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033841.51-AIC-CM.GARC.00.HHZ</text>
@@ -315,7 +315,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.846708Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.126205Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033903.85-S-L2-CM.PIRM.00.HHZ">
@@ -330,7 +330,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.846831Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.126305Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033840.64-AIC-CM.PIRM.00.HHZ</text>
@@ -349,7 +349,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.846987Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.126439Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033903.47-S-L2-CM.BELO.00.HHZ">
@@ -364,7 +364,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.847109Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.126540Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033839.09-AIC-CM.BELO.00.HHZ</text>
@@ -383,7 +383,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.847274Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.126674Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033914.74-S-L2-CM.NOR.00.HHZ">
@@ -398,7 +398,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.847396Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.126773Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033846.58-AIC-CM.NOR.00.HHZ</text>
@@ -417,7 +417,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.847556Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.126906Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033912.69-S-L2-CM.GUY2C.00.HHZ">
@@ -432,7 +432,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.847681Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.127006Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033845.52-AIC-CM.GUY2C.00.HHZ</text>
@@ -451,7 +451,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.847838Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.127143Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033926.62-S-L2-CM.COBO.00.HHZ">
@@ -466,7 +466,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.847960Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.127243Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033853.64-AIC-CM.COBO.00.HHZ</text>
@@ -485,7 +485,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.848118Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.127378Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033852.59-AIC-CM.PAL.00.HHZ">
@@ -500,7 +500,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.848283Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.127518Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033926.35-S-L2-CM.PAL.00.HHZ">
@@ -515,7 +515,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.848406Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.127618Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033852.59-AIC-CM.PAL.00.HHZ</text>
@@ -534,7 +534,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.848563Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.127755Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033921.70-S-L2-CM.FLO2.00.HHZ">
@@ -549,7 +549,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.848686Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.127853Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033850.69-AIC-CM.FLO2.00.HHZ</text>
@@ -568,7 +568,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.848860Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.127990Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033826.01-AIC-CM.SOTO.00.HHZ">
@@ -583,7 +583,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.849023Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.128132Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033856.22-AIC-CM.SOTO.00.HHZ">
@@ -598,7 +598,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.849145Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.128231Z</creationTime>
       </creationInfo>
     </pick>
     <pick publicID="20200529.033859.51-S-L2-CM.SOTO.00.HHZ">
@@ -613,7 +613,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.849268Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.128328Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033856.22-AIC-CM.SOTO.00.HHZ</text>
@@ -632,7 +632,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.849388Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.128424Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033856.22-AIC-CM.SOTO.00.HHZ</text>
@@ -651,7 +651,7 @@
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
-        <creationTime>2020-06-19T17:31:17.849506Z</creationTime>
+        <creationTime>2020-06-19T18:12:31.128521Z</creationTime>
       </creationInfo>
       <comment>
         <text>20200529.033856.22-AIC-CM.SOTO.00.HHZ</text>

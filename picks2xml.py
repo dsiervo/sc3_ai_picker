@@ -57,7 +57,7 @@ def read_picks(phaseNet_picks,
     list
         List of Pick objects
     '''
-
+    """
     # script directory for phaseNet.inp searching
     main_dir = os.path.dirname(os.path.abspath(__file__))
     par_fn = 'phaseNet.inp'
@@ -73,7 +73,7 @@ def read_picks(phaseNet_picks,
             break
     
     mode = params['mode']
-
+    """
     picks = []
     with open(phaseNet_picks, newline='') as csvfile: 
         reader = csv.reader(csvfile, delimiter=',') 
