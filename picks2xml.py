@@ -7,7 +7,11 @@ Created on Mar 25 11:25:33 2020
 """
 import csv
 from obspy import UTCDateTime
+import datetime
+import os
 
+# waveforms lenght in seconds
+WF_LENGHT = 2.0*3600
 
 def main(input_file='picks.csv', output_file='picks_final.xml', min_prob=0.3):
     """Transform PhaseNet picks.csv file into Seiscomp XML file
@@ -21,6 +25,8 @@ def main(input_file='picks.csv', output_file='picks_final.xml', min_prob=0.3):
     min_prob: float
         Minimun probability to consider a phase pick
     """
+
+    print('Input files is:', input_file)
 
     # Obtaining list of Picks objects from file
     pick_list = read_picks(input_file, min_prob)
@@ -51,6 +57,23 @@ def read_picks(phaseNet_picks,
     list
         List of Pick objects
     '''
+
+    # script directory for phaseNet.inp searching
+    main_dir = os.path.dirname(os.path.abspath(__file__))
+    par_fn = 'phaseNet.inp'
+    rel_par_path = os.path.join('../', par_fn)
+    main_par_path = os.path.join(main_dir, par_fn)
+
+    # verifying if phaseNet.inp exist in any of the following 3 paths. 
+    check_inp_dirs = [par_fn, rel_par_path, main_par_path]
+    for path in check_inp_dirs:
+        if os.path.isfile(path):
+            print(f'Reading params for: {path} \n')
+            params = read_params(path)
+            break
+    
+    mode = params['mode']
+
     picks = []
     with open(phaseNet_picks, newline='') as csvfile: 
         reader = csv.reader(csvfile, delimiter=',') 
@@ -145,6 +168,7 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob):
     list
         List of picks objects
     """
+    segment = 0.0
     picks_list = []
     if picks != ['']:
         for pick, prob in zip(picks, prob):
@@ -154,9 +178,12 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob):
                 # se obtienen los parámetros para la creación del objeto pick
                 #----------
                 # algunos datos se obtienen del nombre de la forma de onda
-                net, station, to, df, loc, ch = wf_name.strip('.npz').split('_')
+                net, station, to, df, loc, *ch_segment = wf_name.split('_')
+                ch = ch_segment[0].split('.')[0]
+                if len(ch_segment)==2:
+                    segment = int(ch_segment[1])
                 # se transforma las cuentas asociadas al pick en tiempo
-                pick_time, creation_time = sample2time(pick, to, df)
+                pick_time, creation_time = sample2time(pick, to, df, segment)
                 # se crea el Id usando el tiempo del pick
                 ID = id_maker(pick_time, net, station, loc, ch, ph_type)    
 
@@ -169,7 +196,7 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob):
     return picks_list
 
 
-def sample2time(sample, to, df):
+def sample2time(sample, to, df, segment):
     """Transforma las cuentas de un pick de PhaseNet en fecha
     
     Parameters
@@ -189,8 +216,22 @@ def sample2time(sample, to, df):
     creation_time : UTCDateTime
         Time for creation time
     """
+    global WF_LENGHT
+    df = float(df)
+
     init_time = UTCDateTime(to[:-2]+'.'+to[-2:])
-    pick_time = init_time + float(sample)/float(df)
+    # if segment is different to 0 which implies that we are using
+    # pred_mseed mode
+    if segment is not 0:
+        
+        # if segment is bigger than the lenght of the waveform; then,
+        # the segment is an overlapping one, and then we need to
+        # include the 1500 samples (15 s) of shiftfing 
+        if segment >= WF_LENGHT*df:
+            segment = 0
+            init_time -= datetime.timedelta(seconds=1500/df)
+
+    pick_time = init_time + (segment + float(sample))/df
     creation_time = UTCDateTime()
     return pick_time, creation_time
 
@@ -323,6 +364,25 @@ class Pick:
                 creation_time = self.creation_time
                 )
 
+def read_params(par_file='phaseNet.inp'):
+    lines = open(par_file).readlines()
+    par_dic = {}
+    for line in lines:
+        if line[0] == '#' or line.strip('\n').strip() == '':
+            continue
+        else:
+            #print(line)
+            l = line.strip('\n').strip()
+            key, value = l.split('=')
+            par_dic[key.strip()] = value.strip()
+    return par_dic
 
 if __name__=='__main__':
-    main()
+    import sys
+
+    if len(sys.argv) > 1:
+        main(sys.argv[1])
+    if len(sys.argv) > 2:
+        main(sys.argv[1], sys.argv[2])
+    else:
+        main()
