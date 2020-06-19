@@ -13,7 +13,7 @@ import os
 # waveforms lenght in seconds
 WF_LENGHT = 2.0*3600
 
-def main(input_file='picks.csv', output_file='picks_final.xml', min_prob=0.3):
+def main(input_file='picks.csv', output_file=None, min_prob=0.3):
     """Transform PhaseNet picks.csv file into Seiscomp XML file
 
     Parameters
@@ -33,6 +33,12 @@ def main(input_file='picks.csv', output_file='picks_final.xml', min_prob=0.3):
 
     # Creating xml text
     xml_text = picks2xml(pick_list)
+
+    # Using the YYmmdd_HH to name the output xml if the
+    # output_file name is not provided
+    if output_file is None:
+        t_pick_1 = pick_list[0].pick_time
+        output_file = t_pick_1.strftime('%Y%m%d_%H_pick.xml')
 
     # Writting in the output file
     with open(output_file, 'w') as f:
@@ -380,9 +386,9 @@ def read_params(par_file='phaseNet.inp'):
 if __name__=='__main__':
     import sys
 
-    if len(sys.argv) > 1:
+    if len(sys.argv) == 2:
         main(sys.argv[1])
-    if len(sys.argv) > 2:
+    elif len(sys.argv) == 3:
         main(sys.argv[1], sys.argv[2])
     else:
         main()
