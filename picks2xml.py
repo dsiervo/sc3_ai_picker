@@ -370,19 +370,6 @@ class Pick:
                 creation_time = self.creation_time
                 )
 
-def read_params(par_file='phaseNet.inp'):
-    lines = open(par_file).readlines()
-    par_dic = {}
-    for line in lines:
-        if line[0] == '#' or line.strip('\n').strip() == '':
-            continue
-        else:
-            #print(line)
-            l = line.strip('\n').strip()
-            key, value = l.split('=')
-            par_dic[key.strip()] = value.strip()
-    return par_dic
-
 if __name__=='__main__':
     import sys
 
