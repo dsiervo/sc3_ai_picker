@@ -28,6 +28,8 @@ def init():
     
     print(params)
 
+
+    run_execute= os.path.join(params['PhaseNet_dir'],'run.py')
     if params['download'] in ('yes', 'Yes', 'Y', 'True', 'true', 'TRUE'):
         print('\n\tDownloading waveforms\n')
         my_picks = Picks(
@@ -63,7 +65,7 @@ def init():
             --log_dir={params['log_dir']}"
     
     elif params['mode'] in ('pred', 'test'):
-        command = f"python run.py --mode={params['mode']} --model_dir={params['model_dir']} \
+        command = f"python {run_execute} --mode={params['mode']} --model_dir={params['model_dir']} \
             --data_dir={params['data_dir']} --data_list={params['data_list']} \
             --output_dir={params['output_dir']} --plot_figure --save_result \
             --batch_size={params['batch_size']} --input_length={params['input_length']}\

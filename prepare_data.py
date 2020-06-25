@@ -262,6 +262,187 @@ class Picks:
         
         return n_p
 
+
+class CWav(object):
+
+    def __init__(self,inp_file):
+        inp_file= read_params(inp_file)
+
+        self.CWav_stations_dir= inp_file['CWav_stations_dir']
+        self.CWav_dir= inp_file['CWav_dir']
+        self.CWav_format= inp_file['CWav_format']
+        self.CWav_download= inp_file['CWav_download']
+        self.CWav_download_mode= inp_file['CWav_download_mode']
+        self.CWav_one_name= inp_file['CWav_one_name']
+        self.ip_fdsn= inp_file['ip_fdsn']
+        self.port_fdsn= inp_file['port_fdsn']
+        self.host= inp_file['host']
+        self.client= Client(inp_file['ip_fdsn']+":"+inp_file['port_fdsn'])
+        self.CWav_init_time= inp_file['CWav_init_time']
+        self.CWav_end_time= inp_file['CWav_end_time']
+        self.CWav_csv_path= inp_file['CWav_csv_path']
+
+        self.query_picks= inp_file['query_picks']
+        self.query_host= inp_file['query_host']
+        self.query_user= inp_file['query_user']
+        self.query_passwd= inp_file['query_passwd']
+        self.query_db= inp_file['query_db']
+        self.level = 'location'
+
+
+        if self.CWav_download in ('yes', 'Yes', 'Y', 'True', 'true', 'TRUE'):   self.download_CWavs()
+
+    @property
+    def picks(self):
+
+        stations= tuple(map(lambda x: str(x[1]),self.CWav_stations))
+        _codex = phpmyAdmin(self.query_picks)
+        codex= _codex.picks_query( initial_date=self.CWav_init_time, final_date=self.CWav_end_time, stations=stations)
+        db= MySQLdb.connect(host=self.query_host, user=self.query_user,\
+                             passwd=self.query_passwd, db=self.query_db)
+        df = pd.read_sql_query(codex,db)
+        df['time_pick_p'] = df.apply(lambda x: self._timepick(x,'p'), axis=1)
+        df['time_pick_s'] = df.apply(lambda x: self._timepick(x,'s'), axis=1)
+        df = df.drop(columns=['time_ms_pick_p','time_ms_pick_s'])
+        return df
+        # return codex
+
+    def _timepick(self,df,pick):
+        pick = UTCDateTime(df[f'time_pick_{pick}']) + timedelta(milliseconds=float(df[f'time_ms_pick_{pick}']/1000))
+        return pick
+
+    def _grep_CWav_stations(self, stations, level):
+        columns = ['network','station','location','channel']
+        index = columns.index(level)
+
+        df = pd.DataFrame(stations,columns=columns)
+        df_level = df[~df.duplicated(columns[:index+1])]
+        df_level[f'{columns[index+1] }'] = df_level[f'{columns[index+1] }'].map(lambda x: x[:2]+'*')
+
+        list_level = df_level.values.tolist()
+        
+        return list_level 
+
+    @property
+    def CWav_stations(self):
+        if self.CWav_stations_dir not in ['False','false','None','none','','FALSE','NONE']:
+            stations=  [line.strip('\n').split(',') for line in open(self.CWav_stations_dir).readlines()]
+            #################
+            # ARREGLAR ESTO, para que seleccione si 3 canales o uno solo
+            #################
+        else: 
+            stations = self.client.get_stations(network="CM", channel = "*",starttime=self.CWav_init_time,    #para descargar canales por separado
+                                             endtime=self.CWav_end_time ,level="channel").get_contents()
+            stations = stations['channels']
+            stations = list(map(lambda x: x.split('.'), stations)) 
+            
+            if self.level == 'location':
+                stations = self._grep_CWav_stations(stations,level='location')
+            # stations = self.client.get_stations(network="CM", station = "*",starttime=self.CWav_init_time,
+                                            #  endtime=self.CWav_end_time ,level="station").get_contents()
+            # stations = stations['stations']
+            # stations = list(map(lambda x: x.split(' '), stations)) 
+            # stations = list(map(lambda x: x[0].split('.'), stations)) 
+            # # stations = list(map(lambda x: x.append(), stations)) 
+            
+            # print(stations)
+        return stations
+
+    @property
+    def CWav_names(self):
+        CWav_names=[]
+        for station in self.CWav_stations:
+            station_name= "_".join(station)
+            CWav_names.append(station_name)
+        return CWav_names
+
+    @property
+    def CWav_names_dir(self):
+        date_name= (self.CWav_init_time+'_'+self.CWav_end_time).replace(':','').replace(' ','').replace('-','')
+        build_names= lambda x,y: os.path.join(self.CWav_dir,x.replace('*','-'))+\
+        '_'+y.replace(':','')
+        CWav_names_dir= list(map(build_names, self.CWav_names,itertools.repeat(date_name)))
+        return CWav_names_dir
+
+    @property
+    def CWav_one_name_dir(self):
+        CWav_one_name_dir= os.path.join(self.CWav_dir,self.CWav_one_name)+'.'+self.CWav_format
+        return CWav_one_name_dir
+
+    @property
+    def CWav_streams(self):
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            if self.CWav_download in ('yes', 'Yes', 'Y', 'True', 'true', 'TRUE'):
+                streams= list( executor.map(self._get_CWavs, self.CWav_stations) )
+            else:
+                streams= list( executor.map(self._get_CWavs, self.CWav_names_dir) )
+
+        sts=[]
+        for item in streams:
+            if item != 'None':
+                sts.append(item)
+
+        return sts
+
+    def _write_CWavs(self,st):
+        date_name= (self.CWav_init_time+'_'+self.CWav_end_time).replace(':','').replace(' ','').replace('-','')
+        stats= st[0].stats
+        st_name_mseed= "_".join((stats.network, stats.station, stats.location,str(int(stats.sampling_rate)), stats.channel,date_name))+ f'.{self.CWav_
+        mseed_path= os.path.join(self.CWav_dir,st_name_mseed)
+
+        st.write(mseed_path, format="MSEED")
+        with open(self.CWav_csv_path, "a") as f:
+            wr = csv.writer(f, dialect='excel')
+            pre_channel_name = stats.channel[:2]
+            wr.writerow([st_name_mseed,f'{pre_channel_name}E',f'{pre_channel_name}N',f'{pre_channel_name}Z'])
+            f.close()
+
+        # return  mseed_path,    st_name_mseed  
+
+    def _get_CWavs(self, parameters):
+
+        if self.CWav_download in ('yes', 'Yes', 'Y', 'True', 'true', 'TRUE'): 
+            try:
+                st = self.client.get_waveforms( network=parameters[0], station=parameters[1], 
+                    location= parameters[2], channel=parameters[3],
+                    starttime=UTCDateTime(self.CWav_init_time),
+                    endtime=UTCDateTime(self.CWav_end_time)  )
+                print(st)
+            except:
+                st= 'None'
+                print('No stream:', parameters)
+        else:
+            st=read(parameters)
+        return st
+
+    def download_CWavs(self):
+        with open(self.CWav_csv_path, "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(["fname", "E", 'N', 'Z'])
+            f.close()
+
+        if self.CWav_download_mode == 'all_in_one':
+            total_st = self.CWav_streams[0]
+            for i in range(1,len(self.CWav_streams)):
+                total_st += self.CWav_streams[i]
+            to_write= [total_st,self.CWav_one_name_dir]
+            self._write_CWavs(to_write)
+        
+        if self.CWav_download_mode == 'by_station':
+            with concurrent.futures.ProcessPoolExecutor() as executor:
+                executor.map(self._write_CWavs, self.CWav_streams) 
+
+    def picks_to_csv(self):
+        date_name= (self.CWav_init_time+'_'+self.CWav_end_time).replace(':','').replace(' ','').replace('-','')
+        csv_name = ("Picks_"+f'{date_name}'+".csv").replace(" ","")
+        csv_path = os.path.join(self.CWav_dir,csv_name)
+        with open(csv_path,'w') as csv:   csv.write(f'#{self.CWav_init_time},{self.CWav_end_time}\n')
+        self.picks.to_csv(csv_path, mode='a', index=False)
+
+
+
+
+
 if __name__ == "__main__":
     # SGC2020aicxhi M=0.8
     print('\n\t\tCreando Objeto Picks')
