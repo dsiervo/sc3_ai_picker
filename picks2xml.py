@@ -184,10 +184,10 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob):
                 # se obtienen los parámetros para la creación del objeto pick
                 #----------
                 # algunos datos se obtienen del nombre de la forma de onda
-                net, station, to, df, loc, *ch_segment = wf_name.split('_')
-                ch = ch_segment[0].split('.')[0]
-                if len(ch_segment)==2:
-                    segment = int(ch_segment[1])
+                net, station, loc, ch, df, *to_segment = wf_name.split('_')
+                to = to_segment[0].split('.')[0]
+                if len(to_segment)==2:
+                    segment = int(to_segment[1])
                 # se transforma las cuentas asociadas al pick en tiempo
                 pick_time, creation_time = sample2time(pick, to, df, segment)
                 # se crea el Id usando el tiempo del pick
