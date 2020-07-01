@@ -8,7 +8,8 @@ dt = 7200
 
 ##############################------------ SECTION 2): Stations to download ------------############################
 
-download_data = CM.URMC.00.*, CM.TAPM.00.*
+#download_data = CM.URMC.00.*, CM.TAPM.00.*
+download_data = all
 
 ##############################------------ SECTION 4): Stations to filter  ------------############################
 
@@ -17,10 +18,10 @@ filter_data = CM.TAPM
 ##############################------------ SECTION 2): PhaseNet Dict  ------------############################
 
 PhaseNet_dir = /mnt/almacenamiento/Emmanuel_Castillo/PhaseNet
-general_data_dir = /mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/prove_filt/wav
-general_output_dir = /mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/prove_filt/output
+general_data_dir = /mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/prove/wav
+general_output_dir = /mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/prove/output
 model_dir = /mnt/almacenamiento/Emmanuel_Castillo/PhaseNet/model/190703-214543
 mode = pred
 batch_size = 10
-plot_figure = True
+plot_figure = False
 save_result = False

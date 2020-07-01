@@ -200,7 +200,7 @@ class Cwav(object):
             stream object loaded with the parameters variable and between the dates
             given by the client dictionary in init.
         """
-
+        print(parameters)
         to_msg = '.'.join( (parameters[0],parameters[1],parameters[2]))
         filt_msg = f'\n\t\t\t\t FILTERED STREAM: {to_msg}'
         no_filt_msg = f'\n\t\t\t\t STREAM: {to_msg}'
@@ -283,7 +283,8 @@ class Cwav(object):
 
 
 if __name__ == "__main__":
-    download_data = ['CM.URMC.00.*','CM.URMC.00.*','CM.BAR2.00.*']
+    download_data = 'all'
+    # download_data = ['CM.URMC.00.*','CM.URMC.00.*','CM.BAR2.00.*']
     pnet_dict = {'PhaseNet_dir': '/mnt/almacenamiento/Emmanuel_Castillo/PhaseNet',
                 'mode': 'pred',
                 'data_dir':'/mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/prove/wav',
@@ -304,6 +305,6 @@ if __name__ == "__main__":
 
     cwav = Cwav(download_data, pnet_dict, client_dict, mysqldb_dict, filter_data=filter_data)
 
-    # cwav.download()
-    # cwav.run_pnet()
+    cwav.download()
+    cwav.run_pnet()
         
