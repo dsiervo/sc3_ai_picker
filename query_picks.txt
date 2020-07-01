@@ -1,0 +1,23 @@
+Select POEv.publicID as id, Origin.time_value as time_event, pick_p.waveformID_networkCode as network, 
+        pick_p.waveformID_stationCode as station, 
+        pick_p.waveformID_locationCode as location, pick_p.waveformID_channelCode as channel, 
+        A_p.phase_code as pick_p, pick_p.time_value as time_pick_p, pick_p.time_value_ms as time_ms_pick_p, 
+        A_s.phase_code as pick_s, pick_s.time_value as time_pick_s, pick_s.time_value_ms as time_ms_pick_s
+        from Event AS EvMF left join PublicObject AS POEv ON EvMF._oid = POEv._oid 
+        left join PublicObject as POOri ON EvMF.preferredOriginID=POOri.publicID 
+        left join Origin ON POOri._oid=Origin._oid 
+        left join PublicObject as POMag on EvMF.preferredMagnitudeID=POMag.publicID 
+        left join Magnitude ON Magnitude._oid = POMag._oid 
+        left join Arrival A_p on A_p._parent_oid=Origin._oid  and A_p.phase_code = 'P' 
+        inner join Arrival A_s on A_s._parent_oid=A_p._parent_oid and A_s.phase_code = 'S' 
+        left join PublicObject as POOri1 on POOri1.publicID = A_p.pickID 
+        left join PublicObject as POOri2 on POOri2.publicID = A_s.pickID 
+        left join Pick pick_p on pick_p._oid = POOri1._oid 
+        left join Pick pick_s on pick_s._oid = POOri2._oid 
+        where 
+        pick_p.phaseHint_used = 1 
+        AND pick_p.evaluationMode = 'manual' 
+        AND pick_s.evaluationMode = 'manual' 
+        AND pick_p.waveformID_stationCode = pick_s.waveformID_stationCode 
+        AND Origin.time_value between '%s' and '%s' 
+        AND pick_p.waveformID_stationCode in %s 
