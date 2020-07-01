@@ -9,6 +9,7 @@ import numpy as np
 import MySQLdb
 import pandas as pd
 from datetime import timedelta
+import matplotlib.pyplot as plt
 
 class Cwav(object):
     def __init__(self, download_data, pnet_dict, client_dict,
@@ -18,7 +19,8 @@ class Cwav(object):
         Parameters
         ----------
         download_data: str or list
-            'all'- download all stations, 'no'-Don't download mseed files
+            ('all', 'All', 'ALL') - download all stations, 
+            ('No', 'no', 'N', 'n', 'False', 'false', 'FALSE') -Don't download mseed files
             ['CM.URMC','CM.CLEJA']-list of the stations to download
         pnet_dict: dict
             Dictionary of the PhaseNet parameters
@@ -37,14 +39,17 @@ class Cwav(object):
                     Path of the model_dir parameter of PhaseNet.
                 ['output_dir']: str
                     Path of the output
-                ['batch_size']: int
+                ['batch_size']: str or int
                     PhaseNet batch size parameter.
-                ['input_length]: int
+                ['input_length]: str or int
                     PhaseNet input length parameter.
-                ['plot_figure']:   Bolean (default:False)
-                    True-plot figures, False-Don't plot the figures
-                ['save_result']:    Bolean (default:False)
-                    True-save results, False-Don't save results
+                ['plot_figure']:   str or Bolean (default:False)
+                    ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True)-plot figures
+                    else: -Don't plot the figures
+                ['save_result']:    str or Bolean (default:False)
+                    ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True) -save results
+                    else: -Don't save results
+
         client_dict : dict
             Dictionary of the FDSN Client parameters
                 ['ip']: str
@@ -62,8 +67,9 @@ class Cwav(object):
                 ['passwd']: str
                 ['db']: str
         filter_data: str or list
-            'all'- use filter in all stations, 'no'-Don't use filter 
-            ['URMC','CLEJA']-list of the stations to filter
+            ('all', 'All', 'ALL') - use filter in all stations, 
+            ('No', 'no', 'N', 'n', 'False', 'false', 'FALSE')-Don't use filter 
+            ['CM.URMC','CM.CLEJA']-list of the stations to filter
         download_max_workers: int
             the max workers for download the mseed files in parallel mode.
         **kwargs: 
@@ -98,8 +104,8 @@ class Cwav(object):
             -all: all stations to downlaod, -no: no download, 
             -['CM.URMC.00.*','CM.CLEJA.*.*'] download only these stations
         """
-        if self.download_data != 'no':
-            if self.download_data == 'all':
+        if self.download_data not in ('No', 'no', 'N', 'n', 'False', 'false', 'FALSE'):
+            if self.download_data in ('all', 'All', 'ALL'):
                 inv = self.client.get_stations(network="CM", channel = "*",
                                         starttime=self.client_dict['starttime'], 
                                         endtime=self.client_dict['endtime'], 
@@ -123,7 +129,7 @@ class Cwav(object):
         list
             list of streams object according to the stations_to_download attribute.
         """
-        if self.download_data != 'no':
+        if self.download_data not in ('No', 'no', 'N', 'n', 'False', 'false', 'FALSE'):
             with concurrent.futures.ProcessPoolExecutor() as executor:
                 streams= list( executor.map(self._get_wavs, self.stations_to_download) )
 
@@ -195,27 +201,34 @@ class Cwav(object):
             given by the client dictionary in init.
         """
 
+        to_msg = '.'.join( (parameters[0],parameters[1],parameters[2]))
+        filt_msg = f'\n\t\t\t\t FILTERED STREAM: {to_msg}'
+        no_filt_msg = f'\n\t\t\t\t STREAM: {to_msg}'
+        no_st = f'\n\t\t\t\t NO STREAM: {to_msg}'
+
         try:
             st = self.client.get_waveforms( network=parameters[0], station=parameters[1], 
                 location= parameters[2], channel=parameters[3],
                 starttime=self.client_dict['starttime'],
                 endtime=self.client_dict['endtime']  )
-            print(st)
         except:
             st= 'None'
-            print('No stream:', parameters)
+            print(no_st)
 
-
-        if self.filter_data == 'all':
-            st = self._filter_wavs(st)
-        if isinstance(self.filter_data, list):
-            stats = st[0].stats
-            station = '.'.join( (stats['network'], stats['station'], stats['location'], stats['channel']))
-            
-            if station in self.filter_data:
+        if st != 'None':    
+            if self.filter_data in ('all', 'All', 'ALL'):
                 st = self._filter_wavs(st)
-            else: 
-                pass
+                print(filt_msg,st)
+
+            if isinstance(self.filter_data, list):
+                stats = st[0].stats
+                station = '.'.join( (stats['network'], stats['station']))
+                if station in self.filter_data:
+                    st = self._filter_wavs(st)
+                    print(filt_msg,st)
+                else: 
+                    print(no_filt_msg,st)
+                    pass
 
         return st
 
@@ -261,16 +274,16 @@ class Cwav(object):
             --model_dir={self.pnet_dict['model_dir']} --data_dir={self.pnet_dict['data_dir']} \
             --data_list={self.pnet_dict['data_list']} --output_dir={self.pnet_dict['output_dir']}\
             --batch_size={self.pnet_dict['batch_size']} --input_mseed"
-        if self.pnet_dict['plot_figure'] == True:
+        if self.pnet_dict['plot_figure'] in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True):
             command += ' ' + '--plot_figure'
-        if self.pnet_dict['save_result'] == True:
+        if self.pnet_dict['save_result'] in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True):
             command += ' ' + '--save_result'
         print('\n', command, '\n')
         os.system(command)
 
 
 if __name__ == "__main__":
-    download_data = ['CM.URMC.00.*']
+    download_data = ['CM.URMC.00.*','CM.URMC.00.*','CM.BAR2.00.*']
     pnet_dict = {'PhaseNet_dir': '/mnt/almacenamiento/Emmanuel_Castillo/PhaseNet',
                 'mode': 'pred',
                 'data_dir':'/mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/prove/wav',
@@ -284,11 +297,13 @@ if __name__ == "__main__":
     client_dict = {'ip': 'http://10.100.100.232', 'port':'8091',
                    'starttime': UTCDateTime('2020-01-01 00:00:00'),
                    'endtime': UTCDateTime('2020-01-01 01:00:00') }
-    filter_data = ['CM.URMC.00.*']
+
+    # filter_data = ['CM.URMC','CM.BAR2']
+    filter_data = 'ALL'
     mysqldb_dict = None
 
     cwav = Cwav(download_data, pnet_dict, client_dict, mysqldb_dict, filter_data=filter_data)
-    cwav.download()
-    cwav.run_pnet()
-    # print(name)
+
+    # cwav.download()
+    # cwav.run_pnet()
         
