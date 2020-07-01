@@ -200,7 +200,6 @@ class Cwav(object):
             stream object loaded with the parameters variable and between the dates
             given by the client dictionary in init.
         """
-        print(parameters)
         to_msg = '.'.join( (parameters[0],parameters[1],parameters[2]))
         filt_msg = f'\n\t\t\t\t FILTERED STREAM: {to_msg}'
         no_filt_msg = f'\n\t\t\t\t STREAM: {to_msg}'

@@ -36,7 +36,7 @@ def prep_cwav_params(inp_file):
         if station in ('No', 'no', 'N', 'n', 'False', 'false', 'FALSE'):
             download_data = 'No'
 
-    if len(filter_dataa) == 1:     #change the list type to a str type
+    if len(filter_data) == 1:     #change the list type to a str type
         station = filter_data[0]
         if station in ('all', 'All', 'ALL'):
             filter_data = 'all'
@@ -94,7 +94,6 @@ def run(inp_file):
         client_dict['starttime'] = starttime
         client_dict['endtime'] = endtime
 
-        print(download_data)
         cwav = Cwav(download_data, pnet_dict, client_dict, filter_data=filter_data)
         cwav.download()
         cwav.run_pnet()
