@@ -102,5 +102,5 @@ def run(inp_file):
     return pnet_dict
 
 if __name__ == "__main__":
-    path = '/mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/sgc.inp'
+    path = 'sgc.inp'
     run(path)
