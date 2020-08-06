@@ -3,17 +3,17 @@
 ip = http://10.100.100.232
 port = 8091
 starttime = 2020-01-01 00:00:00  
-endtime = 2020-01-01 01:00:00
+endtime = 2020-01-01 04:00:00
 dt = 7200
 
 ##############################------------ SECTION 2): Stations to download ------------############################
 
-#download_data = CM.URMC.00.*, CM.TAPM.00.*
-download_data = all
+download_data = CM.URMC.00.HH*, CM.TAPM.00.HH*, CM.CLEJA.10.HN*, CM.CLBC.20.*, CM.PRA.00.HH*, CM.VIL.20.EH*, CM.PIRM.00.HH*, CM.MACC.00.HH*
+#download_data = all
 
 ##############################------------ SECTION 4): Stations to filter  ------------############################
 
-filter_data = CM.TAPM
+filter_data = CM.TAPM, CM.PIRM, CM.MACC, CM.PRA
 
 ##############################------------ SECTION 2): PhaseNet Dict  ------------############################
 

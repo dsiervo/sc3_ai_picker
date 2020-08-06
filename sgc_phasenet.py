@@ -1,3 +1,5 @@
+#!/home/sgc/anaconda3/envs/phaseNet/bin/python
+
 from obspy import UTCDateTime
 from datetime import timedelta
 from cwav import Cwav
