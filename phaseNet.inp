@@ -1,5 +1,5 @@
 
-mode = pred
+mode = pred_mseed
 
 # ::::::::::::::::::::::::::::::
 # waveform query params
