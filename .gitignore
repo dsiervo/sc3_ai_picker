@@ -133,3 +133,4 @@ dmypy.json
 
 # waveforms files
 *.mseed
+*00.png
