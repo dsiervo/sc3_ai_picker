@@ -23,5 +23,5 @@ general_output_dir = /home/sgc/mesetas/sgc_phasenet/prove/mesetas_20191225_05_06
 model_dir = /home/sgc/mesetas/PhaseNet/model/190703-214543
 mode = pred
 batch_size = 10
-plot_figure = True
+plot_figure = False
 save_result = False
