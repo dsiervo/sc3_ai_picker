@@ -1,0 +1,63 @@
+# ::::::::::::::::::::::::::::::
+# waveform query params
+# ::::::::::::::::::::::::::::::
+
+# if download can be True, true, yes, Y, Yes
+download = yes
+
+# for waveform extraction
+ip_fdsn = http://10.100.100.232
+port_fdsn = 8091
+# seiscomp server for phase times query
+host = 10.100.100.232
+
+# for event query
+# SGC2020psahhr M:2.0, 2020-08-10 06:34:43, phases:41
+event_id = SGC2020psahhr
+
+# common parameters between event query and station query
+data_list = dataset/pred_mesetas_far.csv
+data_dir = /home/sgc/pred_data/mesetas_event_new
+#data_list = dataset/test_mesetas_far_filtered.csv
+#data_dir = /home/sgc/test_data/test_mesetas_far_filtered
+
+#data_list = dataset/train_mesetas.csv
+#data_dir = /home/sgc/train_data/mesetas
+# if is event query then put in stations no, N, False
+stations = no
+#stations = 'CLEJA', 'URMC', 'CLBC', 'PRA', 'VIL', 'TAPM', 'PIRM', 'MACC'
+#stations = 'PRA', 'VIL', 'TAPM', 'PIRM', 'MACC'
+
+init_time = 2020-03-05 00:00:00
+end_time = 2020-03-18 23:59:59
+lat_min = 3.3
+lat_max = 3.57
+lon_min = -74.366
+lon_max = -73.907
+magnitude = 10.0
+# total number of waveforms to download (in case of stations query)
+limit = 10000
+
+filter = yes
+# Filtra unicamente las estaciones listadas separadas por coma o no para filtrar
+# todo si filter fue yes
+filter_only_this = PRA, VIL, TAPM, PIRM, MACC
+
+# ::::::::::::::::::::::::::::::
+# phaseNet params
+# ::::::::::::::::::::::::::::::
+
+# Can be pred, train, tune or test
+mode = pred
+#model_dir = /home/sgc/mesetas/PhaseNet/log_mesetas/200310-162445
+#model_dir = /home/sgc/mesetas/PhaseNet/log_from_scratch/200310-191414
+model_dir = model/190703-214543
+output_dir = mesetas_pred_event_filter_1.3
+#output_dir = mesetas_test_filtered
+
+#log_dir = log_from_scratch
+log_dir = log_mesetas_tune
+batch_size = 128
+input_length = 9001
+epochs = 1
+learning_rate = 0.01

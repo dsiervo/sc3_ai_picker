@@ -97,8 +97,11 @@ def run(inp_file):
         client_dict['endtime'] = endtime
 
         cwav = Cwav(download_data, pnet_dict, client_dict, filter_data=filter_data)
+        
         cwav.download()
         cwav.run_pnet()
+        cwav.picks2xml(p)
+        cwav.playback()
 
         starttime += dt
     return pnet_dict

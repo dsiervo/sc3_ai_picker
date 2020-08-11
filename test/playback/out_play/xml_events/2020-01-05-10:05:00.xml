@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.11" version="0.11">
+  <EventParameters>
+    <pick publicID="20200810.063507.24-AIC-CM.CHI.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:07.24Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="CHI" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.303476Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063455.73-AIC-CM.CLBC.20.EHZ">
+      <time>
+        <value>2020-08-10T06:34:55.73Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="CLBC" locationCode="20" channelCode="EHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.303603Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063530.90-AIC-CM.RUS.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:30.9Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="RUS" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.303712Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063448.59-AIC-CM.URMC.00.HHZ">
+      <time>
+        <value>2020-08-10T06:34:48.59Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="URMC" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.303817Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063452.06-S-L2-CM.URMC.00.HHZ">
+      <time>
+        <value>2020-08-10T06:34:52.06Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="URMC" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>L2-AIC</methodID>
+      <phaseHint>S</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.303891Z</creationTime>
+      </creationInfo>
+      <comment>
+        <text>20200810.063448.59-AIC-CM.URMC.00.HHZ</text>
+        <id>RefPickID</id>
+      </comment>
+    </pick>
+    <pick publicID="20200810.063457.74-AIC-CM.PRA.00.HHZ">
+      <time>
+        <value>2020-08-10T06:34:57.74Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="PRA" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.303992Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063508.39-S-L2-CM.PRA.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:08.39Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="PRA" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>L2-AIC</methodID>
+      <phaseHint>S</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.304065Z</creationTime>
+      </creationInfo>
+      <comment>
+        <text>20200810.063457.74-AIC-CM.PRA.00.HHZ</text>
+        <id>RefPickID</id>
+      </comment>
+    </pick>
+    <pick publicID="20200810.063503.93-AIC-CM.CVER.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:03.93Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="CVER" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.304169Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063520.23-S-L2-CM.CVER.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:20.23Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="CVER" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>L2-AIC</methodID>
+      <phaseHint>S</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.304241Z</creationTime>
+      </creationInfo>
+      <comment>
+        <text>20200810.063503.93-AIC-CM.CVER.00.HHZ</text>
+        <id>RefPickID</id>
+      </comment>
+    </pick>
+    <pick publicID="20200810.063507.11-AIC-CM.MACC.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:07.11Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="MACC" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.30434Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063524.37-S-L2-CM.MACC.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:24.37Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="MACC" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>L2-AIC</methodID>
+      <phaseHint>S</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.304409Z</creationTime>
+      </creationInfo>
+      <comment>
+        <text>20200810.063507.11-AIC-CM.MACC.00.HHZ</text>
+        <id>RefPickID</id>
+      </comment>
+    </pick>
+    <pick publicID="20200810.063511.41-AIC-CM.TAPM.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:11.41Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="TAPM" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.304514Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063531.80-S-L2-CM.TAPM.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:31.8Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="TAPM" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>L2-AIC</methodID>
+      <phaseHint>S</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.304584Z</creationTime>
+      </creationInfo>
+      <comment>
+        <text>20200810.063511.41-AIC-CM.TAPM.00.HHZ</text>
+        <id>RefPickID</id>
+      </comment>
+    </pick>
+    <pick publicID="20200810.063514.24-AIC-CM.BELO.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:14.24Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="BELO" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.30468Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063522.10-AIC-CM.GUY2C.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:22.1Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="GUY2C" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.304776Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063549.68-S-L2-CM.GUY2C.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:49.68Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="GUY2C" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>L2-AIC</methodID>
+      <phaseHint>S</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.304845Z</creationTime>
+      </creationInfo>
+      <comment>
+        <text>20200810.063522.10-AIC-CM.GUY2C.00.HHZ</text>
+        <id>RefPickID</id>
+      </comment>
+    </pick>
+    <pick publicID="20200810.063515.89-AIC-CM.GARC.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:15.89Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="GARC" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.304945Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063517.59-AIC-CM.MARO.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:17.59Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="MARO" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.305049Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063516.96-AIC-CM.PIRM.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:16.96Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="PIRM" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.305153Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063540.87-S-L2-CM.PIRM.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:40.87Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="PIRM" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>L2-AIC</methodID>
+      <phaseHint>S</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.305222Z</creationTime>
+      </creationInfo>
+      <comment>
+        <text>20200810.063516.96-AIC-CM.PIRM.00.HHZ</text>
+        <id>RefPickID</id>
+      </comment>
+    </pick>
+    <pick publicID="20200810.063531.19-AIC-CM.POP2.00.HHZ">
+      <time>
+        <value>2020-08-10T06:35:31.19Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="POP2" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>AIC</methodID>
+      <phaseHint>P</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.305417Z</creationTime>
+      </creationInfo>
+    </pick>
+    <pick publicID="20200810.063606.04-S-L2-CM.POP2.00.HHZ">
+      <time>
+        <value>2020-08-10T06:36:06.04Z</value>
+      </time>
+      <waveformID networkCode="CM" stationCode="POP2" locationCode="00" channelCode="HHZ"/>
+      <filterID>BW(4,1.00,10.00)</filterID>
+      <methodID>L2-AIC</methodID>
+      <phaseHint>S</phaseHint>
+      <evaluationMode>automatic</evaluationMode>
+      <creationInfo>
+        <agencyID>SGC2</agencyID>
+        <author>PhaseNet</author>
+        <creationTime>2020-08-11T16:24:30.305486Z</creationTime>
+      </creationInfo>
+      <comment>
+        <text>20200810.063531.19-AIC-CM.POP2.00.HHZ</text>
+        <id>RefPickID</id>
+      </comment>
+    </pick>
+  </EventParameters>
+</seiscomp>

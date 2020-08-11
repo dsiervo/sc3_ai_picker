@@ -1,0 +1,31 @@
+# comentary
+
+wf_extraction = yes
+
+# database in wich the pickers that will be tested were configured
+db = mysql://sysop:sysop@10.100.100.232/seiscomp3
+# upload the events to db? Can be yes or no
+upload = no
+
+# scanloc profile
+sc_scanloc = scanloc
+
+# If there are already phaseNet xml picks
+phaseNet = yes
+
+# scautopick profiles
+picks = pickZbayes, pickNbayes
+
+# stations to download
+#station = BAR2, BRJC, PAM, RUS, PTB, OCA, SPBC, YPLC
+station = URMC, CLBC, PRA, TAPM, PIRM, CHI, CVER, GARC, BELO
+loc_cod = 00, 20
+ch = HH*, EH*
+net = CM
+
+# time range in which pickers will be tested
+init_time = 2020-08-10 6:33:00
+end_time = 2020-08-10 6:38:00
+
+# fdsn direction to download the waveforms
+ip_fdsn = http://10.100.100.232:8091
