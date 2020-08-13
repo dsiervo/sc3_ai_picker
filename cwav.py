@@ -4,14 +4,27 @@ from obspy import UTCDateTime
 import csv
 import itertools
 import concurrent.futures
+from functools import reduce
 import os
+import sys
 import numpy as np
 import MySQLdb
 import pandas as pd
+from playback import playback
 from datetime import timedelta
+from picks2xml import main_picks
 import matplotlib.pyplot as plt
 
 class Cwav(object):
+    """
+
+    Atributes
+    ----------
+    db_sc : str
+        Full path to seiscomp3 main database
+    """
+    db_sc = 'mysql://sysop:sysop@10.100.100.232/seiscomp3'
+    
     def __init__(self, download_data, pnet_dict, client_dict,
                  mysqldb_dict=None, filter_data='no', download_max_workers=8,**kwargs):
 
@@ -82,6 +95,8 @@ class Cwav(object):
         self.mysqldb_dict = mysqldb_dict
         self.filter_data = filter_data
         self.download_max_workers = download_max_workers
+        self.pick_csv_path = os.path.join(self.pnet_dict['output_dir'], 'picks.csv')
+        self.pick_xml_path = os.path.join(self.pnet_dict['output_dir'], 'picks.xml')
         self.__dict__.update(kwargs)
 
     @property
@@ -252,18 +267,21 @@ class Cwav(object):
         return mseed_name
 
     def download(self):
-        if not os.path.exists(self.pnet_dict['data_dir']):
-            os.makedirs(self.pnet_dict['data_dir'])
+        if self.download_data != 'No':
+            if not os.path.exists(self.pnet_dict['data_dir']):
+                os.makedirs(self.pnet_dict['data_dir'])
 
-        with open(self.pnet_dict['data_list'] , "w") as f:
-            writer = csv.writer(f)
-            writer.writerow(["fname", "E", 'N', 'Z'])
-            f.close()
+            with open(self.pnet_dict['data_list'] , "w") as f:
+                writer = csv.writer(f)
+                writer.writerow(["fname", "E", 'N', 'Z'])
+                f.close()
 
-        streams = self.streams
-        if streams != None:
-            with concurrent.futures.ProcessPoolExecutor() as executor:
-                executor.map(self._write_mseed_wavs,streams ) 
+            streams = self.streams
+            if streams != None:
+                with concurrent.futures.ProcessPoolExecutor() as executor:
+                    executor.map(self._write_mseed_wavs,streams ) 
+            else:
+                pass
         else:
             pass
     
@@ -279,8 +297,83 @@ class Cwav(object):
             command += ' ' + '--save_result'
         print('\n', command, '\n')
         os.system(command)
+    
+    def picks2xml(self, dt):
+        """Transform PhaseNet picks.csv file into Seiscomp XML file
 
+        Parameters
+        ----------
+        dt : int
+            Waveform length in seconds
+        """
+        
+        main_picks(input_file=self.pick_csv_path, output_file=self.pick_xml_path, dt=dt)
+    
+    def playback(self):
+        """Excecute seiscomp playback from picks.xml:
+            * Group picks
+            * Localize events from grouped picks to generate origins
+            * Compute amplitudes
+            * Compute magnitudes using amplitudes
+            * Group origins into events
+        """
+        
+        xml_picks_file = self.pick_xml_path
 
+        # Verifing if the xml file with picks from phasenet exist
+        assert os.path.isfile(xml_picks_file), \
+            '\n\n\tNo existe el archivo %s en el directorio\n'%xml_picks_file
+
+        print('creando objeto playback')
+        my_playback = playback(
+                sc_scanloc='scanloc',
+                wf_dir=self.pnet_dict['data_dir'],
+                db=self.db_sc,
+                picks ='none',
+                xml_picks_file=xml_picks_file,
+                out_dir=self.pnet_dict['output_dir']
+                )
+        
+        # list with waveforms paths
+        wfs=[]
+        with open(self.pnet_dict['data_list']) as f:
+            reader = csv.reader(f, delimiter=',')
+            # skiping header
+            next(reader)
+            for row in reader:
+                wfs.append(os.path.join(self.pnet_dict['data_dir'], row[0]))
+        
+        os.system('rm -fr xml_events/* events_final.xml')
+        
+        # Creating a list with streams of the station waveforms
+        streams = list(map(read_merge, wfs))
+        # Joining all streams in one stream
+        main_st = reduce(lambda x, y: x + y, streams)
+        # writing stream in mseed file
+        wf_path = os.path.join(self.pnet_dict['data_dir'], 'all.mseed')
+        main_st.write(wf_path)
+
+        # excecuting playback commands
+        my_playback.playback_commands(wf_path)
+        # mergin all seiscomp .xml events files
+        my_playback.merge_events()
+
+def read_merge(path):
+    """Read and merge waveforms. Returns Obspy Stream.
+
+    Parameters
+    ----------
+    path : str
+        Waveform path
+    
+    Returns
+    ------
+    Obspy.Stream
+        Merged obspy stream
+    """
+    st = read(path)
+    return st.merge()
+    
 if __name__ == "__main__":
     download_data = 'all'
     # download_data = ['CM.URMC.00.*','CM.URMC.00.*','CM.BAR2.00.*']
