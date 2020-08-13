@@ -5,7 +5,7 @@ from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
 import numpy as np
 import os
-
+from obspy.core import Trace, Stream
 
 class Picks:
     def __init__(self, event_ID='SGC2020aicxhi',
@@ -138,8 +138,8 @@ class Picks:
             # antes de la P de tamaño 5000 (muestras)
             #sample_1 = 1000 + np.random.uniform(-1, 1)*500
             # se divide en la frecuencia de muestreo para obtener segundos
-            dt1 = 3001/df
-            dt2 = (self.input_length-3001)/df 
+            dt1 = 3000/df
+            dt2 = (self.input_length-3000)/df 
             
             t_ = row[6]
             t_ms_ = row[7]
@@ -148,6 +148,29 @@ class Picks:
                     t_+datetime.timedelta(milliseconds=float(t_ms_)/1000)
                             ) 
 
+            dec_fac = 1.25
+            # Dowsampling the waveforms
+            """if self.filter in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE'):
+                if self.filter_only_this in ('no', 'No', 'NO', 'N', 'n' 'False', 'false'):
+                    dt1 = dt1 + (self.input_length/df)*((dec_fac-1)/2)
+                    dt2 = dt2 + (self.input_length/df)*((dec_fac-1)/2)
+                else:
+                    # lista de estaciones a filtrar
+                    sta_to_fil = self.filter_only_this.replace(' ', '').split(',')
+                    if station in sta_to_fil:
+                        length = ((t+dt2) - (t-dt1))*df
+                        print(f'dt1: {dt1} dt2 {dt2}')
+                        print(f'Tamano antes de la decimacion: {length}')
+                        dt1 = dt1 + (self.input_length/df)*((dec_fac-1)/2)
+                        dt2 = dt2 + (self.input_length/df)*((dec_fac-1)/2)
+                        print(f'Nuevos dt1: {dt1} dt2 {dt2}')
+                        length = ((t+dt2) - (t-dt1))*df
+                        print(f'Tamano luego de la decimacion: {length}')
+                    else:
+                        pass"""
+                    # verificando que que el largo en segundos corresponda
+
+                    
             try:
                 # Descarga las componentes disponibles en el instrumento que fue picada la P
                 st = self.client.get_waveforms(net, station, loc, ch[:2]+'*', t-dt1, t+dt2)
@@ -157,11 +180,15 @@ class Picks:
                 print('No se encontraron datos!\n')
                 continue
 
-            st.trim(t-dt1, t+dt2-0.01)
+            st.trim(t-dt1, t+dt2)
             st.merge(fill_value="interpolate")
+
+            tr = st[0]
 
             if self.filter in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE'):
                 if self.filter_only_this in ('no', 'No', 'NO', 'N', 'n' 'False', 'false'):
+                    df = df/dec_fac
+                    st.resample(df, no_filter=True)
                     st.detrend('linear')
                     st.taper(max_percentage=0.05, type="hann")
                     #st.filter('bandpass', freqmin=5, freqmax=10)
@@ -170,14 +197,16 @@ class Picks:
                     # lista de estaciones a filtrar
                     sta_to_fil = self.filter_only_this.replace(' ', '').split(',')
                     if station in sta_to_fil:
-                        #print(f'\n\n\t\t filtrando {station}!!')
+                        """df = df/dec_fac
+                        print(f'\t\nNueva frecuencia de muestreo: {df}')
+                        st.resample(df, no_filter=True)"""
                         st.detrend('linear')
                         st.taper(max_percentage=0.05, type="hann")
-                        #st.filter('bandpass', freqmin=5, freqmax=10)
-                        st.filter('highpass', freq=0.8)
+                        st.filter('highpass', freq=1.3)
+                        # st.filter('bandpass', freqmin=1, freqmax=15)
                     else: pass
 
-            tr = st[0]
+            
             
             #st.write('/home/sgc/mesetas/PhaseNet/dataset/mseed/'+f"{net}_{station}_{t.strftime('%Y%m%d%H%M%S%f')[:-4]}.mseed", 'mseed')
             
@@ -206,6 +235,16 @@ class Picks:
                 re_data = data.reshape((N,1))
                 data = np.concatenate((re_data, z), axis=1)
 
+            # verificando que tenga el largo correcto (9001)
+            if self.input_length != data.shape[0]:
+                dl = int(self.input_length - data.shape[0])
+                print(f'\nForma de onda de estacion {station} se rellenara\
+                     con {dl} \n')
+                if dl > 0:
+                    data = np.pad(data, ((0,dl), (0,0)), 'edge')
+                else:
+                    data = data[:dl,:]
+
             t_i = tr.stats.starttime
             df = tr.stats.sampling_rate
             npz_name = f"{net}_{station}_{loc}_{ch[:2]+'Z'}_{df}_{t_i.strftime('%Y%m%d%H%M%S%f')[:-4]}.npz"
@@ -229,7 +268,7 @@ class Picks:
                 n_s = self.phase_point(t_s, t_i, df)
 
                 if self.mode in ('train', 'tune', 'test'):
-                    if data_float.shape != (9001, 3):
+                    if data_float.shape != (9000, 3):
                         continue
 
                 np.savez_compressed(os.path.join(self.data_dir,npz_name),
@@ -262,181 +301,6 @@ class Picks:
 
         
         return n_p
-
-
-class CWav(object):
-
-    def __init__(self,inp_file):
-        inp_file= read_params(inp_file)
-
-        self.CWav_stations_dir= inp_file['CWav_stations_dir']
-        self.CWav_dir= inp_file['CWav_dir']
-        self.CWav_format= inp_file['CWav_format']
-        self.CWav_download= inp_file['CWav_download']
-        self.CWav_download_mode= inp_file['CWav_download_mode']
-        self.CWav_one_name= inp_file['CWav_one_name']
-        self.ip_fdsn= inp_file['ip_fdsn']
-        self.port_fdsn= inp_file['port_fdsn']
-        self.host= inp_file['host']
-        self.client= Client(inp_file['ip_fdsn']+":"+inp_file['port_fdsn'])
-        self.CWav_init_time= inp_file['CWav_init_time']
-        self.CWav_end_time= inp_file['CWav_end_time']
-        self.CWav_csv_path= inp_file['CWav_csv_path']
-
-        self.query_picks= inp_file['query_picks']
-        self.query_host= inp_file['query_host']
-        self.query_user= inp_file['query_user']
-        self.query_passwd= inp_file['query_passwd']
-        self.query_db= inp_file['query_db']
-        self.level = 'location'
-
-
-        if self.CWav_download in ('yes', 'Yes', 'Y', 'True', 'true', 'TRUE'):   self.download_CWavs()
-
-    @property
-    def picks(self):
-
-        stations= tuple(map(lambda x: str(x[1]),self.CWav_stations))
-        _codex = phpmyAdmin(self.query_picks)
-        codex= _codex.picks_query( initial_date=self.CWav_init_time, final_date=self.CWav_end_time, stations=stations)
-        db= MySQLdb.connect(host=self.query_host, user=self.query_user,\
-                             passwd=self.query_passwd, db=self.query_db)
-        df = pd.read_sql_query(codex,db)
-        df['time_pick_p'] = df.apply(lambda x: self._timepick(x,'p'), axis=1)
-        df['time_pick_s'] = df.apply(lambda x: self._timepick(x,'s'), axis=1)
-        df = df.drop(columns=['time_ms_pick_p','time_ms_pick_s'])
-        return df
-        # return codex
-
-    def _timepick(self,df,pick):
-        pick = UTCDateTime(df[f'time_pick_{pick}']) + timedelta(milliseconds=float(df[f'time_ms_pick_{pick}']/1000))
-        return pick
-
-    def _grep_CWav_stations(self, stations, level):
-        columns = ['network','station','location','channel']
-        index = columns.index(level)
-
-        df = pd.DataFrame(stations,columns=columns)
-        df_level = df[~df.duplicated(columns[:index+1])]
-        df_level[f'{columns[index+1] }'] = df_level[f'{columns[index+1] }'].map(lambda x: x[:2]+'*')
-
-        list_level = df_level.values.tolist()
-        
-        return list_level 
-
-    @property
-    def CWav_stations(self):
-        if self.CWav_stations_dir not in ['False','false','None','none','','FALSE','NONE']:
-            stations=  [line.strip('\n').split(',') for line in open(self.CWav_stations_dir).readlines()]
-            #################
-            # ARREGLAR ESTO, para que seleccione si 3 canales o uno solo
-            #################
-        else: 
-            stations = self.client.get_stations(network="CM", channel = "*",starttime=self.CWav_init_time,    #para descargar canales por separado
-                                             endtime=self.CWav_end_time ,level="channel").get_contents()
-            stations = stations['channels']
-            stations = list(map(lambda x: x.split('.'), stations)) 
-            
-            if self.level == 'location':
-                stations = self._grep_CWav_stations(stations,level='location')
-            # stations = self.client.get_stations(network="CM", station = "*",starttime=self.CWav_init_time,
-                                            #  endtime=self.CWav_end_time ,level="station").get_contents()
-            # stations = stations['stations']
-            # stations = list(map(lambda x: x.split(' '), stations)) 
-            # stations = list(map(lambda x: x[0].split('.'), stations)) 
-            # # stations = list(map(lambda x: x.append(), stations)) 
-            
-            # print(stations)
-        return stations
-
-    @property
-    def CWav_names(self):
-        CWav_names=[]
-        for station in self.CWav_stations:
-            station_name= "_".join(station)
-            CWav_names.append(station_name)
-        return CWav_names
-
-    @property
-    def CWav_names_dir(self):
-        date_name= (self.CWav_init_time+'_'+self.CWav_end_time).replace(':','').replace(' ','').replace('-','')
-        build_names= lambda x,y: os.path.join(self.CWav_dir,x.replace('*','-'))+\
-        '_'+y.replace(':','')
-        CWav_names_dir= list(map(build_names, self.CWav_names,itertools.repeat(date_name)))
-        return CWav_names_dir
-
-    @property
-    def CWav_one_name_dir(self):
-        CWav_one_name_dir= os.path.join(self.CWav_dir,self.CWav_one_name)+'.'+self.CWav_format
-        return CWav_one_name_dir
-
-    @property
-    def CWav_streams(self):
-        with concurrent.futures.ProcessPoolExecutor() as executor:
-            if self.CWav_download in ('yes', 'Yes', 'Y', 'True', 'true', 'TRUE'):
-                streams= list( executor.map(self._get_CWavs, self.CWav_stations) )
-            else:
-                streams= list( executor.map(self._get_CWavs, self.CWav_names_dir) )
-
-        sts=[]
-        for item in streams:
-            if item != 'None':
-                sts.append(item)
-
-        return sts
-
-        st.write(mseed_path, format="MSEED")
-        with open(self.CWav_csv_path, "a") as f:
-            wr = csv.writer(f, dialect='excel')
-            pre_channel_name = stats.channel[:2]
-            wr.writerow([st_name_mseed,f'{pre_channel_name}E',f'{pre_channel_name}N',f'{pre_channel_name}Z'])
-            f.close()
-
-        # return  mseed_path,    st_name_mseed  
-
-    def _get_CWavs(self, parameters):
-
-        if self.CWav_download in ('yes', 'Yes', 'Y', 'True', 'true', 'TRUE'): 
-            try:
-                st = self.client.get_waveforms( network=parameters[0], station=parameters[1], 
-                    location= parameters[2], channel=parameters[3],
-                    starttime=UTCDateTime(self.CWav_init_time),
-                    endtime=UTCDateTime(self.CWav_end_time)  )
-                print(st)
-            except:
-                st= 'None'
-                print('No stream:', parameters)
-        else:
-            st=read(parameters)
-        return st
-
-    def download_CWavs(self):
-        with open(self.CWav_csv_path, "w") as f:
-            writer = csv.writer(f)
-            writer.writerow(["fname", "E", 'N', 'Z'])
-            f.close()
-
-        if self.CWav_download_mode == 'all_in_one':
-            total_st = self.CWav_streams[0]
-            for i in range(1,len(self.CWav_streams)):
-                total_st += self.CWav_streams[i]
-            to_write= [total_st,self.CWav_one_name_dir]
-            self._write_CWavs(to_write)
-        
-        if self.CWav_download_mode == 'by_station':
-            with concurrent.futures.ProcessPoolExecutor() as executor:
-                executor.map(self._write_CWavs, self.CWav_streams) 
-
-    def picks_to_csv(self):
-        date_name= (self.CWav_init_time+'_'+self.CWav_end_time).replace(':','').replace(' ','').replace('-','')
-        csv_name = ("Picks_"+f'{date_name}'+".csv").replace(" ","")
-        csv_path = os.path.join(self.CWav_dir,csv_name)
-        with open(csv_path,'w') as csv:   csv.write(f'#{self.CWav_init_time},{self.CWav_end_time}\n')
-        self.picks.to_csv(csv_path, mode='a', index=False)
-
-
-
-
 
 if __name__ == "__main__":
     # SGC2020aicxhi M=0.8
