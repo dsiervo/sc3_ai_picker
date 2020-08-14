@@ -10,7 +10,7 @@ from obspy import UTCDateTime
 import datetime
 import os
 
-def main_picks(input_file='picks.csv', output_file=None, min_prob=0.36, dt=7200):
+def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6, dt=3000):
     """Transform PhaseNet picks.csv file into Seiscomp XML file
 
     Parameters
@@ -178,7 +178,8 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
     picks_list = []
     if picks != ['']:
         for pick, prob in zip(picks, prob):
-            if float(prob) >= min_prob:
+            prob = float(prob)
+            if prob >= min_prob:
 
                 #----------
                 # se obtienen los parámetros para la creación del objeto pick
@@ -194,9 +195,14 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
                 # se crea el Id usando el tiempo del pick
                 ID = id_maker(pick_time, net, station, loc, ch, ph_type)    
 
+                # Se evalua si la probabilidad es lo suficientemente buena 
+                # como para considerarlo manual
+                evaluation = 'automatic'
+                if prob >= 0.95:
+                    evaluation = 'manual'
                 # Se crea el objeto Pick
                 p = Pick(ID, pick_time, net, station,
-                        loc, ch, ph_type, creation_time)
+                        loc, ch, ph_type, creation_time, evaluation)
                 
                 # Se agrega cada pick a la lista de picks
                 picks_list.append(p)
@@ -234,7 +240,7 @@ def sample2time(sample, to, df, segment, dt):
         # the segment is an overlapping one, and then we need to
         # include the 1500 samples (15 s) of shiftfing 
         if segment >= dt*df:
-            segment = 0
+            segment = segment - dt*df
             init_time -= datetime.timedelta(seconds=1500/df)
 
     pick_time = init_time + (segment + float(sample))/df
@@ -286,7 +292,7 @@ class Pick:
       <filterID>BW(4,1.00,10.00)</filterID>
       <methodID>AIC</methodID>
       <phaseHint>{phaseHint}</phaseHint>
-      <evaluationMode>automatic</evaluationMode>
+      <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
@@ -303,7 +309,7 @@ class Pick:
       <filterID>BW(4,1.00,10.00)</filterID>
       <methodID>L2-AIC</methodID>
       <phaseHint>{phaseHint}</phaseHint>
-      <evaluationMode>automatic</evaluationMode>
+      <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
         <agencyID>SGC2</agencyID>
         <author>PhaseNet</author>
@@ -313,7 +319,7 @@ class Pick:
 
     def __init__(self, publicID, pick_time,
                 net, station, loc, ch,
-                phaseHint, creation_time):
+                phaseHint, creation_time, evaluation):
         """
         Parameters
         ----------
@@ -342,6 +348,7 @@ class Pick:
         self.ch = ch
         self.phaseHint = phaseHint
         self.creation_time = creation_time
+        self.evaluation = evaluation
     
     def toxml(self):
         """Create a seiscomp xml block
@@ -356,7 +363,8 @@ class Pick:
                 loc = self.loc,
                 ch = self.ch,
                 phaseHint = self.phaseHint,
-                creation_time = self.creation_time
+                creation_time = self.creation_time,
+                evaluation = self.evaluation
                 )
         elif self.phaseHint == 'S':
             return self.xml_S_block.format(
@@ -367,7 +375,8 @@ class Pick:
                 loc = self.loc,
                 ch = self.ch,
                 phaseHint = self.phaseHint,
-                creation_time = self.creation_time
+                creation_time = self.creation_time,
+                evaluation = self.evaluation
                 )
 
 if __name__=='__main__':

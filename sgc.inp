@@ -2,24 +2,25 @@
 
 ip = http://10.100.100.232
 port = 8091
-starttime = 2019-12-29 18:00:00
-endtime = 2019-12-29 19:00:00
+starttime = 2019-12-25 05:00:00
+endtime = 2019-12-25 06:00:00
 dt = 7200
 
 ##############################------------ SECTION 2): Stations to download ------------############################
 
 download_data = CM.URMC.00.HH*, CM.CLBC.00.HH*, CM.CVER.00.HH*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*
-#download_data = all
+#download_data = no
 
 ##############################------------ SECTION 4): Stations to filter  ------------############################
 
-filter_data = CM.TAPM, CM.PIRM, CM.MACC, CM.PRA
+filter_data = CM.TAPM, CM.PIRM, CM.MACC, CM.PRA, CM.BELO, CM.CVER, CM.CHI, CM.ORTC, CM.VIL
+#filter_data = no
 
 ##############################------------ SECTION 2): PhaseNet Dict  ------------############################
 
 PhaseNet_dir = /home/sgc/mesetas/PhaseNet
 general_data_dir = /home/sgc/mesetas/sgc_phasenet/prove/wav
-general_output_dir = /home/sgc/mesetas/sgc_phasenet/prove/mesetas_20191226_18_19
+general_output_dir = /home/sgc/mesetas/sgc_phasenet/prove/mesetas
 model_dir = /home/sgc/mesetas/PhaseNet/model/190703-214543
 mode = pred
 batch_size = 10
