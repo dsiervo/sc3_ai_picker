@@ -51,12 +51,16 @@ class playback:
         self.wf_dir = wf_dir
         self.xml_picks_file = xml_picks_file
         self.out_dir = out_dir
-        self.ev_f_path = os.path.join(self.out_dir, "events_final.xml")
+        
+        dir_split = os.path.split(self.out_dir)
+        self.general_dir = dir_split[0] # Taking the general output dir
+        self.event_name = dir_split[-1]+'.xml'
+        self.ev_f_path = os.path.join(self.general_dir, "events_final.xml")
     
         # por defecto hace extracciones separadas cada 2 horas
         self.delta = 3600*2
 
-        self.events_dir = os.path.join(self.out_dir, 'xml_events')
+        self.events_dir = os.path.join(self.general_dir, 'xml_events')
         
         if not os.path.exists(self.events_dir):
             os.makedirs(self.events_dir)    
@@ -155,8 +159,8 @@ class playback:
         wf : str
             Path to wavefrom to compute amplitudes
         """
-        self.event_name = wf.split('/')[-1].strip('.mseed')+'.xml'
-        self.event_path = os.path.join(self.out_dir, self.event_name)
+        self.event_path = os.path.join(self.events_dir, self.event_name)
+        
         origin_path = os.path.join(self.out_dir, 'origins.xml')
         amp_path = os.path.join(self.out_dir, 'amp.xml')
         mag_path = os.path.join(self.out_dir, 'mag.xml')
@@ -178,8 +182,6 @@ class playback:
         print(all_cmd)
         
         os.system(all_cmd)
-
-        os.system('mv %s %s'%(self.event_path, self.events_dir))
         
     def scdb(self):
         os.system('scdb -i %s -d %s'%(self.ev_f_path, self.db))

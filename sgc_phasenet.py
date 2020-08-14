@@ -3,6 +3,7 @@
 from obspy import UTCDateTime
 from datetime import timedelta
 from cwav import Cwav
+from merge_xml_picks import merge_xml_picks
 import os
 
 def read_params(par_file='phaseNet.inp'):
@@ -104,6 +105,11 @@ def run(inp_file):
         cwav.playback()
 
         starttime += dt
+    
+    # mergin all seiscomp .xml events
+    events_dir = os.path.join(OUTPUT_PATH, 'xml_events')
+    ev_f_path = os.path.join(OUTPUT_PATH, "events_final.xml")
+    merge_xml_picks(events_dir+'/', ev_f_path)
     return pnet_dict
 
 if __name__ == "__main__":

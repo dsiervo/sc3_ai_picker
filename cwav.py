@@ -356,7 +356,7 @@ class Cwav(object):
         # excecuting playback commands
         my_playback.playback_commands(wf_path)
         # mergin all seiscomp .xml events files
-        my_playback.merge_events()
+        #my_playback.merge_events()
 
 def read_merge(path):
     """Read and merge waveforms. Returns Obspy Stream.
