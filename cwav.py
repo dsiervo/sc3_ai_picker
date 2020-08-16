@@ -349,9 +349,10 @@ class Cwav(object):
         streams = list(map(read_merge, wfs))
         # Joining all streams in one stream
         main_st = reduce(lambda x, y: x + y, streams)
+
         # writing stream in mseed file
         wf_path = os.path.join(self.pnet_dict['data_dir'], 'all.mseed')
-        main_st.write(wf_path)
+        main_st.write(wf_path, format='MSEED')
 
         # excecuting playback commands
         my_playback.playback_commands(wf_path)
@@ -372,7 +373,7 @@ def read_merge(path):
         Merged obspy stream
     """
     st = read(path)
-    return st.merge()
+    return st.merge(fill_value='interpolate')
     
 if __name__ == "__main__":
     download_data = 'all'

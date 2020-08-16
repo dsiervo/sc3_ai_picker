@@ -83,22 +83,19 @@ def read_picks(phaseNet_picks, dt, min_prob=0.3):
         reader = csv.reader(csvfile, delimiter=',') 
         for i, row in enumerate(reader): 
             if i != 0: 
-                print(row)
                 wf_name = row[0]
                 picks_p = row[1].strip('[]').strip().split() 
                 prob_p = row[2].strip('[]').strip().split() 
                 picks_s = row[3].strip('[]').strip().split() 
                 prob_s = row[4].strip('[]').strip().split() 
-                print('row[3]:', row[3])
-                print('picks_s:', picks_s)
 
                 P_picks = pick_constructor(picks_p, prob_p, wf_name, 'P', min_prob, dt)
                 S_picks = pick_constructor(picks_s, prob_s, wf_name, 'S', min_prob, dt)
             
                 picks += P_picks + S_picks
                 
-                print(f'{len(P_picks)} P picks')
-                print(f'{len(S_picks)} S picks')
+                #print(f'{len(P_picks)} P picks')
+                #print(f'{len(S_picks)} S picks')
 
     return picks
 
