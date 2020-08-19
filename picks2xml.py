@@ -81,21 +81,23 @@ def read_picks(phaseNet_picks, dt, min_prob=0.3):
     picks = []
     with open(phaseNet_picks, newline='') as csvfile: 
         reader = csv.reader(csvfile, delimiter=',') 
-        for i, row in enumerate(reader): 
-            if i != 0: 
-                wf_name = row[0]
-                picks_p = row[1].strip('[]').strip().split() 
-                prob_p = row[2].strip('[]').strip().split() 
-                picks_s = row[3].strip('[]').strip().split() 
-                prob_s = row[4].strip('[]').strip().split() 
+        for i, row in enumerate(reader):
+            if row != '[]': 
+                if i != 0:
+                    print(row)
+                    wf_name = row[0]
+                    picks_p = row[1].strip('[]').strip().split() 
+                    prob_p = row[2].strip('[]').strip().split() 
+                    picks_s = row[3].strip('[]').strip().split() 
+                    prob_s = row[4].strip('[]').strip().split() 
 
-                P_picks = pick_constructor(picks_p, prob_p, wf_name, 'P', min_prob, dt)
-                S_picks = pick_constructor(picks_s, prob_s, wf_name, 'S', min_prob, dt)
-            
-                picks += P_picks + S_picks
+                    P_picks = pick_constructor(picks_p, prob_p, wf_name, 'P', min_prob, dt)
+                    S_picks = pick_constructor(picks_s, prob_s, wf_name, 'S', min_prob, dt)
                 
-                #print(f'{len(P_picks)} P picks')
-                #print(f'{len(S_picks)} S picks')
+                    picks += P_picks + S_picks
+                    
+                    #print(f'{len(P_picks)} P picks')
+                    #print(f'{len(S_picks)} S picks')
 
     return picks
 
@@ -171,6 +173,8 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
     list
         List of picks objects
     """
+    black_list = ['YPLC']
+    
     segment = 0.0
     picks_list = []
     if picks != ['']:
@@ -183,6 +187,9 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
                 #----------
                 # algunos datos se obtienen del nombre de la forma de onda
                 net, station, loc, ch, df, *to_segment = wf_name.split('_')
+
+                if station in black_list and prob <= 0.73:
+                    continue
 
                 to = to_segment[0].split('.')[0]
                 if len(to_segment)==2:
@@ -198,7 +205,7 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
                 if prob >= 0.95:
                     evaluation = 'manual'
                 # Se crea el objeto Pick
-                p = Pick(ID, pick_time, net, station,
+                p = Pick(ID, pick_time, net, station, prob,
                         loc, ch, ph_type, creation_time, evaluation)
                 
                 # Se agrega cada pick a la lista de picks
@@ -288,6 +295,7 @@ class Pick:
       <waveformID networkCode="{net}" stationCode="{station}" locationCode="{loc}" channelCode="{ch}"/>
       <filterID>BW(4,1.00,10.00)</filterID>
       <methodID>AIC</methodID>
+      <probability>{prob}</probability>
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
@@ -305,6 +313,7 @@ class Pick:
       <waveformID networkCode="{net}" stationCode="{station}" locationCode="{loc}" channelCode="{ch}"/>
       <filterID>BW(4,1.00,10.00)</filterID>
       <methodID>L2-AIC</methodID>
+      <probability>{prob}</probability>
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
@@ -315,7 +324,7 @@ class Pick:
       '''
 
     def __init__(self, publicID, pick_time,
-                net, station, loc, ch,
+                net, station, prob, loc, ch,
                 phaseHint, creation_time, evaluation):
         """
         Parameters
@@ -341,6 +350,7 @@ class Pick:
         self.pick_time = pick_time
         self.net = net
         self.station = station
+        self.prob = prob
         self.loc = loc
         self.ch = ch
         self.phaseHint = phaseHint
@@ -357,6 +367,7 @@ class Pick:
                 pick_time = self.pick_time,
                 net = self.net,
                 station = self.station,
+                prob = self.prob,
                 loc = self.loc,
                 ch = self.ch,
                 phaseHint = self.phaseHint,
@@ -369,6 +380,7 @@ class Pick:
                 pick_time = self.pick_time,
                 net = self.net,
                 station = self.station,
+                prob = self.prob,
                 loc = self.loc,
                 ch = self.ch,
                 phaseHint = self.phaseHint,

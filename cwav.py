@@ -326,7 +326,7 @@ class Cwav(object):
 
         print('creando objeto playback')
         my_playback = playback(
-                sc_scanloc='scanloc',
+                sc_scanloc='scanloc32',
                 wf_dir=self.pnet_dict['data_dir'],
                 db=self.db_sc,
                 picks ='none',
