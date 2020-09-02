@@ -1,9 +1,11 @@
 ##############################------------ SECTION 1): Client Dict  ------------############################
-
+# IP direction and port to FDSN service
 ip = http://10.100.100.232
 port = 8091
+# Time range in wich PhaseNet will be executed
 starttime = 2020-07-01 00:00:00
 endtime = 2020-07-14 23:59:00
+# If the seconds between starttime and endtime are biger than dt 
 dt = 21600
 
 ##############################------------ SECTION 2): Stations to download ------------############################
