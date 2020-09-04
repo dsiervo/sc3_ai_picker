@@ -9,26 +9,36 @@ import csv
 from obspy import UTCDateTime
 import datetime
 import os
+import numpy as np
+import pandas as pd
+import glob
 
-def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6, dt=3000):
+def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6,
+               dt=3000, ai='pnet'):
     """Transform PhaseNet picks.csv file into Seiscomp XML file
 
     Parameters
     ----------
     input_file : str
-        Path to PhaseNet picks.csv file
+        Path to PhaseNet picks.csv file or Path to EQTransformer 
+        X_prediction_results.csv file, by default 'picks.csv'
     output_file : str
         Path to new Sesicomp XML file
     min_prob: float
         Minimun probability to consider a phase pick
     dt: int
         Waveform length in seconds
+    ai: str
+        AI type, can be: pnet or eqt (phasenet or eqtransformer)
     """
 
     print('Input files is:', input_file)
 
     # Obtaining list of Picks objects from file
-    pick_list = read_picks(input_file, dt, min_prob)
+    if ai == 'pnet':
+        pick_list = read_picks(input_file, dt, min_prob)
+    elif ai == 'eqt':
+        pick_list = prepare_eqt(input_file, min_prob)
 
     # Creating xml text
     xml_text = picks2xml(pick_list)
@@ -44,6 +54,83 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6, dt=3000):
         f.write(xml_text)
     
     print(f'\nOutput file: {output_file}')
+
+def prepare_eqt(input_dir, min_prob):
+    """Merge X_prediction_results.csv files of each station in a list of Picks objects
+
+    Parameters
+    ----------
+    input_file : str
+        Directory path which contains station_outputs folders
+    min_prob : float
+        Mimimum probability to consider a pick
+    """
+    sta_dirs = glob.glob(os.path.join(input_dir, '*_outputs'))
+    df = pd.concat([pd.read_csv(os.path.join(sta, 'X_prediction_results.csv')) \
+                for sta in sta_dirs])
+    
+    interest_col = ['network', 'station', 'instrument_type', 'detection_probability',
+                    'p_arrival_time', 'p_probability', 'p_snr',
+                    's_arrival_time', 's_probability', 's_snr']
+    # Keeping with columns of interest
+    df = df[interest_col]
+    # Deleting rows without P phase
+    df = df.dropna(subset=['p_probability'])
+    
+    p_list = read_eqt_picks(df['network'].tolist(), df['station'].tolist(),
+                    df['instrument_type'].tolist(),
+                    df['p_arrival_time'].tolist(), df['p_probability'].tolist(),
+                    df['s_arrival_time'].tolist(), df['s_probability'].tolist())
+    
+    return p_list
+
+def read_eqt_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs):
+    """Iterate over picks for generate list of Picks objects
+
+    Parameters
+    ----------
+    nets : list
+        Networks list
+    stations : list
+        Stations list
+    chs : list
+        Channels list
+    p_times : list
+        P pick times
+    p_probs : list
+        P picks probabilities
+    s_times : list
+        S picks times
+    s_probs : list
+        S picks probabilities
+    """
+    picks_list = []
+
+    for i in range(len(s_times)):
+        net, station, ch = nets[i], stations[i], chs[i]
+        s_pick = None
+        loc = '00'
+        if ch == 'EH':
+            loc = '20'
+        elif ch == 'HN':
+            loc = '10'
+        
+        ch += 'Z'
+
+        p_t, p_prob = p_times[i], p_probs[i]
+
+        p_pick = eqt_pick_constructor(p_t, p_prob, net,
+                                      station, loc, ch, 'P')
+        picks_list.append(p_pick)
+        
+        s_t, s_prob = s_times[i], s_probs[i]
+        print(f'{i}. p_t:{p_t}, s_t:{s_t}')
+        if s_t is not np.nan:
+            s_pick = eqt_pick_constructor(s_t, s_prob, net,
+                                          station, loc, ch, 'S')
+            picks_list.append(s_pick)
+        
+    return picks_list
 
 
 def read_picks(phaseNet_picks, dt, min_prob=0.3):
@@ -152,6 +239,19 @@ def picks2xml(pick_list):
 
     return xml_file
 
+def eqt_pick_constructor(time, prob, net, station, loc, ch, ph):
+    time = UTCDateTime(time)
+    id_ = id_maker(time, net, station, loc, ch, ph)
+    creation_t = UTCDateTime()
+    
+    evaluation = 'automatic'
+    if prob >= 0.95:
+        evaluation = 'manual'
+    
+    pick = Pick(id_, time, net, station, loc, ch,
+                ph, creation_t, evaluation, 'EQTransformer')
+
+    return pick
 
 def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
     """Construct Pick objects
@@ -295,7 +395,7 @@ class Pick:
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
         <agencyID>SGC2</agencyID>
-        <author>PhaseNet</author>
+        <author>{author}</author>
         <creationTime>{creation_time}</creationTime>
       </creationInfo>
     </pick>'''
@@ -312,14 +412,15 @@ class Pick:
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
         <agencyID>SGC2</agencyID>
-        <author>PhaseNet</author>
+        <author>{author}</author>
         <creationTime>{creation_time}</creationTime>
       </creationInfo>
       '''
 
     def __init__(self, publicID, pick_time,
                 net, station, loc, ch,
-                phaseHint, creation_time, evaluation):
+                phaseHint, creation_time,
+                evaluation, author='PhaseNet'):
         """
         Parameters
         ----------
@@ -349,6 +450,7 @@ class Pick:
         self.phaseHint = phaseHint
         self.creation_time = creation_time
         self.evaluation = evaluation
+        self.author = author
     
     def toxml(self):
         """Create a seiscomp xml block
@@ -364,7 +466,8 @@ class Pick:
                 ch = self.ch,
                 phaseHint = self.phaseHint,
                 creation_time = self.creation_time,
-                evaluation = self.evaluation
+                evaluation = self.evaluation,
+                author = self.author
                 )
         elif self.phaseHint == 'S':
             return self.xml_S_block.format(
@@ -376,15 +479,20 @@ class Pick:
                 ch = self.ch,
                 phaseHint = self.phaseHint,
                 creation_time = self.creation_time,
-                evaluation = self.evaluation
+                evaluation = self.evaluation,
+                author = self.author
                 )
 
 if __name__=='__main__':
+    
     import sys
 
     if len(sys.argv) == 2:
         main_picks(sys.argv[1])
     elif len(sys.argv) == 3:
         main_picks(sys.argv[1], sys.argv[2])
+    elif len(sys.argv) == 4:
+        main_picks(sys.argv[1], sys.argv[2], ai='eqt')
     else:
         main_picks()
+
