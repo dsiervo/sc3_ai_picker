@@ -1,10 +1,10 @@
-#!/home/sgc/anaconda3/envs/phaseNet/bin/python
+"""#!/home/sgc/anaconda3/envs/phaseNet/bin/python"""
 # -*- coding: utf-8 -*-
 from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
 import os, multiprocessing
 from datetime import timedelta
-from merge_xml_picks import merge_xml_picks
+from utils.merge_xml_picks import merge_xml_picks
 
 
 class playback:

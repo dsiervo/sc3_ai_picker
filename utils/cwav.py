@@ -1,21 +1,30 @@
-from obspy.clients.fdsn import Client
-from obspy import read
-from obspy import UTCDateTime
-import csv
-import itertools
-import concurrent.futures
-from functools import reduce
 import os
-import sys
-import numpy as np
-import MySQLdb
-import pandas as pd
-from playback import playback
-from datetime import timedelta
-from picks2xml import main_picks
-import matplotlib.pyplot as plt
 
-class Cwav(object):
+if os.environ['CONDA_DEFAULT_ENV'] == 'pnet':
+    from obspy.clients.fdsn import Client
+    from obspy import read
+    from obspy import UTCDateTime
+    import csv
+    import itertools
+    import concurrent.futures
+    from functools import reduce
+    import sys
+    import numpy as np
+    import pandas as pd
+    from datetime import timedelta
+    import matplotlib.pyplot as plt
+    from utils.playback import playback
+    from utils.picks2xml import main_picks
+
+elif os.environ['CONDA_DEFAULT_ENV'] == 'eqt':
+    from EQTransformer.utils.downloader import makeStationList
+    from EQTransformer.utils.downloader import downloadMseeds
+    from EQTransformer.utils.hdf5_maker import preprocessor
+    from EQTransformer.core.predictor import predictor
+    from utils.playback import playback
+    from utils.picks2xml import main_picks
+
+class Cwav_PhaseNet(object):
     """
 
     Atributes
@@ -37,29 +46,29 @@ class Cwav(object):
             ['CM.URMC','CM.CLEJA']-list of the stations to download
         pnet_dict: dict
             Dictionary of the PhaseNet parameters
-                ['PhaseNet_dir']: str
+                ['pnet_repository_dir']: str
                     Path of the PhaseNet algorithm.
-                ['mode']: str
+                ['pnet_mode']: str
                     mode parameter od phaseNet
-                ['data_dir']: str
+                ['pnet_data_dir']: str
                     Path to download or where was downloaded the mseed files. 
                     Also, it is the data_dir paramater of PhaseNet.
-                ['data_list']: str
+                ['pnet_data_list']: str
                     Path to write or where was write the csv file that contain 
                     the downloaded mseed file names. 
                     Also, it is the data_list paramater of PhaseNet.
-                ['model_dir']: str
+                ['pnet_model_dir']: str
                     Path of the model_dir parameter of PhaseNet.
-                ['output_dir']: str
+                ['pnet_output_dir']: str
                     Path of the output
-                ['batch_size']: str or int
+                ['pnet_batch_size']: str 
                     PhaseNet batch size parameter.
-                ['input_length]: str or int
+                ['pnet_input_length]: str 
                     PhaseNet input length parameter.
-                ['plot_figure']:   str or Bolean (default:False)
+                ['pnet_plot_figure']:   str or Bolean (default:False)
                     ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True)-plot figures
                     else: -Don't plot the figures
-                ['save_result']:    str or Bolean (default:False)
+                ['pnet_save_result']:    str or Bolean (default:False)
                     ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True) -save results
                     else: -Don't save results
 
@@ -95,8 +104,8 @@ class Cwav(object):
         self.mysqldb_dict = mysqldb_dict
         self.filter_data = filter_data
         self.download_max_workers = download_max_workers
-        self.pick_csv_path = os.path.join(self.pnet_dict['output_dir'], 'picks.csv')
-        self.pick_xml_path = os.path.join(self.pnet_dict['output_dir'], 'picks.xml')
+        self.pick_csv_path = os.path.join(self.pnet_dict['pnet_output_dir'], 'picks.csv')
+        self.pick_xml_path = os.path.join(self.pnet_dict['pnet_output_dir'], 'picks.xml')
         self.__dict__.update(kwargs)
 
     @property
@@ -254,8 +263,8 @@ class Cwav(object):
                     + str(stats['starttime'].strftime('%Y%m%d%H%M%S%f')[:-4])\
                     + '.mseed'
         
-        mseed_path = os.path.join(self.pnet_dict['data_dir'], mseed_name)    
-        csv_path =  self.pnet_dict['data_list']    
+        mseed_path = os.path.join(self.pnet_dict['pnet_data_dir'], mseed_name)    
+        csv_path =  self.pnet_dict['pnet_data_list']    
 
         st.write(mseed_path, format="MSEED")
         with open(csv_path, "a") as f:
@@ -267,11 +276,11 @@ class Cwav(object):
         return mseed_name
 
     def download(self):
-        if self.download_data != 'No':
-            if not os.path.exists(self.pnet_dict['data_dir']):
-                os.makedirs(self.pnet_dict['data_dir'])
+        if self.download_data not in ('No','no'):
+            if not os.path.exists(self.pnet_dict['pnet_data_dir']):
+                os.makedirs(self.pnet_dict['pnet_data_dir'])
 
-            with open(self.pnet_dict['data_list'] , "w") as f:
+            with open(self.pnet_dict['pnet_data_list'] , "w") as f:
                 writer = csv.writer(f)
                 writer.writerow(["fname", "E", 'N', 'Z'])
                 f.close()
@@ -284,16 +293,16 @@ class Cwav(object):
                 pass
         else:
             pass
-    
+
     def run_pnet(self):
-        run_execute= os.path.join(self.pnet_dict['PhaseNet_dir'],'run.py')
-        command = f"python {run_execute} --mode={self.pnet_dict['mode']} \
-            --model_dir={self.pnet_dict['model_dir']} --data_dir={self.pnet_dict['data_dir']} \
-            --data_list={self.pnet_dict['data_list']} --output_dir={self.pnet_dict['output_dir']}\
-            --batch_size={self.pnet_dict['batch_size']} --input_mseed"
-        if self.pnet_dict['plot_figure'] in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True):
+        run_execute= os.path.join(self.pnet_dict['pnet_repository_dir'],'run.py')
+        command = f"python {run_execute} --mode={self.pnet_dict['pnet_mode']} \
+            --model_dir={self.pnet_dict['pnet_model_dir']} --data_dir={self.pnet_dict['pnet_data_dir']} \
+            --data_list={self.pnet_dict['pnet_data_list']} --output_dir={self.pnet_dict['pnet_output_dir']}\
+            --batch_size={self.pnet_dict['pnet_batch_size']} --input_mseed"
+        if self.pnet_dict['pnet_plot_figure'] in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True):
             command += ' ' + '--plot_figure'
-        if self.pnet_dict['save_result'] in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True):
+        if self.pnet_dict['pnet_save_result'] in ('Yes', 'yes', 'Y', 'y', 'True', 'true', 'TRUE', True):
             command += ' ' + '--save_result'
         print('\n', command, '\n')
         os.system(command)
@@ -327,21 +336,21 @@ class Cwav(object):
         print('creando objeto playback')
         my_playback = playback(
                 sc_scanloc='scanloc',
-                wf_dir=self.pnet_dict['data_dir'],
+                wf_dir=self.pnet_dict['pnet_data_dir'],
                 db=self.db_sc,
                 picks ='none',
                 xml_picks_file=xml_picks_file,
-                out_dir=self.pnet_dict['output_dir']
+                out_dir=self.pnet_dict['pnet_output_dir']
                 )
         
         # list with waveforms paths
         wfs=[]
-        with open(self.pnet_dict['data_list']) as f:
+        with open(self.pnet_dict['pnet_data_list']) as f:
             reader = csv.reader(f, delimiter=',')
             # skiping header
             next(reader)
             for row in reader:
-                wfs.append(os.path.join(self.pnet_dict['data_dir'], row[0]))
+                wfs.append(os.path.join(self.pnet_dict['pnet_data_dir'], row[0]))
         
         os.system('rm -fr xml_events/* events_final.xml')
         
@@ -351,13 +360,172 @@ class Cwav(object):
         main_st = reduce(lambda x, y: x + y, streams)
 
         # writing stream in mseed file
-        wf_path = os.path.join(self.pnet_dict['data_dir'], 'all.mseed')
+        wf_path = os.path.join(self.pnet_dict['pnet_data_dir'], 'all.mseed')
         main_st.write(wf_path, format='MSEED')
 
         # excecuting playback commands
         my_playback.playback_commands(wf_path)
-        # mergin all seiscomp .xml events files
-        #my_playback.merge_events()
+
+class Cwav_EQTransformer(object):
+    """
+
+    Atributes
+    ----------
+    db_sc : str
+        Full path to seiscomp3 main database
+    """
+    db_sc = 'mysql://sysop:sysop@10.100.100.232/seiscomp3'
+    
+    def __init__(self, download_data, eqt_dict, client_dict,
+                 mysqldb_dict=None):
+        """Download mseed files and run them in PhaseNet algorithm
+        Parameters
+        ----------
+        download_data: str or list
+            ('all', 'All', 'ALL') - download all stations, 
+            ('No', 'no', 'N', 'n', 'False', 'false', 'FALSE') -Don't download mseed files
+            ['CM.URMC','CM.CLEJA']-list of the stations to download
+
+        eqt_dict: dict
+            Dictionary of the EQTransformer parameters
+
+        client_dict : dict
+            Dictionary of the FDSN Client parameters
+                ['ip']: str
+                    ip parameter of Client object from obspy
+                ['port']: str
+                    port parameter of Client object from obspy
+                ['starttime']: UTCDateTime
+                    Limit results to time series samples on or after the specified start time
+                ['endtime']: UTCDateTime
+                    Limit results to time series samples on or before the specified end time
+        mysqldb_dict: dict
+            Dictionary of the MySQLdb parameters
+                ['host']: str
+                ['user']: str
+                ['passwd']: str
+                ['db']: str
+        """
+
+        self.download_data = download_data
+        self.eqt_dict = eqt_dict
+        self.client_dict = client_dict
+        self.mysqldb_dict = mysqldb_dict
+        self.pick_xml_path = os.path.join(self.eqt_dict['eqt_output_dir'], 'picks.xml')
+
+    @property
+    def client(self):
+        """
+        Returns
+        -------
+        client object
+            Returns the client object according to the 'ip' and 'port' client parameters
+        """
+        return Client(self.client_dict['ip']+":"+self.client_dict['port'])
+
+    @property
+    def stations_to_download(self):
+        """
+        Returns
+        -------
+        list or None
+            Returns the stations that gonna be downloaded according to the information in download parameter.
+            -all: all stations to downlaod, -no: no download, 
+            -['CM.URMC.00.*','CM.CLEJA.*.*'] download only these stations
+        """
+        if self.download_data not in ('No', 'no', 'N', 'n', 'False', 'false', 'FALSE'):
+            if self.download_data in ('all', 'All', 'ALL'):
+                stations = [['CM','*','*','*']]
+            elif self.download_data in ('all_seismometer', 'All_Seismometer', 'ALL_SEISMOMETER'):
+                stations = [['CM','*','00','*'],['CM','*','20','*']]
+            elif self.download_data in ('all_acelerometer', 'All_Acelerometer', 'ALL_ACELEROMETER'):
+                stations = [['CM','*','10','*']]
+            elif isinstance(self.download_data, list):
+                stations = list(map(lambda x: x.split('.'),self.download_data))
+        else:
+            stations = None
+        
+        return stations
+
+    @property
+    def prepare_eqt_stations(self):
+        keys = list(zip(*self.stations_to_download))
+        network,station,location,channel = (list(set(key)) for key in keys)
+        network,station,location,channel = list(map( lambda x: ",".join(x),
+                                                    [network,station,location,channel]))
+        return network,station,location,channel
+
+    def create_json(self):
+        if self.eqt_dict['eqt_create_json'] in ('True', 'true','TRUE', True):
+            # jsondir = os.path.dirname(self.eqt_dict['eqt_data_dir'])
+            if not os.path.exists(self.eqt_dict['eqt_data_dir']):
+                os.makedirs(self.eqt_dict['eqt_data_dir'])
+
+            network,station,location,channel = self.prepare_eqt_stations
+            json_list = makeStationList(
+                    json_path=os.path.join(self.eqt_dict['eqt_data_dir'],'station_list.json'),
+                    client_list=[f"{self.client_dict['ip']}:{self.client_dict['port']}"], 
+                    min_lat=None, max_lat=None, 
+                    min_lon=None, max_lon=None, 
+                    network=network, station=station,
+                    location=location, channel=channel,
+                    start_time=self.client_dict['starttime'], end_time=self.client_dict['endtime'], 
+                    channel_list=[], filter_network=[], filter_station=[])
+        else:   
+            pass
+
+    def download_mseed(self):
+        if self.download_data not in ('No','no','n','False',False):
+            network,station,location,channel = self.prepare_eqt_stations
+            downloadMseeds(client_list=[f"{self.client_dict['ip']}:{self.client_dict['port']}"],
+                    network=network, station=station,
+                    location=location, channel=channel,
+                    stations_json= os.path.join(self.eqt_dict['eqt_data_dir'],'station_list.json'),
+                    output_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
+                    min_lat=None, max_lat=None, 
+                    min_lon=None, max_lon=None,
+                    start_time=self.client_dict['starttime'], end_time=self.client_dict['endtime'],
+                    chunk_size= self.eqt_dict['eqt_chunk_size'] / (3600*24), #se divide sobre 3600*24 para convertir horas a dias
+                    channel_list=[], 
+                    n_processor=self.eqt_dict['eqt_n_processor'])
+        else: 
+            pass
+
+    def preprocessor(self):
+        if self.eqt_dict['eqt_create_hdf5'] in ('True', 'true','TRUE', True):
+
+            preprocessor(
+                preproc_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'preproc_files'),
+                mseed_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
+                stations_json=os.path.join(self.eqt_dict['eqt_data_dir'],'station_list.json'), 
+                overlap=self.eqt_dict['eqt_preproc_overlap'], 
+                n_processor=self.eqt_dict['eqt_n_processor'])
+        else:
+            pass
+
+    def predictor(self):
+
+        predictor(input_dir= os.path.join( self.eqt_dict['eqt_data_dir'],'mseed_processed_hdfs'), 
+                input_model=self.eqt_dict['eqt_model_dir'], 
+                output_dir=self.eqt_dict['eqt_output_dir'], 
+                detection_threshold=self.eqt_dict['eqt_detection_threshold'], 
+                P_threshold=self.eqt_dict['eqt_P_threshold'],
+                S_threshold=self.eqt_dict['eqt_S_threshold'], 
+                number_of_plots=self.eqt_dict['eqt_number_of_plots'],
+                plot_mode=self.eqt_dict['eqt_plot_mode'])
+
+    def picks2xml(self):
+        """Transform EQTransformer output file into Seiscomp XML file
+
+        Parameters
+        ----------
+        dt : int
+            Waveform length in seconds
+        """
+        
+        main_picks(input_file=self.eqt_dict['eqt_output_dir'],
+                   output_file=self.pick_xml_path, ai='eqt')
+        
 
 def read_merge(path):
     """Read and merge waveforms. Returns Obspy Stream.
@@ -376,28 +544,44 @@ def read_merge(path):
     return st.merge(fill_value='interpolate')
     
 if __name__ == "__main__":
-    download_data = 'all'
-    # download_data = ['CM.URMC.00.*','CM.URMC.00.*','CM.BAR2.00.*']
-    pnet_dict = {'PhaseNet_dir': '/mnt/almacenamiento/Emmanuel_Castillo/PhaseNet',
-                'mode': 'pred',
-                'data_dir':'/mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/prove/wav',
-                'data_list':'/mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/prove/wav/fname.csv',
-                'model_dir': '/mnt/almacenamiento/Emmanuel_Castillo/PhaseNet/model/190703-214543',
-                'output_dir': '/mnt/almacenamiento/Emmanuel_Castillo/git_EDCT/SGC/sgc_phasenet/prove/output',
-                'batch_size': 10,
-                'plot_figure': False,
-                'save_result': False}
+    # download_data = 'all'
+    download_data = ['CM.URMC.00.*']
+    pnet_dict = {'pnet_repository_dir': '/home/dsiervo/PhaseNet',
+                'pnet_mode': 'pred',
+                'pnet_data_dir':'/home/dsiervo/ecastillo/EQT_prove/wav/pnet',
+                'pnet_data_list':'/home/dsiervo/ecastillo/EQT_prove/wav/pnet',
+                'pnet_output_dir': '/home/dsiervo/ecastillo/EQT_prove/output/pnet',
+                'pnet_model_dir': '/home/dsiervo/PhaseNet/model/190703-214543',
+                'pnet_batch_size': 10,
+                'pnet_plot_figure': False,
+                'pnet_save_result': False}
+
+    eqt_dict = {'eqt_data_dir':'/home/dsiervo/sgc_autopicker/wav',
+                'eqt_output_dir':'/home/dsiervo/sgc_autopicker/output',
+                'eqt_model_dir':'/home/dsiervo/EQTransformer/ModelsAndSampleData/EqT_model.h5',
+                'eqt_chunk_size':4*3600,
+                'eqt_n_processor':2,
+                'eqt_preproc_overlap': 0.3,
+                'eqt_detection_threshold': 0.3,
+                'eqt_P_threshold':0.1,
+                'eqt_S_threshold':0.1, 
+                'eqt_number_of_plots':1, 
+                'eqt_plot_mode':'time'}
 
     client_dict = {'ip': 'http://10.100.100.232', 'port':'8091',
                    'starttime': UTCDateTime('2020-01-01 00:00:00'),
-                   'endtime': UTCDateTime('2020-01-01 01:00:00') }
+                   'endtime': UTCDateTime('2020-01-01 04:00:00') }
 
-    # filter_data = ['CM.URMC','CM.BAR2']
-    filter_data = 'ALL'
+    filter_data = ['CM.URMC']
+    # filter_data = 'ALL'
     mysqldb_dict = None
 
-    cwav = Cwav(download_data, pnet_dict, client_dict, mysqldb_dict, filter_data=filter_data)
+    # cwav_phasenet = Cwav_phasenet(download_data, pnet_dict, client_dict, mysqldb_dict, filter_data=filter_data)
+    # cwav_phasenet.download()
+    # cwav_phasenet.run_pnet()
 
-    cwav.download()
-    cwav.run_pnet()
-        
+    cwav_eqt = Cwav_EQTransformer(download_data, eqt_dict, client_dict, mysqldb_dict=None)  
+    # cwav_eqt.create_json()      
+    # cwav_eqt.download_mseed()      
+    # cwav_eqt.preprocessor()    
+    # cwav_eqt.predictor()  
