@@ -1,0 +1,26 @@
+================== Overal Info ==============================
+date of report: 2020-09-02 16:43:40.213949
+input_hdf5: /home/dsiervo/ecastillo/EQT_to_URMC_many/wav/eqt/20191225_000000_7200/mseed_processed_hdfs/PRA.hdf5
+input_csv: /home/dsiervo/ecastillo/EQT_to_URMC_many/wav/eqt/20191225_000000_7200/mseed_processed_hdfs/PRA.csv
+input_model: /home/dsiervo/EQTransformer/ModelsAndSampleData/EqT_model.h5
+output_dir: /home/dsiervo/ecastillo/EQT_to_URMC_many/output/eqt/20191225_000000_7200/PRA_outputs
+================== Prediction Parameters =======================
+finished the prediction in:  0 hours and 0 minutes and 1.94 seconds 
+detected: 42 events.
+writting_probability_outputs: False
+loss_types: ['binary_crossentropy', 'binary_crossentropy', 'binary_crossentropy']
+loss_weights: [0.03, 0.4, 0.58]
+batch_size: 500
+================== Other Parameters =========================
+normalization_mode: std
+estimate uncertainty: False
+number of Monte Carlo sampling: 5
+detection_threshold: 0.3
+P_threshold: 0.1
+S_threshold: 0.1
+number_of_plots: 1
+use_multiprocessing: True
+gpuid: None
+gpu_limit: None
+keepPS: True
+spLimit: 60 seconds
