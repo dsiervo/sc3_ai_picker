@@ -76,6 +76,8 @@ def prepare_eqt(input_dir, min_prob):
     df = df[interest_col]
     # Deleting rows without P phase
     df = df.dropna(subset=['p_probability'])
+    # Removing white spaces arround station name
+    df['station'] = df['station'].str.strip()
     
     p_list = read_eqt_picks(df['network'].tolist(), df['station'].tolist(),
                     df['instrument_type'].tolist(),

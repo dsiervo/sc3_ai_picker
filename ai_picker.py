@@ -161,8 +161,8 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict):
 
     # mergin all seiscomp .xml events
     events_dir = os.path.join(OUTPUT_PATH, 'xml_events')
-    ev_f_path = os.path.join(OUTPUT_PATH, "events_final.xml")
-    merge_xml_picks(events_dir+'/', ev_f_path)
+    evf_path = os.path.join(OUTPUT_PATH, "events_final.xml")
+    merge_xml_picks(events_dir+'/', evf_path)
 
 def run_EQTransformer(client_dict, download_data,eqt_dict):
 
@@ -172,6 +172,13 @@ def run_EQTransformer(client_dict, download_data,eqt_dict):
     cwav_eqt.preprocessor()    
     cwav_eqt.predictor()
     cwav_eqt.picks2xml()
+    cwav_eqt.playback()
+    
+    OUTPUT_PATH = eqt_dict['eqt_output_dir']
+    # mergin all seiscomp .xml events
+    events_dir = os.path.join(OUTPUT_PATH, 'xml_events')
+    evf_path = os.path.join(OUTPUT_PATH, "events_final.xml")
+    merge_xml_picks(events_dir+'/', evf_path)
 
 def run(inp_file):
 

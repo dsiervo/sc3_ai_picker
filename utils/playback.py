@@ -16,7 +16,8 @@ class playback:
               end_time="2019-02-28 23:59:59",
               ip_fdsn="http://10.100.100.232:8091",
               db="mysql://sysop:sysop@localhost/seiscomp3",
-              xml_picks_file = 'picks_final.xml'
+              xml_picks_file = 'picks_final.xml',
+              ai_type='pnet'
               ):
         """Class to create playback process.
         :param station: Station or string with list of station comma
@@ -52,10 +53,15 @@ class playback:
         self.xml_picks_file = xml_picks_file
         self.out_dir = out_dir
         
-        dir_split = os.path.split(self.out_dir)
-        self.general_dir = dir_split[0] # Taking the general output dir
-        self.event_name = dir_split[-1]+'.xml'
-        self.ev_f_path = os.path.join(self.general_dir, "events_final.xml")
+        if ai_type == 'pnet':
+            dir_split = os.path.split(self.out_dir)
+            self.general_dir = dir_split[0] # Taking the general output dir
+            self.event_name = dir_split[-1]+'.xml'
+            self.ev_f_path = os.path.join(self.general_dir, "events_final.xml")
+        else:
+            self.general_dir = out_dir
+            self.event_name = 'events.xml'
+            self.ev_f_path = os.path.join(self.general_dir, "events_final.xml")
     
         # por defecto hace extracciones separadas cada 2 horas
         self.delta = 3600*2
@@ -150,7 +156,7 @@ class playback:
     def merge_picks(self):
         merge_xml_picks(self.picks_dir)
         
-    def playback_commands(self, wf):
+    def playback_commands(self):
         """Excecute seiscomp playback comands to group picks, compute amplitudes,
         compute magnitudes and create seiscomp events.
 
@@ -169,8 +175,8 @@ class playback:
                                                             self.xml_picks_file,
                                                             self.db, origin_path)
         
-        scamp_cmd = 'scamp -u playback --ep %s -I %s -d %s  > %s'%(origin_path, wf,
-                                                                   self.db, amp_path)
+        scamp_cmd = 'scamp -u playback --ep %s -d %s  > %s'%(origin_path,
+                                                            self.db, amp_path)
 
         scmag_cmd = 'scmag -u playback --ep %s -d %s  > %s'%(amp_path, self.db, mag_path)
 
@@ -271,7 +277,7 @@ if __name__ == '__main__':
             #   print()
             #   sys.exit()
 
-        my_playback.playback_commands(wf_path)
+        my_playback.playback_commands()
     
     my_playback.merge_events()
     

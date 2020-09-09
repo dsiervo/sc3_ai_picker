@@ -343,28 +343,28 @@ class Cwav_PhaseNet(object):
                 out_dir=self.pnet_dict['pnet_output_dir']
                 )
         
-        # list with waveforms paths
+        """# list with waveforms paths
         wfs=[]
         with open(self.pnet_dict['pnet_data_list']) as f:
             reader = csv.reader(f, delimiter=',')
             # skiping header
             next(reader)
             for row in reader:
-                wfs.append(os.path.join(self.pnet_dict['pnet_data_dir'], row[0]))
+                wfs.append(os.path.join(self.pnet_dict['pnet_data_dir'], row[0]))"""
         
         os.system('rm -fr xml_events/* events_final.xml')
         
-        # Creating a list with streams of the station waveforms
+        """# Creating a list with streams of the station waveforms
         streams = list(map(read_merge, wfs))
         # Joining all streams in one stream
         main_st = reduce(lambda x, y: x + y, streams)
 
         # writing stream in mseed file
         wf_path = os.path.join(self.pnet_dict['pnet_data_dir'], 'all.mseed')
-        main_st.write(wf_path, format='MSEED')
+        main_st.write(wf_path, format='MSEED')"""
 
         # excecuting playback commands
-        my_playback.playback_commands(wf_path)
+        my_playback.playback_commands()
 
 class Cwav_EQTransformer(object):
     """
@@ -493,7 +493,7 @@ class Cwav_EQTransformer(object):
 
     def preprocessor(self):
         if self.eqt_dict['eqt_create_hdf5'] in ('True', 'true','TRUE', True):
-
+            
             preprocessor(
                 preproc_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'preproc_files'),
                 mseed_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
@@ -525,7 +525,38 @@ class Cwav_EQTransformer(object):
         
         main_picks(input_file=self.eqt_dict['eqt_output_dir'],
                    output_file=self.pick_xml_path, ai='eqt')
+
+    def playback(self):
+        """Excecute seiscomp playback from picks.xml:
+            * Group picks
+            * Localize events from grouped picks to generate origins
+            * Compute amplitudes
+            * Compute magnitudes using amplitudes
+            * Group origins into events
+        """
         
+        xml_picks_file = self.pick_xml_path
+
+        # Verifing if the xml file with picks from phasenet exist
+        assert os.path.isfile(xml_picks_file), \
+            '\n\n\tNo existe el archivo %s en el directorio\n'%xml_picks_file
+
+        print('creando objeto playback')
+        my_playback = playback(
+                sc_scanloc='scanloc',
+                wf_dir=self.eqt_dict['eqt_data_dir'],
+                db=self.db_sc,
+                picks ='none',
+                xml_picks_file=xml_picks_file,
+                out_dir=self.eqt_dict['eqt_output_dir'],
+                ai_type='eqt'
+                )
+        
+        os.system('rm -fr xml_events/* events_final.xml')
+        
+        # excecuting playback commands
+        my_playback.playback_commands()
+
 
 def read_merge(path):
     """Read and merge waveforms. Returns Obspy Stream.
