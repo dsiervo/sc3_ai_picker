@@ -11,8 +11,8 @@ dt = 7200
 #download_data = CM.URMC.00.HH*, CM.CLBC.00.HH*, CM.CVER.00.HH*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*
 #download_data = CM.URMC.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*
 #download_data = CM.PIRM.00.HH*
-download_data = CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*
-#download_data = no
+#download_data = CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*
+download_data = no
 #download_data = all 
 
 ##############################------------ SECTION 3): Stations to filter (ONLY FOR PhaseNet)  ------------############################
@@ -40,8 +40,8 @@ pnet_save_result = False
 
 #########------------ EQTransformer Dict  ------------##########
 
-eqt_create_json = True
-eqt_create_hdf5 = True
+eqt_create_json = False
+eqt_create_hdf5 = False
 eqt_model_dir = /home/sgc/mesetas/EQTransformer/ModelsAndSampleData/EqT_model.h5
 eqt_n_processor = 20
 eqt_preproc_overlap = 0.3

@@ -1,3 +1,10 @@
+#!/home/sgc/anaconda3/envs/eqt/bin/python
+# -*- coding: utf-8 -*-
+"""
+Created on Jul 2020
+
+@author: Emanuel Castillo T. [ecastillot@unal.edu.co], Daniel Siervo P. [ddsiervop@unal.edu.co]
+"""
 import os
 from obspy import UTCDateTime
 from datetime import timedelta
@@ -168,8 +175,8 @@ def run_EQTransformer(client_dict, download_data,eqt_dict):
 
     cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict)
     cwav_eqt.create_json()
-    cwav_eqt.download_mseed()      
-    cwav_eqt.preprocessor()    
+    cwav_eqt.download_mseed()
+    cwav_eqt.preprocessor()
     cwav_eqt.predictor()
     cwav_eqt.picks2xml()
     cwav_eqt.playback()
@@ -191,7 +198,21 @@ def run(inp_file):
         run_EQTransformer(client_dict, download_data,eqt_dict)
 
 if __name__ == "__main__":
-    path = 'ai_picker.inp'
+    
+    # script directory for ai_picker.inp searching
+    main_dir = os.path.dirname(os.path.abspath(__file__))
+    par_fn = 'ai_picker.inp'
+    rel_par_path = os.path.join('../', par_fn)
+    main_par_path = os.path.join(main_dir, par_fn)
+
+    # verifying if ai_picker.inp exist in any of the following 3 paths. 
+    check_inp_dirs = [par_fn, rel_par_path, main_par_path]
+    for rel_path in check_inp_dirs:
+        if os.path.isfile(rel_path):
+            print('Reading params for: {0} \n'.format(rel_path))
+            path = rel_path
+            break
+
     run(path)
 
     # Cwav_params = prep_Cwav_params(path)
