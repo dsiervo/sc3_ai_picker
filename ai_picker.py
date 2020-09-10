@@ -1,4 +1,4 @@
-#!/home/sgc/anaconda3/envs/eqt/bin/python
+#!/home/dsiervo/anaconda3/envs/pnet/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jul 2020
@@ -169,7 +169,7 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict):
     # mergin all seiscomp .xml events
     events_dir = os.path.join(OUTPUT_PATH, 'xml_events')
     evf_path = os.path.join(OUTPUT_PATH, "events_final.xml")
-    merge_xml_picks(events_dir+'/', evf_path)
+    merge_xml_picks(events_dir, evf_path)
 
 def run_EQTransformer(client_dict, download_data,eqt_dict):
 
@@ -185,7 +185,7 @@ def run_EQTransformer(client_dict, download_data,eqt_dict):
     # mergin all seiscomp .xml events
     events_dir = os.path.join(OUTPUT_PATH, 'xml_events')
     evf_path = os.path.join(OUTPUT_PATH, "events_final.xml")
-    merge_xml_picks(events_dir+'/', evf_path)
+    merge_xml_picks(events_dir, evf_path)
 
 def run(inp_file):
 

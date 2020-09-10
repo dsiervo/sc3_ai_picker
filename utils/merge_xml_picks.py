@@ -34,16 +34,15 @@ def merge_xml_picks(picks_dir, out_path):
 	top, bottom = complete_xml_file(file_name, ind, picks_dir)
 	picks_file_complete = top+picks+bottom
 
-	print (len(picks_file_complete.split("\n")))
-
-	picks_final = open(out_path, "w")
+	picks_final = open(out_path, "w", encoding='utf-8')
 	picks_final.write(picks_file_complete)
 	picks_final.close()
+	print(f'\n\tArchivo final con los eventos generados:\n\t  {out_path}')
 
 
 def pick_extractor(file_name, folder_name = "picks/"):
-    
-    f = open(folder_name+file_name).readlines()
+    path = os.path.join(folder_name, file_name)
+    f = open(path, encoding='utf-8').readlines()
 
     ind = []
 
@@ -59,7 +58,8 @@ def pick_extractor(file_name, folder_name = "picks/"):
 
 def complete_xml_file(file_name, ind, folder_name = "picks/"):
     
-    f = open(folder_name+file_name).readlines()
+    path = os.path.join(folder_name, file_name)
+    f = open(path, encoding='utf-8').readlines()
     
     top = "".join(f[:ind[0]+1])
     bottom = "".join(f[ind[1]:])
