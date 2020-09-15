@@ -1,32 +1,34 @@
-##############################------------ SECTION 1): Client Dict  ------------############################
+##############################------------ SECTION 1): Client Dict and Picker Mode ------------############################
+
+#-->picker 'pnet' o 'eqt'
+picker = pnet
 
 ip = http://10.100.100.232
 port = 8091
-starttime = 2019-12-25 00:00:00
-endtime = 2019-12-25 01:00:00
-dt = 3600
+starttime = 2020-04-10 00:00:00
+endtime = 2020-04-10 04:00:00
+dt = 7200
 
 ##############################------------ SECTION 2): Stations to download ------------############################
 
+#download_data = CM.URMC.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*
 #download_data = CM.URMC.00.HH*, CM.CLBC.00.HH*, CM.CVER.00.HH*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*
-#download_data = CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*
-download_data = CM.TAPM.00.HH*
+download_data = CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*
+#download_data = CM.TAPM.00.HH*
 #download_data = no
 #download_data = all 
 
 ##############################------------ SECTION 3): Stations to filter (ONLY FOR PhaseNet)  ------------############################
 
-filter_data = CM.TAPM, CM.PIRM, CM.MACC, CM.PRA, CM.BELO, CM.CVER, CM.CHI, CM.ORTC, CM.VIL
-#filter_data = CM.RUS, CM.PTB, CM.OCA, CM.SPBC, CM.YPLC
+#filter_data = CM.TAPM, CM.PIRM, CM.MACC, CM.PRA, CM.BELO, CM.CVER, CM.CHI, CM.ORTC, CM.VIL
+filter_data = CM.RUS, CM.PTB, CM.OCA, CM.SPBC, CM.YPLC
 #filter_data = CM.RUS
 #filter_data = no
 
-##############################------------ SECTION 4): Picker mode ------------############################
-#-->picker 'pnet' o 'eqt'
+##############################------------ SECTION 4): Picker dirs ------------############################
 
-picker = eqt
-general_data_dir = /home/dsiervo/ecastillo/TAPM/wav
-general_output_dir = /home/dsiervo/ecastillo/TAPM/out
+general_data_dir = /home/analistas/daniel/nido_test_20/wav
+general_output_dir = /home/analistas/daniel/nido_test_20
 
 #########------------ PhaseNet Dict  ------------#######
 

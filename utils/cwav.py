@@ -23,7 +23,8 @@ if (env == 'pnet'
     from utils.playback import playback
     from utils.picks2xml import main_picks
 
-elif os.environ['CONDA_DEFAULT_ENV'] == 'eqt':
+elif (os.environ['CONDA_DEFAULT_ENV'] == 'eqt' 
+     or sys.executable == '/home/dsiervo/anaconda3/envs/eqt/bin/python'):
     from EQTransformer.utils.downloader import makeStationList
     from EQTransformer.utils.downloader import downloadMseeds
     from EQTransformer.utils.hdf5_maker import preprocessor
