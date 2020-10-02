@@ -1,0 +1,53 @@
+##############################------------ SECTION 1): Client Dict and Picker Mode  ------------############################
+
+#-->picker 'pnet' o 'eqt'
+picker = pnet
+
+ip = http://10.100.100.232
+port = 8091
+starttime = 2020-04-10 00:00:00
+endtime = 2020-04-10 04:00:00
+dt = 7200
+
+##############################------------ SECTION 2): Stations to download ------------############################
+
+#download_data = CM.URMC.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*
+#download_data = CM.URMC.00.HH*, CM.CLBC.00.HH*, CM.CVER.00.HH*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*
+download_data = CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*
+#download_data = CM.TAPM.00.HH*
+#download_data = no
+#download_data = all 
+
+##############################------------ SECTION 3): Stations to filter (ONLY FOR PhaseNet)  ------------############################
+
+#filter_data = CM.TAPM, CM.PIRM, CM.MACC, CM.PRA, CM.BELO, CM.CVER, CM.CHI, CM.ORTC, CM.VIL
+filter_data = CM.RUS, CM.PTB, CM.OCA, CM.SPBC, CM.YPLC
+#filter_data = CM.RUS
+#filter_data = no
+
+##############################------------ SECTION 4): Picker mode ------------############################
+
+general_data_dir = /home/analistas/daniel/nido_test_20/wav
+general_output_dir = /home/analistas/daniel/nido_test_20
+
+#########------------ PhaseNet Dict  ------------#######
+
+pnet_repository_dir = /home/dsiervo/PhaseNet
+pnet_model_dir = /home/dsiervo/PhaseNet/model/190703-214543
+pnet_mode = pred
+pnet_batch_size = 10
+pnet_plot_figure = False
+pnet_save_result = False
+
+#########------------ EQTransformer Dict  ------------##########
+
+eqt_create_json = True
+eqt_create_hdf5 = True
+eqt_model_dir = /home/dsiervo/EQTransformer/ModelsAndSampleData/EqT_model.h5
+eqt_n_processor = 5
+eqt_preproc_overlap = 0.3
+eqt_detection_threshold = 0.003
+eqt_P_threshold = 0.001
+eqt_S_threshold = 0.001
+eqt_number_of_plots = 1
+eqt_plot_mode = time
