@@ -393,7 +393,7 @@ class Pick:
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
-        <agencyID>SGC2</agencyID>
+        <agencyID>SGC</agencyID>
         <author>{author}</author>
         <creationTime>{creation_time}</creationTime>
       </creationInfo>
@@ -410,7 +410,7 @@ class Pick:
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
-        <agencyID>SGC2</agencyID>
+        <agencyID>SGC</agencyID>
         <author>{author}</author>
         <creationTime>{creation_time}</creationTime>
       </creationInfo>
