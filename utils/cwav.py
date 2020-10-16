@@ -1,6 +1,14 @@
 import os
+import sys
 
-if os.environ['CONDA_DEFAULT_ENV'] == 'pnet':
+try:
+    env = os.environ['CONDA_DEFAULT_ENV']
+except KeyError:
+    env = 'none'
+
+if (env == 'pnet' 
+  or sys.executable == '/home/dsiervo/anaconda3/envs/pnet/bin/python'):
+
     from obspy.clients.fdsn import Client
     from obspy import read
     from obspy import UTCDateTime
@@ -8,7 +16,6 @@ if os.environ['CONDA_DEFAULT_ENV'] == 'pnet':
     import itertools
     import concurrent.futures
     from functools import reduce
-    import sys
     import numpy as np
     import pandas as pd
     from datetime import timedelta
@@ -16,7 +23,8 @@ if os.environ['CONDA_DEFAULT_ENV'] == 'pnet':
     from utils.playback import playback
     from utils.picks2xml import main_picks
 
-elif os.environ['CONDA_DEFAULT_ENV'] == 'eqt':
+elif (os.environ['CONDA_DEFAULT_ENV'] == 'eqt' 
+     or sys.executable == '/home/dsiervo/anaconda3/envs/eqt/bin/python'):
     from EQTransformer.utils.downloader import makeStationList
     from EQTransformer.utils.downloader import downloadMseeds
     from EQTransformer.utils.hdf5_maker import preprocessor
@@ -296,7 +304,7 @@ class Cwav_PhaseNet(object):
 
     def run_pnet(self):
         run_execute= os.path.join(self.pnet_dict['pnet_repository_dir'],'run.py')
-        command = f"python {run_execute} --mode={self.pnet_dict['pnet_mode']} \
+        command = f"{run_execute} --mode={self.pnet_dict['pnet_mode']} \
             --model_dir={self.pnet_dict['pnet_model_dir']} --data_dir={self.pnet_dict['pnet_data_dir']} \
             --data_list={self.pnet_dict['pnet_data_list']} --output_dir={self.pnet_dict['pnet_output_dir']}\
             --batch_size={self.pnet_dict['pnet_batch_size']} --input_mseed"

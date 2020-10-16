@@ -1,4 +1,4 @@
-#!/home/sgc/anaconda3/envs/phaseNet/bin/python
+#!/home/dsiervo/anaconda3/envs/pnet/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Mar 25 11:25:33 2020
@@ -38,7 +38,7 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6,
     if ai == 'pnet':
         pick_list = read_picks(input_file, dt, min_prob)
     elif ai == 'eqt':
-        pick_list = prepare_eqt(input_file, min_prob)
+        pick_list = prepare_eqt(input_file)
 
     # Creating xml text
     xml_text = picks2xml(pick_list)
@@ -55,7 +55,7 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6,
     
     print(f'\nOutput file: {output_file}')
 
-def prepare_eqt(input_dir, min_prob):
+def prepare_eqt(input_dir):
     """Merge X_prediction_results.csv files of each station in a list of Picks objects
 
     Parameters
@@ -240,7 +240,7 @@ def picks2xml(pick_list):
 
 def eqt_pick_constructor(time, prob, net, station, loc, ch, ph):
     time = UTCDateTime(time)
-    id_ = id_maker(time, net, station, loc, ch, ph)
+    id_ = id_maker(time, net, station, loc, ch, ph, 'EQTransformer')
     creation_t = UTCDateTime()
     
     evaluation = 'automatic'
@@ -292,12 +292,12 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
                 # se transforma las cuentas asociadas al pick en tiempo
                 pick_time, creation_time = sample2time(pick, to, df, segment, dt)
                 # se crea el Id usando el tiempo del pick
-                ID = id_maker(pick_time, net, station, loc, ch, ph_type)    
+                ID = id_maker(pick_time, net, station, loc, ch, ph_type, 'PhaseNet')    
 
                 # Se evalua si la probabilidad es lo suficientemente buena 
                 # como para considerarlo manual
                 evaluation = 'automatic'
-                if prob >= 0.95:
+                if prob >= 0.98:
                     evaluation = 'manual'
                 # Se crea el objeto Pick
                 p = Pick(ID, pick_time, net, station,
@@ -347,7 +347,7 @@ def sample2time(sample, to, df, segment, dt):
     return pick_time, creation_time
 
 
-def id_maker(pick_time, net, station, loc, ch, phaseHint):
+def id_maker(pick_time, net, station, loc, ch, phaseHint, ai_type):
     """Creates the seiscomp Pick PublicID
     
     Parameters
@@ -362,9 +362,9 @@ def id_maker(pick_time, net, station, loc, ch, phaseHint):
     """
     dateID = pick_time.strftime('%Y%m%d.%H%M%S.%f')[:-4]
     if phaseHint == 'P':
-        publicID = dateID+f'-AIC-{net}.{station}.{loc}.{ch}'
+        publicID = dateID+f'-{ai_type}-{net}.{station}.{loc}.{ch}'
     elif phaseHint == 'S':
-        publicID = dateID+f'-S-L2-{net}.{station}.{loc}.{ch}'
+        publicID = dateID+f'-{ai_type}-{net}.{station}.{loc}.{ch}'
     return publicID
 
 
@@ -393,7 +393,7 @@ class Pick:
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
-        <agencyID>SGC2</agencyID>
+        <agencyID>SGC</agencyID>
         <author>{author}</author>
         <creationTime>{creation_time}</creationTime>
       </creationInfo>
@@ -410,7 +410,7 @@ class Pick:
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
-        <agencyID>SGC2</agencyID>
+        <agencyID>SGC</agencyID>
         <author>{author}</author>
         <creationTime>{creation_time}</creationTime>
       </creationInfo>
