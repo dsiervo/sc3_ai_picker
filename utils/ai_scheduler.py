@@ -117,7 +117,7 @@ if __name__ == "__main__":
     while True:
         #print('esperando: ', datetime.datetime.now() + datetime.timedelta(hours=(5)), 'UT')
         schedule.run_pending()
-        time.sleep(60) # wait one second
+        time.sleep(1) # wait one second
 
     #runner(2)
 
