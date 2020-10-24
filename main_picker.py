@@ -82,12 +82,15 @@ def prep_pnet_params(params):
 
 def prep_eqt_params(params):
     params = params.copy()
-    eqt_int = ['dt', 'eqt_n_processor', 'eqt_number_of_plots']
-    eqt_float = ['eqt_preproc_overlap', 'eqt_detection_threshold',\
+    eqt_int = ['dt', 'eqt_n_processor', 'eqt_number_of_plots',
+                'eqt_batch_size']
+    eqt_float = ['eqt_overlap',\
+                'eqt_detection_threshold',\
                 'eqt_P_threshold', 'eqt_S_threshold']
     eqt_str = ['general_data_dir','general_output_dir', \
                 'eqt_create_json', 'eqt_create_hdf5',\
-                'eqt_model_dir','eqt_plot_mode']
+                'eqt_model_dir','eqt_plot_mode',\
+                'eqt_predictor']
     
     for key in eqt_int: params[f'{key}'] = int(params[f'{key}'])
     for key in eqt_float: params[f'{key}'] = float(params[f'{key}'])
@@ -157,7 +160,9 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict):
         client_dict['starttime'] = starttime
         client_dict['endtime'] = endtime
 
-        cwav_pnet = Cwav_PhaseNet(download_data, pnet_dict, client_dict, filter_data=filter_data)
+        cwav_pnet = Cwav_PhaseNet(download_data, pnet_dict, 
+                                client_dict, 
+                                filter_data=filter_data)
         
         cwav_pnet.download()
         cwav_pnet.run_pnet()
@@ -176,8 +181,11 @@ def run_EQTransformer(client_dict, download_data,eqt_dict):
     cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict)
     cwav_eqt.create_json()
     cwav_eqt.download_mseed()
-    cwav_eqt.preprocessor()
-    cwav_eqt.predictor()
+    if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):
+        cwav_eqt.mseedpredictor()
+    elif eqt_dict['eqt_predictor'] in ('hdf5','HDF5'):
+        cwav_eqt.preprocessor()
+        cwav_eqt.predictor()
     cwav_eqt.picks2xml()
     cwav_eqt.playback()
     
