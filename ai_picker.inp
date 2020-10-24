@@ -40,14 +40,21 @@ pnet_plot_figure = False
 pnet_save_result = False
 
 #########------------ EQTransformer Dict  ------------##########
+##-->eqt_predictor:  mseed or hdf5
 
 eqt_create_json = True
-eqt_create_hdf5 = True
-eqt_model_dir = /home/dsiervo/EQTransformer/ModelsAndSampleData/EqT_model.h5
+eqt_predictor = mseed
+eqt_model_dir = /home/ecastillo/EQTransformer/ModelsAndSampleData/EqT_model.h5
+eqt_overlap = 0.3
 eqt_n_processor = 1
-eqt_preproc_overlap = 0.3
 eqt_detection_threshold = 0.3
 eqt_P_threshold = 0.1
 eqt_S_threshold = 0.1
 eqt_number_of_plots = 1
 eqt_plot_mode = time
+
+
+##-->si eqt_predictor= mseed entonces:
+eqt_batch_size = 1
+##-->si eqt_predictor= hdf5 entonces:
+eqt_create_hdf5 = True
