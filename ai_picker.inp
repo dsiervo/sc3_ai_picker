@@ -1,13 +1,13 @@
 ##############################------------ SECTION 1): Client Dict and Picker Mode ------------############################
 
 #-->picker 'pnet' o 'eqt'
-picker = pnet
+picker = eqt
 
 ip = http://10.100.100.232
 port = 8091
 starttime = 2020-04-10 00:00:00
-endtime = 2020-04-10 04:00:00
-dt = 7200
+endtime = 2020-04-10 00:02:00
+dt = 120
 
 ##############################------------ SECTION 2): Stations to download ------------############################
 
@@ -27,8 +27,8 @@ filter_data = CM.RUS, CM.PTB, CM.OCA, CM.SPBC, CM.YPLC
 
 ##############################------------ SECTION 4): Picker dirs ------------############################
 
-general_data_dir = /home/analistas/daniel/nido_test_20/wav
-general_output_dir = /home/analistas/daniel/nido_test_20
+general_data_dir = /home/ecastillo/results_aipicker/real_time/wav
+general_output_dir = /home/ecastillo/results_aipicker/real_time/out
 
 #########------------ PhaseNet Dict  ------------#######
 

@@ -490,8 +490,6 @@ class Cwav_EQTransformer(object):
             network,station,location,channel = self.prepare_eqt_stations
             downloadMseeds(
                     client_list=[f"{self.client_dict['ip']}:{self.client_dict['port']}"],
-                    network=network, station=station,
-                    location=location, channel=channel,
                     stations_json= os.path.join(self.eqt_dict['eqt_data_dir'],
                                                 'station_list.json'),
                     output_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
