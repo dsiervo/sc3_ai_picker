@@ -27,8 +27,8 @@ filter_data = CM.RUS, CM.PTB, CM.OCA, CM.SPBC, CM.YPLC
 
 ##############################------------ SECTION 4): Picker dirs ------------############################
 
-general_data_dir = /home/ecastillo/results_aipicker/real_time/wav
-general_output_dir = /home/ecastillo/results_aipicker/real_time/out
+general_data_dir = /home/dsiervo/results_aipicker/real_time/wav
+general_output_dir = /home/dsiervo/results_aipicker/real_time/out
 
 #########------------ PhaseNet Dict  ------------#######
 
@@ -44,7 +44,7 @@ pnet_save_result = False
 
 eqt_create_json = True
 eqt_predictor = mseed
-eqt_model_dir = /home/ecastillo/EQTransformer/ModelsAndSampleData/EqT_model.h5
+eqt_model_dir = /home/dsiervo/EQTransformer/ModelsAndSampleData/EqT_model.h5
 eqt_overlap = 0.3
 eqt_n_processor = 1
 eqt_detection_threshold = 0.3

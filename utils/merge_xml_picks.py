@@ -8,36 +8,51 @@ import os
 
 
 def merge_xml_picks(picks_dir, out_path):
-	picks = ""
-	indices = []
+    picks = ""
+    # lista que contiene una lista por cada archivo en la
+    # carpeta picks_dir donde el primer elemento es una tupla de 2 elementos
+    # que contiene los índices donde empieza y termina la etiqueta EventParameters
+    # y el segundo elemento es el nombre del archivo
+    indices = []
+    
+    # variable para controlar si no existe un archivo con información en la 
+    # carpeta picks_dir.
+    not_usefull_file = True
 
-	for pick_file in os.listdir(picks_dir):
-		if fnmatch.fnmatch(pick_file, '*.xml'):
-			print (pick_file)
-			# se salta un xml de pick si no tiene ninguna picada
-			try:
-				parte, ind, file_name = pick_extractor(pick_file, picks_dir)
-			except IndexError:
-				os.system('rm -fr %s'%pick_file)
-				continue
-			texto = "".join(parte)
-			picks += texto 
-			
-			indices.append([ind, file_name])
+    for pick_file in os.listdir(picks_dir):
+        if fnmatch.fnmatch(pick_file, '*.xml'):
+            print (pick_file)
+            # se salta un xml de pick si no tiene ninguna picada
+            try:
+                parte, ind, file_name = pick_extractor(pick_file, picks_dir)
+                not_usefull_file = False
+            except IndexError:
+                print(f'No encontró datos en el archivo {pick_file}')
+                #os.system('rm -fr %s'%pick_file)
+                continue
+            texto = "".join(parte)
+            picks += texto 
 
-	try:
-		ind = indices[0][0]
-	except IndexError:
-		print ('No se encontró ningún archivo .xml en la carpeta %s'%picks_dir)
-	file_name = indices[0][1]
+            indices.append([ind, file_name])
 
-	top, bottom = complete_xml_file(file_name, ind, picks_dir)
-	picks_file_complete = top+picks+bottom
+    try:
+        ind = indices[0][0]
+    except IndexError:
+        #print ('No se encontró ningún archivo .xml en la carpeta %s'%picks_dir)
+        pass
+    
+    if not_usefull_file:
+        print(f'\n\tNo se creo el archivo {out_path}\n')
+    else:
+        file_name = indices[0][1]
 
-	picks_final = open(out_path, "w", encoding='utf-8')
-	picks_final.write(picks_file_complete)
-	picks_final.close()
-	print(f'\n\tArchivo final con los eventos generados:\n\t  {out_path}')
+        top, bottom = complete_xml_file(file_name, ind, picks_dir)
+        picks_file_complete = top+picks+bottom
+
+        picks_final = open(out_path, "w", encoding='utf-8')
+        picks_final.write(picks_file_complete)
+        picks_final.close()
+        print(f'\n\tArchivo final con los eventos generados:\n\t  {out_path}')
 
 
 def pick_extractor(file_name, folder_name = "picks/"):
@@ -47,8 +62,10 @@ def pick_extractor(file_name, folder_name = "picks/"):
     ind = []
 
     for idx, line in enumerate(f):
-        if line.strip().strip("\n") == "<EventParameters>" or \
-        line.strip().strip("\n") == "</EventParameters>":
+        clean_line = line.strip().strip("\n")
+
+        if clean_line == "<EventParameters>" or \
+        clean_line == "</EventParameters>":
             #print line, idx
             ind.append(idx)
 
@@ -68,4 +85,4 @@ def complete_xml_file(file_name, ind, folder_name = "picks/"):
 
 
 if __name__ == '__main__':
-	merge_xml_picks('picks/', 'picks')
+    merge_xml_picks('picks/', 'picks')
