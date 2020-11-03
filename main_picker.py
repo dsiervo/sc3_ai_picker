@@ -180,14 +180,14 @@ def run_EQTransformer(client_dict, download_data,eqt_dict):
 
     cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict)
     cwav_eqt.create_json()
-    """cwav_eqt.download_mseed()
+    cwav_eqt.download_mseed()
     if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):
         cwav_eqt.mseedpredictor()
     elif eqt_dict['eqt_predictor'] in ('hdf5','HDF5'):
         cwav_eqt.preprocessor()
         cwav_eqt.predictor()
     cwav_eqt.picks2xml()
-    cwav_eqt.playback()"""
+    cwav_eqt.playback()
     
     OUTPUT_PATH = eqt_dict['eqt_output_dir']
     # mergin all seiscomp .xml events
