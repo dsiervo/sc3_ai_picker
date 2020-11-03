@@ -126,7 +126,7 @@ def read_eqt_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs):
         picks_list.append(p_pick)
         
         s_t, s_prob = s_times[i], s_probs[i]
-        print(f'{i}. p_t:{p_t}, s_t:{s_t}')
+        print(f'{i}. {station}, p_t:{p_t}, s_t:{s_t}')
         if s_t is not np.nan:
             s_pick = eqt_pick_constructor(s_t, s_prob, net,
                                           station, loc, ch, 'S')

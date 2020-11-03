@@ -28,6 +28,7 @@ elif (os.environ['CONDA_DEFAULT_ENV'] == 'eqt'
     from EQTransformer.utils.downloader import makeStationList
     from EQTransformer.utils.downloader import downloadMseeds
     from EQTransformer.utils.hdf5_maker import preprocessor
+    from EQTransformer.core.mseed_predictor import mseed_predictor
     from EQTransformer.core.predictor import predictor
     from utils.playback import playback
     from utils.picks2xml import main_picks
@@ -471,13 +472,15 @@ class Cwav_EQTransformer(object):
 
             network,station,location,channel = self.prepare_eqt_stations
             json_list = makeStationList(
-                    json_path=os.path.join(self.eqt_dict['eqt_data_dir'],'station_list.json'),
+                    json_path=os.path.join(self.eqt_dict['eqt_data_dir'],
+                                            'station_list.json'),
                     client_list=[f"{self.client_dict['ip']}:{self.client_dict['port']}"], 
                     min_lat=None, max_lat=None, 
                     min_lon=None, max_lon=None, 
                     network=network, station=station,
                     location=location, channel=channel,
-                    start_time=self.client_dict['starttime'], end_time=self.client_dict['endtime'], 
+                    start_time=self.client_dict['starttime'], 
+                    end_time=self.client_dict['endtime'], 
                     channel_list=[], filter_network=[], filter_station=[])
         else:   
             pass
@@ -485,14 +488,15 @@ class Cwav_EQTransformer(object):
     def download_mseed(self):
         if self.download_data not in ('No','no','n','False',False):
             network,station,location,channel = self.prepare_eqt_stations
-            downloadMseeds(client_list=[f"{self.client_dict['ip']}:{self.client_dict['port']}"],
-                    network=network, station=station,
-                    location=location, channel=channel,
-                    stations_json= os.path.join(self.eqt_dict['eqt_data_dir'],'station_list.json'),
+            downloadMseeds(
+                    client_list=[f"{self.client_dict['ip']}:{self.client_dict['port']}"],
+                    stations_json= os.path.join(self.eqt_dict['eqt_data_dir'],
+                                                'station_list.json'),
                     output_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
                     min_lat=None, max_lat=None, 
                     min_lon=None, max_lon=None,
-                    start_time=self.client_dict['starttime'], end_time=self.client_dict['endtime'],
+                    start_time=self.client_dict['starttime'], 
+                    end_time=self.client_dict['endtime'],
                     chunk_size= self.eqt_dict['eqt_chunk_size'] / (3600*24), #se divide sobre 3600*24 para convertir horas a dias
                     channel_list=[], 
                     n_processor=self.eqt_dict['eqt_n_processor'])
@@ -506,7 +510,7 @@ class Cwav_EQTransformer(object):
                 preproc_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'preproc_files'),
                 mseed_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
                 stations_json=os.path.join(self.eqt_dict['eqt_data_dir'],'station_list.json'), 
-                overlap=self.eqt_dict['eqt_preproc_overlap'], 
+                overlap=self.eqt_dict['eqt_overlap'], 
                 n_processor=self.eqt_dict['eqt_n_processor'])
         else:
             pass
@@ -521,6 +525,23 @@ class Cwav_EQTransformer(object):
                 S_threshold=self.eqt_dict['eqt_S_threshold'], 
                 number_of_plots=self.eqt_dict['eqt_number_of_plots'],
                 plot_mode=self.eqt_dict['eqt_plot_mode'])
+
+    def mseedpredictor(self):
+
+        mseed_predictor(
+                input_dir=os.path.join( self.eqt_dict['eqt_data_dir'],
+                                        'mseed'),
+                input_model=self.eqt_dict['eqt_model_dir'],
+                stations_json=os.path.join(self.eqt_dict['eqt_data_dir'],
+                                        'station_list.json'),
+                output_dir=self.eqt_dict['eqt_output_dir'],
+                detection_threshold=self.eqt_dict['eqt_detection_threshold'],
+                P_threshold=self.eqt_dict['eqt_P_threshold'], 
+                S_threshold=self.eqt_dict['eqt_S_threshold'],
+                number_of_plots=self.eqt_dict['eqt_number_of_plots'], 
+                plot_mode=self.eqt_dict['eqt_plot_mode'], 
+                overlap=self.eqt_dict['eqt_overlap'], 
+                batch_size=self.eqt_dict['eqt_batch_size'])
 
     def picks2xml(self):
         """Transform EQTransformer output file into Seiscomp XML file
