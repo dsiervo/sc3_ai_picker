@@ -133,3 +133,6 @@ dmypy.json
 
 # waveforms files
 *.mseed
+
+# time tracks EQTransformer
+time_tracks.pkl
