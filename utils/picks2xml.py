@@ -76,9 +76,13 @@ def prepare_eqt(input_dir):
     df = df[interest_col]
     # Deleting rows without P phase
     df = df.dropna(subset=['p_probability'])
+    # Changing NaN for "no pick"
+    df = df.fillna('no pick')
     # Removing white spaces arround station name
     df['station'] = df['station'].str.strip()
     
+    # Writting in csv the data
+    df.to_csv(os.path.join(input_dir, 'all_picks.csv'), index=False)
     p_list = read_eqt_picks(df['network'].tolist(), df['station'].tolist(),
                     df['instrument_type'].tolist(),
                     df['p_arrival_time'].tolist(), df['p_probability'].tolist(),
@@ -126,8 +130,8 @@ def read_eqt_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs):
         picks_list.append(p_pick)
         
         s_t, s_prob = s_times[i], s_probs[i]
-        print(f'{i}. {station}, p_t:{p_t}, s_t:{s_t}')
-        if s_t is not np.nan:
+        print(f'{i}. {station}, p_t:{p_t}, p_prob:{p_prob}, s_t:{s_t}, s_prob:{s_prob}')
+        if s_t != 'no pick':
             s_pick = eqt_pick_constructor(s_t, s_prob, net,
                                           station, loc, ch, 'S')
             picks_list.append(s_pick)
