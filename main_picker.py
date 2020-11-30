@@ -10,6 +10,7 @@ from obspy import UTCDateTime
 from datetime import timedelta
 from utils.cwav import Cwav_PhaseNet, Cwav_EQTransformer
 from utils.merge_xml_picks import merge_xml_picks
+from utils.origins_pruning import origins_pruning
 
 def read_params(par_file='ai_picker.inp'):
     lines = open(par_file).readlines()
@@ -175,6 +176,10 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict):
     events_dir = os.path.join(OUTPUT_PATH, 'xml_events')
     evf_path = os.path.join(OUTPUT_PATH, "events_final.xml")
     merge_xml_picks(events_dir, evf_path)
+    
+    # pruning origins that are not the prefered
+    pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
+    origins_pruning(evf_path, pref_orig_path)
 
 def run_EQTransformer(client_dict, download_data,eqt_dict):
 
