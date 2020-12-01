@@ -48,7 +48,7 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml'):
     print('\tArreglando IDs en nuevo xml')
     remove_id_prefix(output_fn)
     
-    print('\n\tArchivo con orígenes preferidos para migrar a SeisComP3:\n\t  %s'%output_fn)
+    print('\n\tArchivo con orígenes preferidos para migrar a SeisComP3:\n\n\t  %s\n'%output_fn)
 
 def remove_id_prefix(xml_name):
     f = open(xml_name).read()

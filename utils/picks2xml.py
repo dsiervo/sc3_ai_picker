@@ -251,7 +251,7 @@ def eqt_pick_constructor(time, prob, net, station, loc, ch, ph):
     if prob >= 0.95:
         evaluation = 'manual'
     
-    pick = Pick(id_, time, net, station, loc, ch,
+    pick = Pick(id_, time, net, station, loc, ch, prob,
                 ph, creation_t, evaluation, 'EQTransformer')
 
     return pick
@@ -304,8 +304,8 @@ def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
                 if prob >= 0.98:
                     evaluation = 'manual'
                 # Se crea el objeto Pick
-                p = Pick(ID, pick_time, net, station,
-                        loc, ch, ph_type, creation_time, evaluation)
+                p = Pick(ID, pick_time, net, station, loc, ch, prob,
+                        ph_type, creation_time, evaluation)
                 
                 # Se agrega cada pick a la lista de picks
                 picks_list.append(p)
@@ -392,7 +392,7 @@ class Pick:
         <value>{pick_time}</value>
       </time>
       <waveformID networkCode="{net}" stationCode="{station}" locationCode="{loc}" channelCode="{ch}"/>
-      <filterID>BW(4,1.00,10.00)</filterID>
+      <filterID>Probability_{prob}</filterID>
       <methodID>AIC</methodID>
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
@@ -409,7 +409,7 @@ class Pick:
         <value>{pick_time}</value>
       </time>
       <waveformID networkCode="{net}" stationCode="{station}" locationCode="{loc}" channelCode="{ch}"/>
-      <filterID>BW(4,1.00,10.00)</filterID>
+      <filterID>Probability_{prob}</filterID>
       <methodID>L2-AIC</methodID>
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
@@ -421,7 +421,7 @@ class Pick:
       '''
 
     def __init__(self, publicID, pick_time,
-                net, station, loc, ch,
+                net, station, loc, ch, prob,
                 phaseHint, creation_time,
                 evaluation, author='PhaseNet'):
         """
@@ -450,6 +450,7 @@ class Pick:
         self.station = station
         self.loc = loc
         self.ch = ch
+        self.prob = prob
         self.phaseHint = phaseHint
         self.creation_time = creation_time
         self.evaluation = evaluation
@@ -467,6 +468,7 @@ class Pick:
                 station = self.station,
                 loc = self.loc,
                 ch = self.ch,
+                prob = self.prob,
                 phaseHint = self.phaseHint,
                 creation_time = self.creation_time,
                 evaluation = self.evaluation,
@@ -480,6 +482,7 @@ class Pick:
                 station = self.station,
                 loc = self.loc,
                 ch = self.ch,
+                prob = self.prob,
                 phaseHint = self.phaseHint,
                 creation_time = self.creation_time,
                 evaluation = self.evaluation,
