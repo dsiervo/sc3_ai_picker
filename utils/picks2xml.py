@@ -393,7 +393,7 @@ class Pick:
       </time>
       <waveformID networkCode="{net}" stationCode="{station}" locationCode="{loc}" channelCode="{ch}"/>
       <filterID>Probability_{prob}</filterID>
-      <methodID>AIC</methodID>
+      <methodID>{author}</methodID>
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
@@ -410,7 +410,7 @@ class Pick:
       </time>
       <waveformID networkCode="{net}" stationCode="{station}" locationCode="{loc}" channelCode="{ch}"/>
       <filterID>Probability_{prob}</filterID>
-      <methodID>L2-AIC</methodID>
+      <methodID>{author}</methodID>
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
