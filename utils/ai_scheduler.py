@@ -13,6 +13,31 @@ import time
 import datetime
 import random
 
+
+def read_params(par_file='phaseNet.inp'):
+    """Read params from .inp file
+
+    Parameters
+    ----------
+    par_file : str, optional
+        File name of parameter file, by default 'phaseNet.inp'
+
+    Returns
+    -------
+    dic
+        Dictionary with parameters and values from params file
+    """
+    lines = open(par_file).readlines()
+    par_dic = {}
+    for line in lines:
+        if line[0] == '#' or line.strip('\n').strip() == '':
+            continue
+        else:
+            l = line.strip('\n').strip()
+            key, value = l.split('=')
+            par_dic[key.strip()] = value.strip()
+    return par_dic
+
 def change_times(ti:str, tf:str):
     """Change starttime and endtime in ai_picker.inp file
 
@@ -48,15 +73,15 @@ def change_xml_version(ev_file='events_final.xml'):
         f.write(''.join(lines))
 
 
-def get_origins_path(path):
+def get_origins_path(path, xmlfile):
     orig_path = None
     for (dirpath, dirnames, filenames) in os.walk(path):
         for filename in filenames:
-            if filename == 'mag.xml':
+            if filename == xmlfile:
                 orig_path = os.path.join(dirpath, filename)
                 break
     
-    print('mag.xml path:', orig_path)
+    print(xmlfile, orig_path)
     return orig_path
 
 
@@ -68,7 +93,9 @@ def runner(every_h):
     every_h : int
         Time delta in hours between init and end time
     """
-    main_path = '/home/dsiervo/scheduler/nido_test/'
+    
+    params = read_params('ai_picker_scdl.inp')
+    main_path = params['general_output_dir']
     os.system('rm -fr %s'%main_path)
     
     # taking current time in UTC
@@ -84,21 +111,21 @@ def runner(every_h):
     os.system('time ai_picker.py')
 
     # getting the origins path
-    output_path = get_origins_path('nido_test/')
+    output_path = get_origins_path(main_path, 'origenes_preferidos.xml')
 
     if output_path is not None:
         # if the file is not empty
         if os.path.getsize(output_path):
             print('xml a modificar:', output_path)
             # changing the xml version of the origins file (mags.xml)
-            change_xml_version(output_path)
+            #change_xml_version(output_path)
     
             print('\n\n\tUploading to db\n\n')
             os.system('head -3 %s'%output_path)
 
             # random number to avoid repetead users
             num = random.randint(1, 10)
-            cmd = 'scdispatch -i %s -H 10.100.100.232:4803 -u ai_sgc_%d'%(output_path, num)
+            cmd = 'scdispatch -i %s -H 10.100.100.13:4803 -u ai_sgc_%d'%(output_path, num)
             print(cmd)
             os.system(cmd)
         else:

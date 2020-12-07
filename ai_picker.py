@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/envs/pnet/bin/python
+#!/home/dsiervo/anaconda3/envs/eqt/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jul 2020
@@ -50,7 +50,7 @@ if __name__ == '__main__':
         if os.path.isfile(rel_path):
             inp_path = rel_path
             break
-
+    
     par = read_params(inp_path)
 
     # changing the excecution line 

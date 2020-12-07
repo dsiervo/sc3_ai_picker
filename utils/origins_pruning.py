@@ -27,28 +27,23 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml'):
         Name of output SeisComP3 xml file.
     """
     
-    print('\n\tCambiando versión del xml')
     change_xml_version(xml_name)
     
-    print('\n\nEliminando los orígnenes que no son el preferido del archivo %s\n'%xml_name)
-    print('\tLeyendo el xml de eventos...')
+    print('\n\nRemoving origins that are not the prefered one in the xml %s\n'%xml_name)
     try: 
         cat = obs.read_events(xml_name, id_prefix='', format='SC3ML')
     except FileNotFoundError:
         print('\n\t No existe el archivo %s, se salta este proceso\n'%xml_name)
         sys.exit(1)
-    
-    print('\tEliminando orígenes que no son el preferido...')
+
     for ev in cat:
         del ev.origins[:-1]
-    
-    print('\tEscribiendo nuevo xml...')
+
     cat.write(output_fn, format='SC3ML',validate=True, event_removal=True, verbose=True)
-    
-    print('\tArreglando IDs en nuevo xml')
+
     remove_id_prefix(output_fn)
     
-    print('\n\tArchivo con orígenes preferidos para migrar a SeisComP3:\n\n\t  %s\n'%output_fn)
+    print('\n\tArchivo con origenes preferidos para migrar a SeisComP3:\n\n\t  %s\n'%output_fn)
 
 def remove_id_prefix(xml_name):
     f = open(xml_name).read()

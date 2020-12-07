@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/envs/eqt/bin/python
+#!/home/dsiervo/anaconda3/envs/pnet/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jul 2020
@@ -13,7 +13,7 @@ from utils.merge_xml_picks import merge_xml_picks
 from utils.origins_pruning import origins_pruning
 
 def read_params(par_file='ai_picker.inp'):
-    lines = open(par_file).readlines()
+    lines = open(par_file, encoding='utf-8').readlines()
     par_dic = {}
     for line in lines:
         if line[0] == '#' or line.strip('\n').strip() == '':
@@ -56,8 +56,11 @@ def prep_filter_list(params):
 
 def prep_client_params(params):
     params = params.copy()
-    params['starttime'] = UTCDateTime(params['starttime'])
-    params['endtime'] = UTCDateTime(params['endtime'])
+    try:
+        params['starttime'] = UTCDateTime(params['starttime'])
+        params['endtime'] = UTCDateTime(params['endtime'])
+    except ValueError:
+        raise ValueError("\n\nAsegúrese de ingresar fechas válidas con el formato: YYYY-MM-D hh:mm:ss\n")
     params['dt'] = timedelta(seconds=int(params['dt']))
 
     client_params = ['ip', 'port', 'starttime', 'endtime', 'dt']
@@ -111,9 +114,21 @@ def prep_eqt_params(params):
             eqt_dict[str(key)] = params[key]
     return eqt_dict
 
+def prep_mysqldb_params(params):
+    params = params.copy()
+    
+    # value by default. It will be replaced if it exist in ai_picker.inp
+    mysql_dict = {'db_sc':'mysql://sysop:sysopp@10.100.100.13/seiscomp3'}
+    for key in mysql_dict:
+        if key in params.keys():
+            mysql_dict[key] = params[key]
+    
+    return mysql_dict
+
 def prep_Cwav_params(inp_file):
     params = read_params(inp_file)
 
+    mysqldb_dict = prep_mysqldb_params(params)
     client_dict = prep_client_params(params)   
     download_data = prep_download_list(params)
     filter_data = prep_filter_list(params)
@@ -121,9 +136,9 @@ def prep_Cwav_params(inp_file):
     pnet_dict = prep_pnet_params(params)
     eqt_dict = prep_eqt_params(params)
 
-    return client_dict, download_data,filter_data, picker, pnet_dict, eqt_dict
+    return client_dict, download_data,filter_data, picker, pnet_dict, eqt_dict, mysqldb_dict
 
-def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict):
+def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict):
     STARTTIME= client_dict['starttime']
     ENDTIME = client_dict['endtime']
     DT = client_dict['dt']
@@ -163,7 +178,8 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict):
 
         cwav_pnet = Cwav_PhaseNet(download_data, pnet_dict, 
                                 client_dict, 
-                                filter_data=filter_data)
+                                filter_data=filter_data,
+                                mysqldb_dict=mysqldb_dict)
         
         cwav_pnet.download()
         cwav_pnet.run_pnet()
@@ -181,9 +197,12 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict):
     pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
     origins_pruning(evf_path, pref_orig_path)
 
-def run_EQTransformer(client_dict, download_data,eqt_dict):
+def run_EQTransformer(client_dict, download_data,eqt_dict, mysqldb_dict):
 
-    cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict)
+    cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict,
+                                  mysqldb_dict=mysqldb_dict)
+    
+    print(f'\ncwav_eqt object:\n\t{cwav_eqt.__dict__}\n')
     cwav_eqt.create_json()
     cwav_eqt.download_mseed()
     if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):
@@ -206,13 +225,13 @@ def run_EQTransformer(client_dict, download_data,eqt_dict):
 
 def run(inp_file):
 
-    client_dict, download_data,filter_data, picker, pnet_dict, eqt_dict = prep_Cwav_params(inp_file)
+    client_dict, download_data,filter_data, picker, pnet_dict, eqt_dict, mysqldb_dict = prep_Cwav_params(inp_file)
 
     if picker in ('PhaseNet','pnet','phasenet'):
-        run_PhaseNet(client_dict, download_data,filter_data,pnet_dict)
+        run_PhaseNet(client_dict, download_data, filter_data, pnet_dict, mysqldb_dict=mysqldb_dict)
 
     elif picker in ('EQTransformer','eqt','eqtransformer'):
-        run_EQTransformer(client_dict, download_data,eqt_dict)
+        run_EQTransformer(client_dict, download_data, eqt_dict, mysqldb_dict=mysqldb_dict)
 
 if __name__ == "__main__":
     

@@ -41,7 +41,8 @@ class Cwav_PhaseNet(object):
     db_sc : str
         Full path to seiscomp3 main database
     """
-    db_sc = 'mysql://sysop:sysop@10.100.100.232/seiscomp3'
+    # replaced by mysqldb_dict key db_sc
+    #db_sc = 'mysql://sysop:sysop@10.100.100.232/seiscomp3'
     
     def __init__(self, download_data, pnet_dict, client_dict,
                  mysqldb_dict=None, filter_data='no', download_max_workers=8,**kwargs):
@@ -104,7 +105,7 @@ class Cwav_PhaseNet(object):
         download_max_workers: int
             the max workers for download the mseed files in parallel mode.
         **kwargs: 
-            kwargs for filter method of stream object from obspy
+            kwargs for filter method of stream object
         """
 
         self.download_data = download_data
@@ -115,6 +116,7 @@ class Cwav_PhaseNet(object):
         self.download_max_workers = download_max_workers
         self.pick_csv_path = os.path.join(self.pnet_dict['pnet_output_dir'], 'picks.csv')
         self.pick_xml_path = os.path.join(self.pnet_dict['pnet_output_dir'], 'picks.xml')
+        self.db_sc = mysqldb_dict['db_sc']
         self.__dict__.update(kwargs)
 
     @property
@@ -361,7 +363,7 @@ class Cwav_PhaseNet(object):
             for row in reader:
                 wfs.append(os.path.join(self.pnet_dict['pnet_data_dir'], row[0]))"""
         
-        os.system('rm -fr xml_events/* events_final.xml')
+        #os.system('rm -fr xml_events/* events_final.xml')
         
         """# Creating a list with streams of the station waveforms
         streams = list(map(read_merge, wfs))
@@ -383,7 +385,8 @@ class Cwav_EQTransformer(object):
     db_sc : str
         Full path to seiscomp3 main database
     """
-    db_sc = 'mysql://sysop:sysop@10.100.100.232/seiscomp3'
+    # replaced by mysqldb_dict key db_sc
+    #db_sc = 'mysql://sysop:sysop@10.100.100.232/seiscomp3'
     
     def __init__(self, download_data, eqt_dict, client_dict,
                  mysqldb_dict=None):
@@ -421,6 +424,7 @@ class Cwav_EQTransformer(object):
         self.client_dict = client_dict
         self.mysqldb_dict = mysqldb_dict
         self.pick_xml_path = os.path.join(self.eqt_dict['eqt_output_dir'], 'picks.xml')
+        self.db_sc = mysqldb_dict['db_sc']
 
     @property
     def client(self):
@@ -580,8 +584,6 @@ class Cwav_EQTransformer(object):
                 out_dir=self.eqt_dict['eqt_output_dir'],
                 ai_type='eqt'
                 )
-        
-        os.system('rm -fr xml_events/* events_final.xml')
         
         # excecuting playback commands
         my_playback.playback_commands()
