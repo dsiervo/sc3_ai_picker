@@ -18,8 +18,9 @@ db_sc = mysql://sysop:sysopp@10.100.100.13/seiscomp3
 #download_data = CM.URMC.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*
 #download_data = CM.URMC.00.HH*, CM.CLBC.00.HH*, CM.CVER.00.HH*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*
 #download_data = CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*
-download_data = CM.PDSC.10.HN*, CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.TAM.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*, CM.URMC.00.HH*, CM.CLBC.20.EH*, CM.CJELA.10.*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*, CM.DBB.00.HH*, CM.URE.00.HH*, CM.APAC.00.HH*, CM.CBOC.00.HH*, CM.QUBC.00.HH*, CM.GUY2C.00.HH*, CM.HEL.00.HH*, CM.YOT.00.HH*, CM.PAL.00.HH*, CM.MAN1C.10.*, CM.BBAC.00.HH*, CM.GRPC.00.HH*, CM.SOL.20.EH*, CM.CUM.20.EH*, CM.CCALA.10.*, CM.NOR.00.HH*, CM.CLEJA.10.HN*, CM.DRL02.30.HH*, IU.SDV.00.BH*, CM.SJC.00.HH*, CM.CRJC.00.HH*, CM.URI.00.HH*, CM.ARGC.00.HH*, CM.SMAR.00.HH*, CM.GUA.20.EH*, CM.PTGC.00.HH*, CM.MARO.00.HH*, CM.COBO.00.HH*, CM.SOTO.00.HH*, CM.BET.20.EH*, CM.JAMC.00.HH*, RP.UPD2.*.HH*, EC.SNRL.*.HH*, CM.CUFI.10.HN*, CM.POP2.00.HH*, EC.RVRD.*.HH*
-#download_data = CM.TAPM.00.HH*
+#download_data = CM.PDSC.10.HN*, CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.TAM.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*, CM.URMC.00.HH*, CM.CLBC.20.EH*, CM.CJELA.10.*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*, CM.DBB.00.HH*, CM.URE.00.HH*, CM.APAC.00.HH*, CM.CBOC.00.HH*, CM.QUBC.00.HH*, CM.GUY2C.00.HH*, CM.HEL.00.HH*, CM.YOT.00.HH*, CM.PAL.00.HH*, CM.MAN1C.10.*, CM.BBAC.00.HH*, CM.GRPC.00.HH*, CM.SOL.20.EH*, CM.CUM.20.EH*, CM.CCALA.10.*, CM.NOR.00.HH*, CM.CLEJA.10.HN*, CM.DRL02.30.HH*, IU.SDV.00.BH*, CM.SJC.00.HH*, CM.CRJC.00.HH*, CM.URI.00.HH*, CM.ARGC.00.HH*, CM.SMAR.00.HH*, CM.GUA.20.EH*, CM.PTGC.00.HH*, CM.MARO.00.HH*, CM.COBO.00.HH*, CM.SOTO.00.HH*, CM.BET.20.EH*, CM.JAMC.00.HH*, RP.UPD2.*.HH*, EC.SNRL.*.HH*, CM.CUFI.10.HN*, CM.POP2.00.HH*, EC.RVRD.*.HH*
+download_data = CM.BAR2.00.HH*,CM.PDSC.10.HN*
+#download_data = CM.URMC.00.HH*
 #download_data = no
 #download_data = all 
 
@@ -32,8 +33,8 @@ filter_data = CM.RUS, CM.PTB, CM.OCA, CM.SPBC, CM.YPLC
 
 ##############################------------ SECTION 4): Picker dirs ------------############################
 
-general_data_dir = /home/dsiervo/results_aipicker/real_time/wav
-general_output_dir = /home/dsiervo/results_aipicker/real_time/out
+general_data_dir = /home/ecastillo/results_SGCaipicker/real_time/wav
+general_output_dir = /home/ecastillo/results_SGCaipicker/real_time/out
 
 #########------------ PhaseNet Dict  ------------#######
 
@@ -49,7 +50,7 @@ pnet_save_result = False
 
 eqt_create_json = True
 eqt_predictor = mseed
-eqt_model_dir = /home/dsiervo/EQTransformer/ModelsAndSampleData/EqT_model.h5
+eqt_model_dir = /home/ecastillo/EQTransformer/ModelsAndSampleData/EqT_model.h5
 eqt_overlap = 0.3
 eqt_n_processor = 5
 eqt_detection_threshold = 0.003
