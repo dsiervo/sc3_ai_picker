@@ -100,7 +100,7 @@ def logger(ti, tf):
     
     f.close()
 
-def runner(every_m, buf=2):
+def runner(every_m, buf=2, db='10.100.100.13:4803'):
     """Excecute ai_picker.py every every_m hours with a 5 min buffer
 
     Parameters
@@ -130,6 +130,12 @@ def runner(every_m, buf=2):
 
     # getting the origins path
     output_path = get_origins_path(main_path, 'origenes_preferidos.xml')
+    # getting the picks path
+    picks_path = get_origins_path(main_path, 'picks.xml')
+
+    cmd_picks = 'scdispatch -i %s -H %s -u ai_sgc'%(picks_path, db)
+    print(cmd_picks)
+    os.system(cmd_picks)
 
     if output_path is not None:
         # if the file is not empty
@@ -143,7 +149,7 @@ def runner(every_m, buf=2):
 
             # random number to avoid repetead users
             num = random.randint(1, 10)
-            cmd = 'scdispatch -i %s -H 10.100.100.13:4803 -u ai_sgc_%d'%(output_path, num)
+            cmd = 'scdispatch -i %s -H % -u ai_sgc_%d'%(output_path, db, num)
             print(cmd)
             os.system(cmd)
         else:
