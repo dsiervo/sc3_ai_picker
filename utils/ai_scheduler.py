@@ -38,7 +38,7 @@ def read_params(par_file='phaseNet.inp'):
             par_dic[key.strip()] = value.strip()
     return par_dic
 
-def change_times(ti:str, tf:str):
+def change_times(ti:str, tf:str, dt:int):
     """Change starttime and endtime in ai_picker.inp file
 
     Parameters
@@ -47,6 +47,8 @@ def change_times(ti:str, tf:str):
         Initial UTC datetime in strftime format: %Y-%m-%d %H-%M-%S
     tf : str
         Final UTC datetime in strftime format: %Y-%m-%d %H-%M-%S
+    dt : int
+        Delta time in seconds (tf-ti)
     """
     
     f_lines = open('ai_picker_scdl.inp').readlines()
@@ -56,10 +58,13 @@ def change_times(ti:str, tf:str):
             start_idx = idx
         elif line.startswith('endtime'):
             end_idx = idx
-    
-    # replacing start and end time lines 
+        elif line.startswith('dt'):
+            dt_idx = idx
+
+    # replacing start, end and dt time lines 
     f_lines[start_idx] = f'starttime = {ti}\n'
     f_lines[end_idx] = f'endtime = {tf}\n'
+    f_lines[dt_idx] = f'dt = {dt}\n'
     
     # writing new file
     with open('ai_picker.inp', 'w') as f:
@@ -84,14 +89,26 @@ def get_origins_path(path, xmlfile):
     print(xmlfile, orig_path)
     return orig_path
 
+def logger(ti, tf):
+    logfile = 'scheduler.log'
+    if not os.path.isfile('scheduler.log'):
+        f = open(logfile, 'w')
+    else:
+        f = open(logfile,'a')
+    
+    print(f'Inició ejecución a las: {ti}, terminó la ejecución a las: {tf}', file=f)
+    
+    f.close()
 
-def runner(every_h):
-    """Excecute ai_picker.py every every_h hours with a 5 min buffer
+def runner(every_m, buf=2):
+    """Excecute ai_picker.py every every_m hours with a 5 min buffer
 
     Parameters
     ----------
-    every_h : int
+    every_m : int
         Time delta in hours between init and end time
+    buf : int
+        Buffer in minutes, default: 2
     """
     
     params = read_params('ai_picker_scdl.inp')
@@ -100,11 +117,12 @@ def runner(every_h):
     
     # taking current time in UTC
     t = datetime.datetime.now() + datetime.timedelta(hours=(5))
-    t_i = t - datetime.timedelta(minutes=(60*every_h + 5))
+    t_i = t - datetime.timedelta(minutes=(every_m + buf))
     
-    # change the init and end time in ai_picker.inp
+    # change the init, end time and dt in ai_picker.inp
     change_times(t_i.strftime("%Y-%m-%d %H:%M:%S"),
-                 t.strftime("%Y-%m-%d %H:%M:%S"))
+                 t.strftime("%Y-%m-%d %H:%M:%S"),
+                 (every_m + buf)*60)
     
     print(f'\n\n\trunning from {t_i} to {t}\n\n')
     os.system('head -10 ai_picker.inp')
@@ -132,19 +150,21 @@ def runner(every_h):
             print('\n\n\tArchivo vacio!\n\n')
     else:
         print('\n\n\tNo existe mag.xml!\n\n')
-    print('Siguiente ejecucion a las: ', t + datetime.timedelta(hours=(every_h)), 'UT')
+    print('\n\tSiguiente ejecucion a las: ', t + datetime.timedelta(minutes=(every_m)), 'UT\n')
+    
+    tf = datetime.datetime.now() + datetime.timedelta(hours=(5))
+    
+    logger(t, tf)
 
 
 if __name__ == "__main__":
 
-    hours = 2 # period of excecution in hours
-    schedule.every(hours).hours.do(runner, every_h=hours)
-    #schedule.every(hours).minutes.do(runner, every_h=1/6)
+    minutes = 2 # period of excecution in minutes
+    buffer = 5 # buffer or overlapping in minutes
+    schedule.every(minutes).minutes.do(runner, every_m=minutes, buf=buffer)
     
     while True:
         #print('esperando: ', datetime.datetime.now() + datetime.timedelta(hours=(5)), 'UT')
         schedule.run_pending()
         time.sleep(1) # wait one second
-
-    #runner(2)
 
