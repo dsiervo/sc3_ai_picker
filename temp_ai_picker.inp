@@ -1,0 +1,59 @@
+##############################------------ SECTION 1): Client Dict and Picker Mode  ------------############################
+
+#-->picker 'pnet' o 'eqt'
+picker = eqt
+
+ip = http://10.100.100.232
+port = 8091
+starttime = 2020-01-22 00:00:00
+endtime = 2020-01-30 23:59:59
+dt = 21600
+
+# base de datos de SeisComP3 desde donde se tomará la configuración de las estaciones y 
+# se calcularán las amplitudes en las trazas para el cálculo de magnitud
+db_sc = mysql://sysop:sysopp@10.100.100.13/seiscomp3
+
+##############################------------ SECTION 2): Stations to download ------------############################
+
+download_data = CM.ARAMC.00.HH*, CM.DORAC.00.HH*, CM.CLEJA.10.HN*, CM.URMC.00.HH*, CM.CLBC.20.EH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*
+#download_data = no
+#download_data = all 
+
+##############################------------ SECTION 3): Stations to filter (ONLY FOR PhaseNet)  ------------############################
+
+#filter_data = CM.TAPM, CM.PIRM, CM.MACC, CM.PRA, CM.BELO, CM.CVER, CM.CHI, CM.ORTC, CM.VIL
+filter_data = CM.BAR2, CM.BRJC, CM.PAM, CM.RUS, CM.PTB, CM.OCA, CM.SPBC, CM.YPLC, CM.URMC, CM.CLBC.20.EH*, CM.CJELA.10.*, CM.BELO, CM.TAPM, CM.CHI, CM.PRA, CM.ORTC, CM.PIRM, CM.MACC, CM.VIL.20.EH*, CM.DBB, CM.URE, CM.APAC, CM.CBOC, CM.QUBC, CM.GUY2C, CM.HEL, CM.YOT, CM.PAL, CM.MAN1C, CM.BBAC, CM.GRPC, CM.CUM, CM.CCALA, CM.NOR
+#filter_data = CM.RUS
+#filter_data = no
+
+##############################------------ SECTION 4): Picker mode ------------############################
+
+general_data_dir = /home/dsiervo/mesetas/wav
+general_output_dir = /home/dsiervo/mesetas/
+
+#########------------ PhaseNet Dict  ------------#######
+
+pnet_repository_dir = /home/dsiervo/PhaseNet
+pnet_model_dir = /home/dsiervo/PhaseNet/model/190703-214543
+pnet_mode = pred
+pnet_batch_size = 10
+pnet_plot_figure = False
+pnet_save_result = False
+
+#########------------ EQTransformer Dict  ------------##########
+
+eqt_create_json = True
+eqt_predictor = mseed
+eqt_model_dir = /home/dsiervo/EQTransformer/ModelsAndSampleData/EqT_model.h5
+eqt_n_processor = 5
+eqt_overlap = 0.3
+eqt_detection_threshold = 0.03
+eqt_P_threshold = 0.01
+eqt_S_threshold = 0.01
+eqt_number_of_plots = 5
+eqt_plot_mode = time
+
+##-->si eqt_predictor= mseed entonces:
+eqt_batch_size = 1
+##-->si eqt_predictor= hdf5 entonces:
+eqt_create_hdf5 = True

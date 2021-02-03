@@ -1,0 +1,177 @@
+#!/home/dsiervo/anaconda3/bin/python
+# -*- coding: utf-8 -*-
+"""
+Created on Jan 2021
+
+@author: Daniel Siervo P. [ddsiervop@unal.edu.co]
+
+Excecutes ai_picker.py discontinously in a large amount
+of time
+"""
+
+import os
+import datetime
+import random
+
+
+def discontinuous_picker(start, end, dt, db='10.100.100.13:4803'):
+
+    start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
+    end = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
+    dt = datetime.timedelta(days=dt)
+
+    temp_inp = 'temp_ai_picker.inp'
+    params = read_params(temp_inp)
+    wav_dir = params['general_data_dir']
+    main_path = params['general_output_dir']
+
+    while start <= end:
+        # taking current time in UTC
+        t = datetime.datetime.now() + datetime.timedelta(hours=(5))
+
+        final_time = start + dt
+        print(f'\n\n\trunning from {start} to {final_time}\n\n')
+
+        os.system('rm -fr %s' % wav_dir)
+        output_dir = '%s%s-%s%s' % (str(start.day).rjust(2, '0'),
+                                    str(start.month).rjust(2, '0'),
+                                    str(final_time.day).rjust(2, '0'),
+                                    str(final_time.month).rjust(2, '0'))
+        general_output_dir = os.path.join(params['general_output_dir'],
+                                          output_dir)
+        
+        # change the init, end time and output dir in ai_picker.inp
+        change_times_dir(temp_inp,
+                         start.strftime("%Y-%m-%d %H:%M:%S"),
+                         final_time.strftime("%Y-%m-%d %H:%M:%S"),
+                         general_output_dir)
+
+        # excecuting ai_picker.py
+        os.system('time ai_picker.py')
+
+        # getting the origins path
+        output_path = get_origins_path(main_path, 'origenes_preferidos.xml')
+        # getting the picks path
+        picks_path = get_origins_path(main_path, 'picks.xml')
+
+        # migrating picks to seiscomp db
+        cmd_picks = 'scdispatch -i %s -H %s -u ai_sgc' % (picks_path, db)
+        print(cmd_picks)
+        os.system(cmd_picks)
+
+        # migrating events to seiscomp db as long as the file exist and
+        # is not empty
+        if output_path is not None:
+            # if the file is not empty
+            if os.path.getsize(output_path):
+                print('xml a modificar:', output_path)
+                print('\n\n\tUploading to db\n\n')
+
+                # random number to avoid repetead users
+                num = random.randint(1, 10)
+                cmd = 'scdispatch -i %s -H %s -u ai_sgc_%d' % (output_path,
+                                                               db, num)
+                print(cmd)
+                os.system(cmd)
+            else:
+                print('\n\n\tArchivo vacio!\n\n')
+        else:
+            print('\n\n\tNo existe %s!\n\n' % output_path)
+
+        start += dt
+        tf = datetime.datetime.now() + datetime.timedelta(hours=(5))
+
+        logger(t, tf)
+
+
+def read_params(par_file='phaseNet.inp'):
+    """Read params from .inp file
+
+    Parameters
+    ----------
+    par_file : str, optional
+        File name of parameter file, by default 'phaseNet.inp'
+
+    Returns
+    -------
+    dic
+        Dictionary with parameters and values from params file
+    """
+    lines = open(par_file).readlines()
+    par_dic = {}
+    for line in lines:
+        if line[0] == '#' or line.strip('\n').strip() == '':
+            continue
+        else:
+            l = line.strip('\n').strip()
+            key, value = l.split('=')
+            par_dic[key.strip()] = value.strip()
+    return par_dic
+
+
+def change_times_dir(inp_file: str, ti: str, tf: str, general_output_dir: str):
+    """Change starttime and endtime in ai_picker.inp file
+
+    Parameters
+    ----------
+    inp_file: str
+        ai_picker.inp template file
+    ti : str
+        Initial UTC datetime in strftime format: %Y-%m-%d %H-%M-%S
+    tf : str
+        Final UTC datetime in strftime format: %Y-%m-%d %H-%M-%S
+    general_output_dir : str
+        Output dir path
+    """
+
+    f_lines = open(inp_file).readlines()
+
+    for idx, line in enumerate(f_lines):
+        if line.startswith('starttime'):
+            start_idx = idx
+        elif line.startswith('endtime'):
+            end_idx = idx
+        elif line.startswith('general_output_dir'):
+            dt_idx = idx
+
+    # replacing start, end and dt time lines
+    f_lines[start_idx] = f'starttime = {ti}\n'
+    f_lines[end_idx] = f'endtime = {tf}\n'
+    f_lines[dt_idx] = f'general_output_dir = {general_output_dir}\n'
+
+    # writing new file
+    with open('ai_picker.inp', 'w') as f:
+        text = ''.join(f_lines)
+        f.write(text)
+
+
+def get_origins_path(path, xmlfile):
+    orig_path = None
+    for (dirpath, dirnames, filenames) in os.walk(path):
+        for filename in filenames:
+            if filename == xmlfile:
+                orig_path = os.path.join(dirpath, filename)
+                break
+
+    print(xmlfile, orig_path)
+    return orig_path
+
+
+def logger(ti, tf):
+    logfile = 'discontinuous.log'
+    if not os.path.isfile(logfile):
+        f = open(logfile, 'w')
+    else:
+        f = open(logfile, 'a')
+    print(f'Inició ejecución a las: {ti} UTC, terminó la ejecución a las: {tf} UTC', file=f)
+    f.close()
+
+
+if __name__ == '__main__':
+    
+    start = '2020-01-22 00:00:00'
+    end = '2020-11-01 23:59:59'
+    n_days = 7
+    db = '10.100.100.13:4803'
+    
+    discontinuous_picker(start, end, n_days, db)

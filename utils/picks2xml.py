@@ -12,6 +12,8 @@ import os
 import numpy as np
 import pandas as pd
 import glob
+import sys
+
 
 def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6,
                dt=3000, ai='pnet'):
@@ -55,6 +57,7 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6,
     
     print(f'\nOutput file: {output_file}')
 
+
 def prepare_eqt(input_dir):
     """Merge X_prediction_results.csv files of each station in a list of Picks objects
 
@@ -80,18 +83,26 @@ def prepare_eqt(input_dir):
     df = df.fillna('no pick')
     # Removing white spaces arround station name
     df['station'] = df['station'].str.strip()
-    
+
     # Writting in csv the data
     df.to_csv(os.path.join(input_dir, 'all_picks.csv'), index=False)
+
+    # Create a list of picks
     p_list = read_eqt_picks(df['network'].tolist(), df['station'].tolist(),
-                    df['instrument_type'].tolist(),
-                    df['p_arrival_time'].tolist(), df['p_probability'].tolist(),
-                    df['s_arrival_time'].tolist(), df['s_probability'].tolist())
-    
+                            df['instrument_type'].tolist(),
+                            df['p_arrival_time'].tolist(),
+                            df['p_probability'].tolist(),
+                            df['s_arrival_time'].tolist(),
+                            df['s_probability'].tolist(),
+                            p_snrs=df['p_snr'].tolist(),
+                            s_snrs=df['p_snr'].tolist())
+
     return p_list
 
-def read_eqt_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs):
-    """Iterate over picks for generate list of Picks objects
+
+def read_eqt_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs,
+                   p_snrs, s_snrs):
+    """Iterate over picks to generate list of Picks objects
 
     Parameters
     ----------
@@ -120,22 +131,33 @@ def read_eqt_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs):
             loc = '20'
         elif ch == 'HN':
             loc = '10'
-        
+
         ch += 'Z'
 
-        p_t, p_prob = p_times[i], p_probs[i]
+        p_t, p_prob, p_snr = p_times[i], p_probs[i], p_snrs[i]
 
-        p_pick = eqt_pick_constructor(p_t, p_prob, net,
-                                      station, loc, ch, 'P')
-        picks_list.append(p_pick)
-        
-        s_t, s_prob = s_times[i], s_probs[i]
-        print(f'{i}. {station}, p_t:{p_t}, p_prob:{p_prob}, s_t:{s_t}, s_prob:{s_prob}')
+        # filtering bad picks according to statistical analysis doing in
+        # the notebook EDA_EQTransformer_probs.ipynb
+        if p_snr == 'no pick':
+            p_snr = 0
+        p_snr = float(p_snr)
+        if p_prob >= 0.01 and p_snr >= -1.7:
+            p_pick = eqt_pick_constructor(p_t, p_prob, net,
+                                          station, loc, ch, 'P')
+            picks_list.append(p_pick)
+
+        s_t, s_prob, s_snr = s_times[i], s_probs[i], p_snrs[i]
         if s_t != 'no pick':
-            s_pick = eqt_pick_constructor(s_t, s_prob, net,
-                                          station, loc, ch, 'S')
-            picks_list.append(s_pick)
-        
+            if s_snr == 'no pick':
+                s_snr = 0
+            s_snr = float(s_snr)
+            if float(s_prob) >= 0.01 and s_snr >= 0:
+                s_pick = eqt_pick_constructor(s_t, s_prob, net,
+                                              station, loc, ch, 'S')
+                picks_list.append(s_pick)
+
+        print(f'{i}. {station}, p_t:{p_t}, p_prob:{p_prob}, s_t:{s_t}, s_prob:{s_prob}, p_snr:{p_snr}, s_snr:{s_snr}')
+
     return picks_list
 
 
@@ -242,19 +264,21 @@ def picks2xml(pick_list):
 
     return xml_file
 
+
 def eqt_pick_constructor(time, prob, net, station, loc, ch, ph):
     time = UTCDateTime(time)
     id_ = id_maker(time, net, station, loc, ch, ph, 'EQTransformer')
     creation_t = UTCDateTime()
-    
+
     evaluation = 'automatic'
     if prob >= 0.95:
         evaluation = 'manual'
-    
+
     pick = Pick(id_, time, net, station, loc, ch, prob,
                 ph, creation_t, evaluation, 'EQTransformer')
 
     return pick
+
 
 def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
     """Construct Pick objects
@@ -338,10 +362,10 @@ def sample2time(sample, to, df, segment, dt):
     # if segment is different to 0 which implies that we are using
     # pred_mseed mode
     if segment is not 0:
-        
+
         # if segment is bigger than the lenght of the waveform; then,
         # the segment is an overlapping one, and then we need to
-        # include the 1500 samples (15 s) of shiftfing 
+        # include the 1500 samples (15 s) of shiftfing
         if segment >= dt*df:
             segment = segment - dt*df
             init_time -= datetime.timedelta(seconds=1500/df)
@@ -362,7 +386,7 @@ def id_maker(pick_time, net, station, loc, ch, phaseHint, ai_type):
     Returns
     ------
     str
-       Seiscomp pick PublicID 
+       Seiscomp pick PublicID
     """
     dateID = pick_time.strftime('%Y%m%d.%H%M%S.%f')[:-4]
     if phaseHint == 'P':
@@ -370,7 +394,6 @@ def id_maker(pick_time, net, station, loc, ch, phaseHint, ai_type):
     elif phaseHint == 'S':
         publicID = dateID+f'-{ai_type}-{net}.{station}.{loc}.{ch}'
     return publicID
-
 
 
 class Pick:
@@ -421,9 +444,9 @@ class Pick:
       '''
 
     def __init__(self, publicID, pick_time,
-                net, station, loc, ch, prob,
-                phaseHint, creation_time,
-                evaluation, author='PhaseNet'):
+                 net, station, loc, ch, prob,
+                 phaseHint, creation_time,
+                 evaluation, author='PhaseNet'):
         """
         Parameters
         ----------
@@ -462,17 +485,17 @@ class Pick:
 
         if self.phaseHint == 'P':
             return self.xml_P_block.format(
-                publicID = self.publicID,
-                pick_time = self.pick_time,
-                net = self.net,
-                station = self.station,
-                loc = self.loc,
-                ch = self.ch,
-                prob = self.prob,
-                phaseHint = self.phaseHint,
-                creation_time = self.creation_time,
-                evaluation = self.evaluation,
-                author = self.author
+                publicID=self.publicID,
+                pick_time=self.pick_time,
+                net=self.net,
+                station=self.station,
+                loc=self.loc,
+                ch=self.ch,
+                prob=self.prob,
+                phaseHint=self.phaseHint,
+                creation_time=self.creation_time,
+                evaluation=self.evaluation,
+                author=self.author
                 )
         elif self.phaseHint == 'S':
             return self.xml_S_block.format(
