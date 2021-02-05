@@ -63,4 +63,16 @@ def change_xml_version(ev_file='events_final.xml'):
 
 if __name__ == "__main__":
     import sys
-    origins_pruning(sys.argv[1])
+    
+    assert len(sys.argv) >= 2, 'Insuficent arguments. Needs to provide the xml name or\
+        the xml name and the name of the output file'
+        
+    if len(sys.argv) == 2:
+        origins_pruning(sys.argv[1])
+    elif len(sys.argv) == 3:
+        origins_pruning(sys.argv[1], sys.argv[2])
+    else:
+        print('\n\tTo many arguments you need to provide the xml name \
+            or the xml name and the name of the input file. Example:\n\
+            \t\torigins_pruning.py events_final.xml\n\t or\n\
+            \t\torigins_pruning.py events_final.xml only_prefered_origins.xml')
