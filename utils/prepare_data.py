@@ -384,7 +384,7 @@ class CWav(object):
 
         return sts
 
-    def _write_CWavs(self,st):
+    """def _write_CWavs(self,st):
         date_name= (self.CWav_init_time+'_'+self.CWav_end_time).replace(':','').replace(' ','').replace('-','')
         stats= st[0].stats
         st_name_mseed= "_".join((stats.network, stats.station, stats.location,str(int(stats.sampling_rate)), stats.channel,date_name))+ f'.{self.CWav_
@@ -413,7 +413,7 @@ class CWav(object):
                 print('No stream:', parameters)
         else:
             st=read(parameters)
-        return st
+        return st"""
 
     def download_CWavs(self):
         with open(self.CWav_csv_path, "w") as f:
