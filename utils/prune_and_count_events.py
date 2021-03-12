@@ -6,8 +6,6 @@ Created on Feb 5 2021
 @author: Daniel Siervo, emetdan@gmail.com
 """
 import os
-import obspy
-import obsplus
 from concurrent.futures import ProcessPoolExecutor
 
 
@@ -77,8 +75,10 @@ def event_summary(joined_xml_path):
     main_xml_path : str
         Path to joined seiscomp events like xml
     """
-    cat = obspy.read_events(joined_xml_path)
-    
+
+    cmd = f'run_dashboard.sh {joined_xml_path}'
+    print(cmd)
+    os.system(cmd)
 
 
 def prune_and_count(main_path):
@@ -103,7 +103,9 @@ def prune_and_count(main_path):
     
     change_xml_version(main_events_name)
     
-    #event_summary(main_events_name)
+    main_ev_path = os.path.join(main_path, main_events_name)
+    event_summary(main_ev_path)
+
 
 if __name__ == '__main__':
     prune_and_count(os.getcwd())
