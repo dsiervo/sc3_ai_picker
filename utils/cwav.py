@@ -502,7 +502,7 @@ class Cwav_EQTransformer(object):
                     start_time=self.client_dict['starttime'], 
                     end_time=self.client_dict['endtime'],
                     chunk_size= self.eqt_dict['eqt_chunk_size'] / (3600*24), #se divide sobre 3600*24 para convertir horas a dias
-                    channel_list=channel.split(","), 
+                    channel_list=['HH*', 'EH*', 'BH*', 'HN*', 'HL*'], 
                     n_processor=self.eqt_dict['eqt_n_processor'])
         else: 
             pass

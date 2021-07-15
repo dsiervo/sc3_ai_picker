@@ -15,7 +15,8 @@ import glob
 import sys
 
 
-def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6,
+def main_picks(input_file='picks.csv', output_file=None, min_prob_p=0.6,
+               min_prob_s=0.5,
                dt=3000, ai='pnet'):
     """Transform PhaseNet picks.csv file into Seiscomp XML file
 
@@ -26,8 +27,10 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6,
         X_prediction_results.csv file, by default 'picks.csv'
     output_file : str
         Path to new Sesicomp XML file
-    min_prob: float
-        Minimun probability to consider a phase pick
+    min_prob_p: float
+        Minimun probability to consider a P phase pick
+    min_prob_s: float
+        Minimun probability to consider a S phase pick
     dt: int
         Waveform length in seconds
     ai: str
@@ -38,7 +41,7 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob=0.6,
 
     # Obtaining list of Picks objects from file
     if ai == 'pnet':
-        pick_list = read_picks(input_file, dt, min_prob)
+        pick_list = read_picks(input_file, dt, min_prob_p, min_prob_s)
     elif ai == 'eqt':
         pick_list = prepare_eqt(input_file)
 
@@ -161,7 +164,7 @@ def read_eqt_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs,
     return picks_list
 
 
-def read_picks(phaseNet_picks, dt, min_prob=0.3):
+def read_picks(phaseNet_picks, dt, min_prob_p=0.3, min_prob_s=0.3):
     '''Read phaseNet picks and returns list of Pick objects
 
     Parameters
@@ -204,8 +207,8 @@ def read_picks(phaseNet_picks, dt, min_prob=0.3):
                 picks_s = row[3].strip('[]').strip().split() 
                 prob_s = row[4].strip('[]').strip().split() 
 
-                P_picks = pick_constructor(picks_p, prob_p, wf_name, 'P', min_prob, dt)
-                S_picks = pick_constructor(picks_s, prob_s, wf_name, 'S', min_prob, dt)
+                P_picks = pick_constructor(picks_p, prob_p, wf_name, 'P', min_prob_p, dt)
+                S_picks = pick_constructor(picks_s, prob_s, wf_name, 'S', min_prob_s, dt)
             
                 picks += P_picks + S_picks
                 
