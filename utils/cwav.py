@@ -418,6 +418,12 @@ class Cwav_EQTransformer(object):
                     Limit results to time series samples on or after the specified start time
                 ['endtime']: UTCDateTime
                     Limit results to time series samples on or before the specified end time
+        mysqldb_dict: dict
+            Dictionary of the MySQLdb parameters
+                ['host']: str
+                ['user']: str
+                ['passwd']: str
+                ['db']: str
         """
 
         self.download_data = download_data
@@ -425,6 +431,7 @@ class Cwav_EQTransformer(object):
         self.client_dict = client_dict
         self.mysqldb_dict = mysqldb_dict
         self.pick_xml_path = os.path.join(self.eqt_dict['eqt_output_dir'], 'picks.xml')
+        self.db_sc = mysqldb_dict['db_sc']
 
     @property
     def client(self):
@@ -645,7 +652,7 @@ if __name__ == "__main__":
     # cwav_phasenet.download()
     # cwav_phasenet.run_pnet()
 
-    cwav_eqt = Cwav_EQTransformer(download_data, eqt_dict, client_dict)  
+    cwav_eqt = Cwav_EQTransformer(download_data, eqt_dict, client_dict,mysqldb_dict)  
     # cwav_eqt.create_json()      
     # cwav_eqt.download_mseed()      
     # cwav_eqt.preprocessor()    
