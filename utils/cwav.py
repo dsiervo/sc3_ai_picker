@@ -1,6 +1,12 @@
 import os
 import sys
 
+# Para poder correr en usuario ecastillo
+# EQTransformer_path = "/home/ecastillo/EQTransformer"
+# sgc_ai_picker = "/home/ecastillo/sgc_ai_picker"
+# sys.path.insert(0,EQTransformer_path)
+# sys.path.insert(0,sgc_ai_picker )
+
 try:
     env = os.environ['CONDA_DEFAULT_ENV']
 except KeyError:
@@ -32,6 +38,7 @@ elif (os.environ['CONDA_DEFAULT_ENV'] == 'eqt'
     from EQTransformer.core.predictor import predictor
     from utils.playback import playback
     from utils.picks2xml import main_picks
+
 
 class Cwav_PhaseNet(object):
     """
@@ -588,7 +595,6 @@ class Cwav_EQTransformer(object):
         # excecuting playback commands
         my_playback.playback_commands()
 
-
 def read_merge(path):
     """Read and merge waveforms. Returns Obspy Stream.
 
@@ -606,8 +612,10 @@ def read_merge(path):
     return st.merge(fill_value='interpolate')
     
 if __name__ == "__main__":
+    from obspy import UTCDateTime
+
     # download_data = 'all'
-    download_data = ['CM.URMC.00.*']
+    download_data = ['CM.BAR2.00.HHZ','CM.PTB.00.HHZ','CM.RUS.00.HHZ','CM.PDSC.10.HNZ','CM.PAM.20.EHZ']
     pnet_dict = {'pnet_repository_dir': '/home/dsiervo/PhaseNet',
                 'pnet_mode': 'pred',
                 'pnet_data_dir':'/home/dsiervo/ecastillo/EQT_prove/wav/pnet',
@@ -618,17 +626,19 @@ if __name__ == "__main__":
                 'pnet_plot_figure': False,
                 'pnet_save_result': False}
 
-    eqt_dict = {'eqt_data_dir':'/home/dsiervo/sgc_autopicker/wav',
-                'eqt_output_dir':'/home/dsiervo/sgc_autopicker/output',
+    eqt_dict = {'eqt_data_dir':'/home/ecastillo/test/scanloc/wav',
+                'eqt_output_dir':'/home/ecastillo/test/scanloc/output',
                 'eqt_model_dir':'/home/dsiervo/EQTransformer/ModelsAndSampleData/EqT_model.h5',
                 'eqt_chunk_size':4*3600,
                 'eqt_n_processor':2,
-                'eqt_preproc_overlap': 0.3,
+                'eqt_overlap': 0.3,
+                'eqt_batch_size': 10,
                 'eqt_detection_threshold': 0.3,
                 'eqt_P_threshold':0.1,
                 'eqt_S_threshold':0.1, 
                 'eqt_number_of_plots':1, 
-                'eqt_plot_mode':'time'}
+                'eqt_plot_mode':'time',
+                'eqt_create_json':True}
 
     client_dict = {'ip': 'http://10.100.100.232', 'port':'8091',
                    'starttime': UTCDateTime('2020-01-01 00:00:00'),
@@ -636,14 +646,17 @@ if __name__ == "__main__":
 
     filter_data = ['CM.URMC']
     # filter_data = 'ALL'
-    mysqldb_dict = None
+    mysqldb_dict = {'db_sc':'mysql://sysop:sysopp@10.100.100.13/seiscomp3'}
 
     # cwav_phasenet = Cwav_phasenet(download_data, pnet_dict, client_dict, mysqldb_dict, filter_data=filter_data)
     # cwav_phasenet.download()
     # cwav_phasenet.run_pnet()
 
-    cwav_eqt = Cwav_EQTransformer(download_data, eqt_dict, client_dict, mysqldb_dict=None)  
+    cwav_eqt = Cwav_EQTransformer(download_data, eqt_dict, client_dict,mysqldb_dict)  
     # cwav_eqt.create_json()      
     # cwav_eqt.download_mseed()      
     # cwav_eqt.preprocessor()    
-    # cwav_eqt.predictor()  
+    # cwav_eqt.mseedpredictor()
+    cwav_eqt.db_sc = 'mysql://"sysop:sysopp@10.100.100.13/seiscomp3"'
+    cwav_eqt.picks2xml()
+    cwav_eqt.playback()

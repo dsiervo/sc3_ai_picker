@@ -6,6 +6,122 @@ import os, multiprocessing
 from datetime import timedelta
 from utils.merge_xml_picks import merge_xml_picks
 
+def get_xml_Origins(xml_picks,output_file,locator_type="LOCSAT",
+                    locator_profile="iasp91",
+                    db="sysop:sysopp@10.100.100.13/seiscomp3"):
+    """
+    Write origins in an origins xml file.
+
+    Parameters:
+    -----------
+    xml_picks: str
+        path where is lcoated the picks xml file
+    output_file: str
+        path where will be lcoated the origins xml file
+    locator_type: str
+        "LOCSAT" or "Hypo71"
+    locator_profile: str
+        "iaspei91" for LOCSAT and "RSNC" for Hypo71
+    db: str
+        "sysop:sysopp@10.100.100.13/seiscomp3" 
+
+    Returns:
+    --------
+    origin xml file
+    """
+
+    if os.path.isdir(os.path.dirname(output_file)) == False:
+        os.makedirs(os.path.dirname(output_file))
+
+    scanloc_cmd = f'scanloc -u playback --locator-type {locator_type} --locator-profile {locator_profile} '
+    scanloc_cmd += '--ep %s -d %s  > %s'%(xml_picks, db, output_file)
+
+    
+    if  locator_type == "Hypo71":
+
+        tmp_file = os.path.join(os.path.dirname(output_file),
+                                os.path.basename(output_file).split('.')[0]+'_tmp.xml')
+        mv_msg = f"mv {output_file} {tmp_file} "
+        # print(mv_msg)
+        # os.system(mv_msg)
+
+        key_word = '<?xml version="1.0" encoding="UTF-8"?>'
+        clean_msg = f"sed -n '/{key_word}/,$p' {tmp_file} > {output_file}"
+        # print(clean_msg)
+        # os.system(clean_msg)
+
+        rm_msg = f"rm {tmp_file}"
+        # print(rm_msg)
+
+        scanloc_cmd = ';'.join([scanloc_cmd,mv_msg,clean_msg,rm_msg])
+        # os.system(scanloc_cmd)
+    return scanloc_cmd
+
+def merge_xml(xmls,output_file):
+    """
+    merge xml files
+
+    Parameters:
+    -----------
+    xmls: list
+        List of paths of the xml files
+    output_file: str
+        Path of the merged xml
+    """
+    if len(xmls) <2 :
+        raise Exception("Need two or more xml files to merge")
+
+    xmls = " ".join(xmls)
+
+    msg = f"scxmlmerge {xmls} > {output_file}"
+
+    # os.system(msg)
+    return msg
+
+def get_scanloc_msg(picks_file,origins_file,origins_loc={"LOCSAT":"iasp91"},
+                    db="sysop:sysopp@10.100.100.13/seiscomp3"):
+    """
+    Parameters:
+    picks_file: str
+        Path of the xml picks file
+    origins_file: str
+        Path of the xml origins file
+    origins_loc: dict (default:{"LOCSAT":"iasp91"})
+        key-> locator_type , value -> locator_profile
+    db: str
+        database
+    """
+
+    location_types = list(origins_loc.keys())
+    location_profiles = list(origins_loc.values())
+
+    filenames = []
+    for i in range(0,len(location_types)):
+        name = os.path.basename(origins_file).split('.')[0]
+        extra_name = f"_{location_types[i]}_{location_profiles[i]}.xml"
+        filename = os.path.join(os.path.dirname(origins_file),name + extra_name)
+        merge_filename = os.path.join(os.path.dirname(origins_file), f"merge_{i}.xml")
+
+        msg_orig = get_xml_Origins(picks_file,filename,location_types[i],
+                                    location_profiles[i], db)
+
+        if i>0:
+            msg_orig += ";" + merge_xml([filenames[i-1],filename],merge_filename)
+            filename = merge_filename
+        else:
+            first_orig = msg_orig
+
+        filenames.append(filename)
+
+    msg_orig = first_orig +";"+ msg_orig
+
+    if len(location_types) == 1:
+        msg_orig += ";" + f"mv {filenames[0]} {origins_file}"
+    else:
+        msg_orig += ";" + f"mv {filenames[i]} {origins_file}"
+
+    print(msg_orig)
+    return msg_orig
 
 class playback:
     
@@ -152,7 +268,6 @@ class playback:
         for j in jobs:
             j.join()    
 
-
     def merge_picks(self):
         merge_xml_picks(self.picks_dir)
         
@@ -171,7 +286,13 @@ class playback:
         amp_path = os.path.join(self.out_dir, 'amp.xml')
         mag_path = os.path.join(self.out_dir, 'mag.xml')
 
-        scanloc_cmd = '%s -u playback --ep %s -d %s  > %s'%(self.sc_scanloc,
+        if self.sc_scanloc == "scanloc":
+            scanloc_cmd = get_scanloc_msg(picks_file=self.xml_picks_file,
+                                            origins_file=origin_path,
+                                            origins_loc={ "LOCSAT": "iasp91","Hypo71":"RSNC" },
+                                            db = self.db)
+        else:
+            scanloc_cmd = '%s -u playback --ep %s -d %s  > %s'%(self.sc_scanloc,
                                                             self.xml_picks_file,
                                                             self.db, origin_path)
         
