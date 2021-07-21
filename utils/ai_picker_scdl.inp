@@ -3,17 +3,21 @@
 #-->picker 'pnet' o 'eqt'
 picker = eqt
 
-ip = http://10.100.100.232
+ip = http://10.100.100.13
 port = 8091
 starttime = 2020-09-20 20:00:00
 endtime = 2020-09-20 22:00:00
-dt = 7200
+dt = 720
+
+# base de datos de SeisComP3 desde donde se tomará la configuración de las estaciones y 
+# se calcularán las amplitudes en las trazas para el cálculo de magnitud
+db_sc = mysql://sysop:sysopp@10.100.100.13/seiscomp3
 
 ##############################------------ SECTION 2): Stations to download ------------############################
 
 #download_data = CM.URMC, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*
 #download_data = CM.URMC.00.HH*, CM.CLBC.20.EH*, CM.CVER.00.HH*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*
-download_data = CM.PDSC.10.HN*, CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.TAM.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*, CM.URMC.00.HH*, CM.CLBC.20.EH*, CM.CJELA.10.*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*, CM.DBB.00.HH*, CM.URE.00.HH*, CM.APAC.00.HH*, CM.CBOC.00.HH*, CM.QUBC.00.HH*, CM.GUY2C.00.HH*, CM.HEL.00.HH*, CM.YOT.00.HH*, CM.PAL.00.HH*, CM.MAN1C.10.*, CM.BBAC.00.HH*, CM.GRPC.00.HH*, CM.SOL.20.EH*, CM.CUM.*.*, CM.CCALA.10.*, CM.NOR.00.HH*, CM.CLEJA.10.HN*, CM.DRL02.30.HH*, IU.SDV.00.BH*, CM.SJC.00.HH*, CM.CRJC.00.HH*, CM.URI.00.HH*, CM.ARGC.00.HH*, CM.SMAR.00.HH*, CM.GUA.20.EH*, CM.PTGC.00.HH*
+download_data = CM.PDSC.10.HN*, CM.BAR2.00.HH*, CM.BRJC.00.HH*, CM.TAM.00.HH*, CM.PAM.20.EH*, CM.RUS.00.HH*, CM.PTB.00.HH*, CM.OCA.00.HH*, CM.SPBC.00.HH*, CM.YPLC.00.HH*, CM.URMC.00.HH*, CM.CLBC.20.EH*, CM.CJELA.10.*, CM.BELO.00.HH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*, CM.DBB.00.HH*, CM.DBB.20.EH*, CM.URE.00.HH*, CM.APAC.00.HH*, CM.CBOC.00.HH*, CM.QUBC.00.HH*, CM.GUY2C.00.HH*, CM.HEL.00.HH*, CM.YOT.00.HH*, CM.PAL.00.HH*, CM.MAN1C.10.*, CM.BBAC.00.HH*, CM.GRPC.00.HH*, CM.SOL.20.EH*, CM.CUM.20.EH*, CM.CCALA.10.*, CM.NOR.00.HH*, CM.CLEJA.10.HN*, CM.DRL02.30.HH*, CM.DRL01.30.HH*, IU.SDV.00.BH*, CM.SJC.00.HH*, CM.CRJC.00.HH*, CM.URI.00.HH*, CM.ARGC.00.HH*, CM.SMAR.00.HH*, CM.GUA.20.EH*, CM.PTGC.00.HH*, CM.MARO.00.HH*, CM.COBO.00.HH*, CM.SOTO.00.HH*, CM.BET.20.EH*, CM.JAMC.00.HH*, RP.UPD2.*.HH*, EC.SNRL.*.HH*, CM.CUFI.10.HN*, CM.POP2.00.HH*, EC.RVRD.*.HH*
 #download_data = CM.TAPM.00.HH*
 #download_data = no
 #download_data = all 
@@ -42,12 +46,17 @@ pnet_save_result = False
 #########------------ EQTransformer Dict  ------------##########
 
 eqt_create_json = True
-eqt_create_hdf5 = True
+eqt_predictor = mseed
 eqt_model_dir = /home/dsiervo/EQTransformer/ModelsAndSampleData/EqT_model.h5
 eqt_n_processor = 5
-eqt_preproc_overlap = 0.3
-eqt_detection_threshold = 0.003
-eqt_P_threshold = 0.001
-eqt_S_threshold = 0.001
+eqt_overlap = 0.3
+eqt_detection_threshold = 0.03
+eqt_P_threshold = 0.01
+eqt_S_threshold = 0.01
 eqt_number_of_plots = 3
 eqt_plot_mode = time
+
+##-->si eqt_predictor= mseed entonces:
+eqt_batch_size = 1
+##-->si eqt_predictor= hdf5 entonces:
+eqt_create_hdf5 = True

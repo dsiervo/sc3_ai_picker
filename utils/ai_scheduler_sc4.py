@@ -138,25 +138,25 @@ def runner(every_m, buf=2, db='10.100.100.13:4803'):
     # getting the picks path
     picks_path = get_origins_path(main_path, 'picks.xml')
 
-    cmd_picks = 'scdispatch -i %s -H %s -u ai_sgc' % (picks_path, db)
-    print(cmd_picks)
+    cmd1 = 'sshpass -p "0rcada2020.\$1" scp {0} sysop@10.100.100.94:/home/sysop/ai_picker/'
+    cmd2 = 'sshpass -p "0rcada2020.\$1" ssh -l sysop 10.100.100.94 "/opt/seiscomp/bin/seiscomp exec scdispatch -i /home/sysop/ai_picker/{1} -H localhost/production -u ai_sgc_"'
+    cmd = cmd1 + ';' + cmd2
+    cmd_picks = cmd.format(picks_path, 'picks.xml')
+    
+    #cmd_picks = 'scdispatch -i %s -H %s -u ai_sgc' % (picks_path, db)
+    print('\n\n\t', cmd_picks, '\n\n')
     os.system(cmd_picks)
 
     if output_path is not None:
         # if the file is not empty
         if os.path.getsize(output_path):
             print('xml a modificar:', output_path)
-            # changing the xml version of the origins file (mags.xml)
-            # change_xml_version(output_path)
 
             print('\n\n\tUploading to db\n\n')
-            os.system('head -3 %s' % output_path)
-
-            # random number to avoid repetead users
-            num = random.randint(1, 10)
-            cmd = 'scdispatch -i %s -H %s -u ai_sgc_%d' % (output_path, db, num)
-            print(cmd)
-            os.system(cmd)
+            
+            cmd_origins = cmd.format(output_path, 'origenes_preferidos.xml')
+            print('\n\n\t', cmd_origins, '\n\n')
+            os.system(cmd_origins)
         else:
             print('\n\n\tArchivo vacio!\n\n')
     else:
@@ -171,10 +171,11 @@ def runner(every_m, buf=2, db='10.100.100.13:4803'):
 
 if __name__ == "__main__":
 
-    every_minutes = 15
-    minutes = 30  # period of excecution in minutes
-    buffer = 0    # buffer or overlapping in minutes
-    schedule.every(every_minutes).minutes.do(runner, every_m=minutes, buf=buffer, db='10.100.100.232:4803')
+    every_minutes = 10
+    minutes = 20  # period of excecution in minutes
+    buffer = 0 # buffer or overlapping in minutes
+    schedule.every(every_minutes).minutes.do(runner, every_m=minutes, buf=buffer,
+                                             db='10.100.100.94/production')
 
     while True:
         schedule.run_pending()
