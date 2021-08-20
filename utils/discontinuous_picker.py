@@ -18,14 +18,13 @@ import click
 
 @click.command()
 @click.option('-s', "--start", required=True, prompt='Start date [yyyy-MM-dd hh:mm:ss]',
-              help='Starting date in format like 2020-01-22 00:00:00')
+              help='Starting date in format like "2020-01-22 00:00:00"')
 @click.option('-e', "--end", required=True, prompt='End date [yyyy-MM-dd hh:mm:ss]',
-              help='Ending date in format like 2020-01-22 00:00:00')
+              help='Ending date in format like "2020-01-22 00:00:00"')
 @click.option('-n', "--n_days", prompt=True, default=7,
               help='Run ai_picker every n_days\n')
 @click.option('-d', "--db", required=False, prompt=False, default='None',
               help='Seiscomp database to migrate events every n_days. Could be 10.100.100.13')
-
 def discontinuous_picker(start, end, n_days, db):
 
     start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
@@ -46,11 +45,11 @@ def discontinuous_picker(start, end, n_days, db):
 
         os.system('rm -fr %s' % wav_dir)
         output_dir = '%s%s%s-%s%s%s' % (str(start.day).rjust(2, '0'),
-                                    str(start.month).rjust(2, '0'),
-                                    str(start.year).rjust(2, '0'),
-                                    str(final_time.day).rjust(2, '0'),
-                                    str(final_time.month).rjust(2, '0'),
-                                    str(final_time.year).rjust(2, '0'),)
+                                        str(start.month).rjust(2, '0'),
+                                        str(start.year),
+                                        str(final_time.day).rjust(2, '0'),
+                                        str(final_time.month).rjust(2, '0'),
+                                        str(final_time.year))
         general_output_dir = os.path.join(params['general_output_dir'],
                                           output_dir)
         
