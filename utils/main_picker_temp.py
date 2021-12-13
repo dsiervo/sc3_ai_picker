@@ -96,13 +96,13 @@ def prep_eqt_params(params):
                 'eqt_model_dir','eqt_plot_mode',\
                 'eqt_predictor']
     
+    eqt_dict = {'eqt_n_processor':2}
     for key in eqt_int: params[f'{key}'] = int(params[f'{key}'])
     for key in eqt_float: params[f'{key}'] = float(params[f'{key}'])
 
     eqt_params = eqt_int + eqt_float + eqt_str
 
     # eqt_dict = dict((key, params[key]) for key in eqt_params)
-    eqt_dict = {}
     for key in eqt_params:
         if key == 'general_data_dir' or key == 'general_output_dir':
             g,x,_dir = key.split("_")

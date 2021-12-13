@@ -36,10 +36,9 @@ def load_and_dashboard(xml_path):
     events_sum = EventSumamry(xml_path)
     csv_path = events_sum.csv_path
     print('\n\tReading', csv_path)
-    # If CSV file already exist doesn't create it
-    if not os.path.exists(csv_path):
-        print('\n\tConvirtiendo xml a csv...')
-        events_sum.load_prepare_data()
+
+    print('\n\tConvirtiendo xml a csv...')
+    events_sum.load_prepare_data()
     
     print('\n\tCreando dashboard interactivo...')
     dashboard = Dashboard(csv_path)
@@ -113,7 +112,7 @@ class EventSumamry(object):
         df_or['lat_e'] = df_or['latitude'].apply(self.get_from_dict, key='uncertainty')
         df_or['lon_e'] = df_or['longitude'].apply(self.get_from_dict, key='uncertainty')
         df_or['z_e'] = df_or['depth'].apply(self.get_from_dict, key='uncertainty')
-        df_or['t_e'] = df_or['time'].apply(self.get_from_dict, key='uncertainty')
+        df_or['t_e'] = df_or['quality'].apply(self.get_from_dict, key='standardError')
 
         df_or['min_dis'] = df_or['quality'].apply(self.get_from_dict, key='minimumDistance')
         df_or['phasecount'] = df_or['quality'].apply(self.get_from_dict, key='usedPhaseCount')
