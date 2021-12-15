@@ -211,7 +211,7 @@ def run_EQTransformer(client_dict, download_data,eqt_dict, mysqldb_dict):
         cwav_eqt.preprocessor()
         cwav_eqt.predictor()
     cwav_eqt.picks2xml()
-    cwav_eqt.playback()
+    cwav_eqt.playback(eval(eqt_dict['locator_dict']))
     
     OUTPUT_PATH = eqt_dict['eqt_output_dir']
     # mergin all seiscomp .xml events

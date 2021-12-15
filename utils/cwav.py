@@ -336,7 +336,7 @@ class Cwav_PhaseNet(object):
         
         main_picks(input_file=self.pick_csv_path, output_file=self.pick_xml_path, dt=dt)
     
-    def playback(self):
+    def playback(self, locator_dict):
         """Excecute seiscomp playback from picks.xml:
             * Group picks
             * Localize events from grouped picks to generate origins
@@ -344,7 +344,8 @@ class Cwav_PhaseNet(object):
             * Compute magnitudes using amplitudes
             * Group origins into events
         """
-        
+        for key in locator_dict:
+            assert key in ('Hypo71', 'LOCSAT', 'NonLinLoc'), 'locator must be Hypo71, LOCSAT or NonLinLoc'
         xml_picks_file = self.pick_xml_path
 
         # Verifing if the xml file with picks from phasenet exist
@@ -354,6 +355,7 @@ class Cwav_PhaseNet(object):
         print('creando objeto playback')
         my_playback = playback(
                 sc_scanloc='scanloc',
+                locator_dict=locator_dict,
                 wf_dir=self.pnet_dict['pnet_data_dir'],
                 db=self.db_sc,
                 picks ='none',
@@ -566,7 +568,7 @@ class Cwav_EQTransformer(object):
         main_picks(input_file=self.eqt_dict['eqt_output_dir'],
                    output_file=self.pick_xml_path, ai='eqt')
 
-    def playback(self):
+    def playback(self, locator_dict):
         """Excecute seiscomp playback from picks.xml:
             * Group picks
             * Localize events from grouped picks to generate origins
@@ -577,6 +579,8 @@ class Cwav_EQTransformer(object):
         
         xml_picks_file = self.pick_xml_path
 
+        for key in locator_dict:
+            assert key in ('Hypo71', 'LOCSAT', 'NonLinLoc'), 'locator must be Hypo71, LOCSAT or NonLinLoc'
         # Verifing if the xml file with picks from phasenet exist
         assert os.path.isfile(xml_picks_file), \
             '\n\n\tNo existe el archivo %s en el directorio\n'%xml_picks_file
@@ -584,6 +588,7 @@ class Cwav_EQTransformer(object):
         print('creando objeto playback')
         my_playback = playback(
                 sc_scanloc='scanloc',
+                locator_dict=locator_dict,
                 wf_dir=self.eqt_dict['eqt_data_dir'],
                 db=self.db_sc,
                 picks ='none',

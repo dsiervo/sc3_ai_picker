@@ -125,7 +125,7 @@ def get_scanloc_msg(picks_file,origins_file,origins_loc={"LOCSAT":"iasp91"},
 
 class playback:
     
-    def __init__(self, sc_scanloc, picks, wf_dir,
+    def __init__(self, sc_scanloc,locator_dict, picks, wf_dir,
               out_dir,
               station="YPLC", loc_cod='00', net='CM', ch='HHN',
               init_time="2019-02-01 00:00:00",
@@ -155,6 +155,7 @@ class playback:
         """
         
         self.sc_scanloc = sc_scanloc
+        self.locator_dict = locator_dict
         self.station = station
         self.loc_cod = loc_cod
         self.net = net
@@ -279,6 +280,8 @@ class playback:
         ----------
         wf : str
             Path to wavefrom to compute amplitudes
+        locator_dict : dict
+            Dictionary with locator and velocity models
         """
         self.event_path = os.path.join(self.events_dir, self.event_name)
         
@@ -286,10 +289,10 @@ class playback:
         amp_path = os.path.join(self.out_dir, 'amp.xml')
         mag_path = os.path.join(self.out_dir, 'mag.xml')
 
-        if self.sc_scanloc == "scanloc":
+        if self.sc_scanloc == 'scanloc':
             scanloc_cmd = get_scanloc_msg(picks_file=self.xml_picks_file,
                                             origins_file=origin_path,
-                                            origins_loc={ "LOCSAT": "iasp91","Hypo71":"RSNC" },
+                                            origins_loc=self.locator_dict, # { "LOCSAT": "iasp91", "Hypo71":"RSNC" }
                                             db = self.db)
         else:
             scanloc_cmd = '%s -u playback --ep %s -d %s  > %s'%(self.sc_scanloc,
