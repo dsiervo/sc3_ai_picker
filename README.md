@@ -15,8 +15,8 @@ The main script **ai_picker.py** reads the parameters from the ai_picker.inp in 
 
 ### Requirements
 
-    - Anaconda3
-    - [SeisComP3](https://www.seiscomp.de/seiscomp3/)
+- [Anaconda3](https://www.anaconda.com/products/individual)
+- [SeisComP3](https://www.seiscomp.de/seiscomp3/)
 
 ### Create eqt virtual environment
 ```bash
