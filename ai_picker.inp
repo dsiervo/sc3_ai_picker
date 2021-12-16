@@ -56,7 +56,7 @@ pnet_save_result = False
 
 eqt_create_json = True
 eqt_predictor = mseed
-eqt_model_dir = model/EqT_model.h5
+#eqt_model_dir = model/EqT_model.h5
 eqt_overlap = 0.3
 eqt_n_processor = 5
 eqt_detection_threshold = 0.003

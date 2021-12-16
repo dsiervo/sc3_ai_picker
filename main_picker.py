@@ -63,10 +63,10 @@ def prep_client_params(params):
         raise ValueError("\n\nAsegúrese de ingresar fechas válidas con el formato: YYYY-MM-D hh:mm:ss\n")
     params['dt'] = timedelta(seconds=int(params['dt']))
 
-    client_params = ['ip', 'port', 'starttime', 'endtime', 'dt']
+    client_params = ['ip', 'port', 'starttime', 'endtime', 'dt', 'locator_dict']
     client_dict = dict((key, params[key]) for key in client_params)
-
     return client_dict
+
 
 def prep_pnet_params(params):
     params = params.copy()
@@ -93,10 +93,15 @@ def prep_eqt_params(params):
                 'eqt_P_threshold', 'eqt_S_threshold']
     eqt_str = ['general_data_dir','general_output_dir', \
                 'eqt_create_json', 'eqt_create_hdf5',\
-                'eqt_model_dir','eqt_plot_mode',\
+                'eqt_plot_mode',\
                 'eqt_predictor']
+
+    # get script path directory
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    model_default_path = os.path.join(script_dir, 'model', 'EqT_model.h5')
     
-    eqt_dict = {'eqt_n_processor':2}
+    eqt_dict = {'eqt_n_processor': 2,
+                'eqt_model_dir': model_default_path}
     for key in eqt_int: params[f'{key}'] = int(params[f'{key}'])
     for key in eqt_float: params[f'{key}'] = float(params[f'{key}'])
 
@@ -112,6 +117,10 @@ def prep_eqt_params(params):
             eqt_dict['eqt_chunk_size'] = params[key]
         else :
             eqt_dict[str(key)] = params[key]
+
+    # if file params['eqt_model_dir'] does not exist, set it to default
+    if not os.path.exists(eqt_dict['eqt_model_dir']):
+        params['eqt_model_dir'] = model_default_path
     return eqt_dict
 
 def prep_mysqldb_params(params):
@@ -184,7 +193,7 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict)
         cwav_pnet.download()
         cwav_pnet.run_pnet()
         cwav_pnet.picks2xml(p)
-        cwav_pnet.playback()
+        cwav_pnet.playback(eval(client_dict['locator_dict']))
 
         starttime += dt
 
@@ -211,7 +220,7 @@ def run_EQTransformer(client_dict, download_data,eqt_dict, mysqldb_dict):
         cwav_eqt.preprocessor()
         cwav_eqt.predictor()
     cwav_eqt.picks2xml()
-    cwav_eqt.playback()
+    cwav_eqt.playback(eval(client_dict['locator_dict']))
     
     OUTPUT_PATH = eqt_dict['eqt_output_dir']
     # mergin all seiscomp .xml events
