@@ -4,60 +4,62 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 --------------
-## Description 
-[PhaseNet](https://github.com/wayneweiqiang/PhaseNet) and [EQTransformer](https://github.com/smousavi05/EQTransformer) implementation in the SeisComP3 system of the Colombian Geological Survey.
-Allows events creation in seiscomp from Phasenet of EQTransformer picks.
+## Descripción 
+Implementación en el sistema SeisComP3 del Servicio Geológico Colombiano de [PhaseNet](https://github.com/wayneweiqiang/PhaseNet) y [EQTransformer](https://github.com/smousavi05/EQTransformer).
+Permite la creación de eventos en seiscomp a partir de los picks obtenidos con EQTransformer o PhaseNet.
 
-The main script **ai_picker.py** reads the parameters from the ai_picker.inp in the working directory and according to your preferences allows you to download and pick waveforms, and to create SeisComP3 events from those picks.
+
+El script principal **ai_picker.py** lee los parámetros desde el archivo ai_picker.inp en el directorio de trabajo y según sus preferencias permite descargar y seleccionar seismogramas, y crear eventos en seiscomp a partir de esos picks.
 
 --------------
-## Installation
+## Instalación
 
-### Requirements
+### Requisitos
 
 - [Anaconda3](https://www.anaconda.com/products/individual)
 - [SeisComP3](https://www.seiscomp.de/seiscomp3/)
 
-### Create eqt virtual environment
+### Crear el entorno virtual eqt
 ```bash
 $ conda create -n eqt python=3.7
 $ conda activate eqt
 (eqt) $
 ```
 
-### Clone the repository
+### Clonar el repositorio
 ```bash
 (eqt) $ git clone https://github.com/dsiervo/sgc_ai_picker.git
 (eqt) $ cd sgc_ai_picker
 ```
 
-### Install the requirements
+
+### Instalar los requisitos
 ```bash
 (eqt) $ pip install -r requirements.txt
 ```
-### Configure the environment
-#### Improving the waveform download
-The following steps are required to improve the performance when downloading waveforms using EQTransformer.
-Edit the file `<your anaconda3 path>/envs/eqt/lib/python3.7/site-packages/EQTransformer/utils/downloader.py` and add the following line in the **downloadMseed** function before the line `with ThreadPool(n_processors) as p:`
+### Configurar el entorno
+#### Mejorando la descarga de señales
+El siguiente paso es necesario para mejorar la performance al descargar señales usando EQTransformer.
+Editar el archivo `<su ruta de anaconda3>/envs/eqt/lib/python3.7/site-packages/EQTransformer/utils/downloader.py` y agregar la siguiente línea antes de la línea `with ThreadPool(n_processors) as p:`
 
 ```python
 n_processor = len(station_dic)
 ```
 
-#### Setting up the environment in ai_picker.py
-Edit the file `ai_picker.py` and modify the anaconda_path variable to your anaconda3 path in the **change_env** function.
+#### Configurando el entorno en ai_picker.py
+Editar el archivo `ai_picker.py` y modificar la variable anaconda_path en la función **change_env**.
 
-##### Add sgc_ai_picker to your PATH
-1. Edit the file `~/.bashrc` and add the following line:
+##### Agregar sgc_ai_picker a tu PATH
+1. Editar el archivo `~/.bashrc` y agregar la siguiente línea:
 ```bash
-export PATH="<your sgc_ai_picker path>:$PATH"
+export PATH="<su ruta a sgc_ai_picker>:$PATH"
 ```
-2. In your terminal run `source ~/.bashrc` to reload the environment.
+2. En tu terminal ejecute `source ~/.bashrc` para recargar el entorno.
 --------------
-## Usage
+## Uso
 
-### Old data mode
+### Modo antiguo de datos
 
-### Semi-realtime mode
+### Modo Semi-realtime
 
-### Realtime mode
+### Modo Realtime
