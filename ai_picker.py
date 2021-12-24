@@ -29,7 +29,10 @@ def change_env(picker, main_dir):
 
     assert picker in ('pnet', 'eqt'), 'El picker debe ser "eqt" o "pnet", usó "%s"\n'%picker
 
-    exc_env = '#!/home/dsiervo/anaconda3/envs/%s/bin/python\n'%picker
+    anaconda_path = '/home/dsiervo/anaconda3/'
+    exc_env_path = os.path.join(anaconda_path, 'envs/%s/bin/python'%picker)
+    exc_env = '#!%s\n'%exc_env_path
+    #exc_env = '#!/home/dsiervo/anaconda3/envs/%s/bin/python\n'%picker
     lines[0] = exc_env
 
     with open(os.path.join(main_dir, 'main_picker.py'), 'w') as f:
