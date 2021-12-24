@@ -105,7 +105,7 @@ def logger(ti, tf):
     f.close()
 
 
-def runner(every_m, buf, ip_db, usr_db, psw_db, sc4_ai_picker_dir):
+def runner(every_m, buf=2, db='10.100.100.13:4803'):
     """Excecute ai_picker.py every every_m hours with a 5 min buffer
 
     Parameters
@@ -138,8 +138,8 @@ def runner(every_m, buf, ip_db, usr_db, psw_db, sc4_ai_picker_dir):
     # getting the picks path
     picks_path = get_origins_path(main_path, 'picks.xml')
 
-    cmd1 = 'sshpass -p "%s" scp {0} %s@%s:%s'%(psw_db, usr_db, ip_db, sc4_ai_picker_dir)
-    cmd2 = 'sshpass -p "%s" ssh -l %s %s "/opt/seiscomp/bin/seiscomp exec scdispatch -i %s -H localhost/production -u ai_sgc_"'%(psw_db, usr_db, ip_db, os.path.join(sc4_ai_picker_dir, "{1}"))
+    cmd1 = 'sshpass -p "0rcada2020.\$1" scp {0} sysop@10.100.100.94:/home/sysop/ai_picker/'
+    cmd2 = 'sshpass -p "0rcada2020.\$1" ssh -l sysop 10.100.100.94 "/opt/seiscomp/bin/seiscomp exec scdispatch -i /home/sysop/ai_picker/{1} -H localhost/production -u ai_sgc_"'
     cmd = cmd1 + ';' + cmd2
     cmd_picks = cmd.format(picks_path, 'picks.xml')
     
@@ -174,17 +174,8 @@ if __name__ == "__main__":
     every_minutes = 10
     minutes = 20  # period of excecution in minutes
     buffer = 0 # buffer or overlapping in minutes
-    
-    ip_db = '10.100.100.94'
-    usr_db = 'sysop'
-    psw_db = "0rcada2020.\$1"
-    # directorio en el servidor seiscomp4 en el que se guardaran los xml con los eventos.
-    # Asegurese que el directorio exista.
-    sc4_ai_picker_dir = '/home/sysop/ai_picker/'
-    
-    schedule.every(every_minutes).minutes.do(runner, minutes, buffer,
-                                             ip_db, usr_db, psw_db,
-                                             sc4_ai_picker_dir)
+    schedule.every(every_minutes).minutes.do(runner, every_m=minutes, buf=buffer,
+                                             db='10.100.100.94/production')
 
     while True:
         schedule.run_pending()
