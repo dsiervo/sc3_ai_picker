@@ -174,10 +174,10 @@ El programa prune_and_count_events.py unirá en el archivo **main_events_pruned.
 
 En el panel izquierdo del dashboard podrá filtrar los eventos por magnitud, coordenadas, profundidad, RMS e intervalo temporal. En el lado derecho de la página se mostrará una tabla con información resumida de los eventos localizados que puede ser ordenada por la columna de preferencia. Adicionalmente se generarán histogramas sobre el número de eventos por valor de magnitud, rms y profundidad. Cómo también la evolución temporal de la sismicidad, perfiles de profundidad y un mapa con la sismicidad.
 
-### ai_scheduler.py (ejecucioń en tiempo semi-real)
-Este script se sirve para picar en tiempo semi-real las formas de onda de la red con el ai_picker y enviar los eventos generados a un servidor de seiscomp de forma automática.
+### Ejecución en tiempo semi-real (ai_scheduler.py y ai_scheduler_sc4.py)
+Los scripts *ai_scheduler.py y ai_scheduler_sc4.py permiten picar en tiempo semi-real las formas de onda de la red con el ai_picker y enviar los eventos generados a un servidor de seiscomp de forma automática (SeisComP3 en el caso del ai_scheduler.py y SeisComP4 en el caso del ai_scheduler_sc4.py).
 
-### Uso ai_scheduler.py
+### Uso ai_scheduler.py (seiscomp3)
 
 #### Copie los archivos necesarios
 Primero debe hacer una copia de los archivos **ai_scheduler.py** y **ai_picker_scdl.inp** a su directorio de trabajo, para ello úbiquese en su directorio de trabajo desde la terminal y ejecute:
@@ -186,7 +186,7 @@ Primero debe hacer una copia de los archivos **ai_scheduler.py** y **ai_picker_s
         $ cp <ruta hacia sgc_ai_picker>/utils/ai_picker_scdl.inp .
 
 #### Modifique ai_picker_scdl.inp y ai_scheduler.py
-Edite el los parámetros de ai_picker_scdl.inp según sus preferencias ([guía parámetros de configuración](#parámetros-generales)) y luego abra el archivo **ai_scheduler.py** y en el bloque `if __name__ == "__main__"` edite el valor de las variables `every_minutes`, `minutes` y `db` según sus preferencias. A continuación se explicará en que consiste cada una de éstas (no se explica la variable `buffer` pues no se recomienda su uso):
+Edite el los parámetros de ai_picker_scdl.inp según sus preferencias ([guía parámetros de configuración](#parámetros-generales)) y luego abra el archivo **ai_scheduler.py** y en el bloque `if __name__ == "__main__"` edite el valor de las variables `every_minutes`, `minutes` y `db` según sus preferencias. A continuación se explicará en que consiste cada una de éstas (no se explica la variable `buffer` pues se recomienda siempre dejarla en 0):
 
 * `every_minutes`: Especifica el intervalo de tiempo en minutos entre cada ejecución del programa.
 * `minutes`: Especifica el tamaño de las formas de onda a picar en minutos.
@@ -194,4 +194,20 @@ Edite el los parámetros de ai_picker_scdl.inp según sus preferencias ([guía p
 
 **Se recomienda configurar el programa para que se ejecute cada 15 minutos picando trazas de la última media hora (implicitamente un overlaping de 5 minutos) configurando el valor de `minutes` como 30, el de `every_minutes` como 15 y el de `buffer` como 0.**
 
+### Uso ai_scheduler_sc4.py (seiscomp4)
+
+#### Copie los archivos necesarios
+Primero debe hacer una copia de los archivos **ai_scheduler_sc4.py** y **ai_picker_scdl.inp** a su directorio de trabajo, para ello úbiquese en su directorio de trabajo desde la terminal y ejecute:
+    
+        $ cp <ruta hacia sgc_ai_picker>/utils/ai_scheduler_sc4.py .
+        $ cp <ruta hacia sgc_ai_picker>/utils/ai_picker_scdl.inp .
+
+#### Modifique ai_picker_scdl.inp y ai_scheduler_sc4.py
+Edite el los parámetros de ai_picker_scdl.inp según sus preferencias ([guía parámetros de configuración](#parámetros-generales)) y luego abra el archivo **ai_scheduler_sc4.py** y en el bloque `if __name__ == "__main__"` edite el valor de las variables `every_minutes`, `minutes` y `db` según sus preferencias. A continuación se explicará en que consiste cada una de éstas (no se explica la variable `buffer` pues se recomienda siempre dejarla en 0):
+
+* `every_minutes`: Especifica el intervalo de tiempo en minutos entre cada ejecución del programa.
+* `minutes`: Especifica el tamaño de las formas de onda a picar en minutos.
+* `db`: Especifica la dirección de host de la base de datos de seiscomp a la cual se enviarán los eventos generados por el programa usando scdispatch (usando el parámetro -H).
+
+**Se recomienda configurar el programa para que se ejecute cada 15 minutos picando trazas de la última media hora (implicitamente un overlaping de 5 minutos) configurando el valor de `minutes` como 30, el de `every_minutes` como 15 y el de `buffer` como 0.**
 
