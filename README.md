@@ -15,11 +15,17 @@ No se recomienda usar este script directamente, en su lugar se recomienda usar l
 
 --------------
 ## Instalación
-A continuación se describen los pasos para que el ai_picker funcione con EQTransformer, el cual es al día de hoy el mejor picker automático que existe (mejor incluso que PhaseNet). Para permitir el uso  también de Phasenet habría que instalarlo en un ambiente de anaconda llamado **pnet**  
+
 ### Requisitos
 
 - [Anaconda3](https://www.anaconda.com/products/individual)
 - [SeisComP3](https://www.seiscomp.de/seiscomp3/)
+
+### Descargue el ai_picker
+```bash
+(eqt) $ git clone https://github.com/dsiervo/sgc_ai_picker.git
+(eqt) $ cd sgc_ai_picker
+```
 
 ### Instale EQTransformer
 
@@ -49,12 +55,7 @@ $ cd PhaseNet
 $ conda env create -f env.yml
 ```
 
-### Instale el ai_picker
-#### Clone el repositorio del ai_picker
-```bash
-(eqt) $ git clone https://github.com/dsiervo/sgc_ai_picker.git
-(eqt) $ cd sgc_ai_picker
-```
+
 
 #### Configure la optimización de descaga de formas de onda
 El siguiente paso es necesario para mejorar el desempeño al descargar señales usando EQTransformer.
@@ -175,9 +176,9 @@ El programa prune_and_count_events.py unirá en el archivo **main_events_pruned.
 En el panel izquierdo del dashboard podrá filtrar los eventos por magnitud, coordenadas, profundidad, RMS e intervalo temporal. En el lado derecho de la página se mostrará una tabla con información resumida de los eventos localizados que puede ser ordenada por la columna de preferencia. Adicionalmente se generarán histogramas sobre el número de eventos por valor de magnitud, rms y profundidad. Cómo también la evolución temporal de la sismicidad, perfiles de profundidad y un mapa con la sismicidad.
 
 ### Ejecución en tiempo semi-real (ai_scheduler.py y ai_scheduler_sc4.py)
-Los scripts *ai_scheduler.py y ai_scheduler_sc4.py permiten picar en tiempo semi-real las formas de onda de la red con el ai_picker y enviar los eventos generados a un servidor de seiscomp de forma automática (SeisComP3 en el caso del ai_scheduler.py y SeisComP4 en el caso del ai_scheduler_sc4.py).
+Los scripts **ai_scheduler.py** y **ai_scheduler_sc4.py** permiten picar en tiempo semi-real las formas de onda de la red con el ai_picker y enviar los eventos generados a un servidor de seiscomp de forma automática (SeisComP3 en el caso del ai_scheduler.py y SeisComP4 en el caso del ai_scheduler_sc4.py).
 
-### Uso ai_scheduler.py (seiscomp3)
+### Configuración ai_scheduler.py (seiscomp3)
 
 #### Copie los archivos necesarios
 Primero debe hacer una copia de los archivos **ai_scheduler.py** y **ai_picker_scdl.inp** a su directorio de trabajo, para ello úbiquese en su directorio de trabajo desde la terminal y ejecute:
@@ -186,7 +187,7 @@ Primero debe hacer una copia de los archivos **ai_scheduler.py** y **ai_picker_s
         $ cp <ruta hacia sgc_ai_picker>/utils/ai_picker_scdl.inp .
 
 #### Modifique ai_picker_scdl.inp y ai_scheduler.py
-Edite el los parámetros de ai_picker_scdl.inp según sus preferencias ([guía parámetros de configuración](#parámetros-generales)) y luego abra el archivo **ai_scheduler.py** y en el bloque `if __name__ == "__main__"` edite el valor de las variables `every_minutes`, `minutes` y `db` según sus preferencias. A continuación se explicará en que consiste cada una de éstas (no se explica la variable `buffer` pues se recomienda siempre dejarla en 0):
+Edite el los parámetros de ai_picker_scdl.inp según sus preferencias (se recomienda usar como picker a EQTransformer, para mas información puede mirar [guía parámetros de configuración](#parámetros-generales)) y luego abra el archivo **ai_scheduler.py** y en el bloque `if __name__ == "__main__"` edite el valor de las variables `every_minutes`, `minutes` y `db` según sus preferencias. A continuación se explicará en que consiste cada una de éstas (no se explica la variable `buffer` pues se recomienda siempre dejarla en 0):
 
 * `every_minutes`: Especifica el intervalo de tiempo en minutos entre cada ejecución del programa.
 * `minutes`: Especifica el tamaño de las formas de onda a picar en minutos.
@@ -194,7 +195,8 @@ Edite el los parámetros de ai_picker_scdl.inp según sus preferencias ([guía p
 
 **Se recomienda configurar el programa para que se ejecute cada 15 minutos picando trazas de la última media hora (implicitamente un overlaping de 5 minutos) configurando el valor de `minutes` como 30, el de `every_minutes` como 15 y el de `buffer` como 0.**
 
-### Uso ai_scheduler_sc4.py (seiscomp4)
+### Configuración ai_scheduler_sc4.py (seiscomp4)
+Debido a que no fue posible arreglar el problema de conexión en SeisComP4 para enviar eventos desde un cliente a un servidor usando *scdispatch* de forma remota, se decidió copiar tanto el xml de picks como el de eventos al servidor de destino y desde allí ejecutar *scdispatch*. Esto se maneja desde el script ai_scheduler_sc4.py de forma automática.
 
 #### Copie los archivos necesarios
 Primero debe hacer una copia de los archivos **ai_scheduler_sc4.py** y **ai_picker_scdl.inp** a su directorio de trabajo, para ello úbiquese en su directorio de trabajo desde la terminal y ejecute:
@@ -203,11 +205,32 @@ Primero debe hacer una copia de los archivos **ai_scheduler_sc4.py** y **ai_pick
         $ cp <ruta hacia sgc_ai_picker>/utils/ai_picker_scdl.inp .
 
 #### Modifique ai_picker_scdl.inp y ai_scheduler_sc4.py
-Edite el los parámetros de ai_picker_scdl.inp según sus preferencias ([guía parámetros de configuración](#parámetros-generales)) y luego abra el archivo **ai_scheduler_sc4.py** y en el bloque `if __name__ == "__main__"` edite el valor de las variables `every_minutes`, `minutes` y `db` según sus preferencias. A continuación se explicará en que consiste cada una de éstas (no se explica la variable `buffer` pues se recomienda siempre dejarla en 0):
+Edite el los parámetros de ai_picker_scdl.inp según sus preferencias (se recomienda usar como picker a EQTransformer, para mas información puede mirar [guía parámetros de configuración](#parámetros-generales)) y luego abra el archivo **ai_scheduler_sc4.py** y en el bloque `if __name__ == "__main__"` edite el valor de las variables `every_minutes`, `minutes`, `ip_db`, `usr_db` y `psw_db` según sus preferencias. A continuación se explicará en que consisten las últimas 3 (para las primeras 2 puede mirar la sección [Modifique ai_picker_scdl.inp y ai_scheduler.py](#modifique_ai_picker_scdl.inp_y_ai_scheduler.py)):
 
-* `every_minutes`: Especifica el intervalo de tiempo en minutos entre cada ejecución del programa.
-* `minutes`: Especifica el tamaño de las formas de onda a picar en minutos.
-* `db`: Especifica la dirección de host de la base de datos de seiscomp a la cual se enviarán los eventos generados por el programa usando scdispatch (usando el parámetro -H).
+* `ip_db`: Dirección IP del servidor SeisComP4.
+* `usr_db`: Nombre de usuario del servidor SeisComP4.
+* `psw_db`: Contraseña del servidor SeisComP4.
 
 **Se recomienda configurar el programa para que se ejecute cada 15 minutos picando trazas de la última media hora (implicitamente un overlaping de 5 minutos) configurando el valor de `minutes` como 30, el de `every_minutes` como 15 y el de `buffer` como 0.**
+
+#### Uso ai_scheduler.py y ai_scheduler_sc4.py
+Para ambos scripts la ejecución es igual, una ves configurado el .py y .inp, se debe primero activar el entorno de anaconda correspodiente al picker seleccionado en el archivo ai_picker_scdl.inp y luego ejecutar con python el script.
+
+Si se seleccionó `eqt` (EQTransformer), el cual es el picker recomendado, se debe ejecutar:
+    
+        $ conda activate eqt
+
+En caso de haber seleccionado `pnet` (PhaseNet), se debe ejecutar:
+    
+        $ conda activate pnet
+
+Por ultimo ejecutar el script con python (ejemplo con ai_scheduler.py) usando `nohup` al inicio del comando y `&` al final para evitar que el programa se detenga en caso de que la terminal se cierre:
+    
+        (eqt) $ nohup python ai_scheduler.py&
+
+Se puede monitorear la salida del programa revisando las 500 últimas líneas del archivo nohup.out con el comando
+
+    (eqt) $ tail -500 nohup.out
+
+
 
