@@ -5,8 +5,14 @@ Created on Nov 24 13:01:33 2020
 
 @author: Daniel Siervo, emetdan@gmail.com
 """
+import os
+import numpy as np
 import obspy as obs
 import sys
+import pandas as pd
+import datetime
+import mysql.connector
+from obspy.geodetics import gps2dist_azimuth
 
 """import click
 
@@ -36,7 +42,14 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml'):
         print('\n\t No existe el archivo %s, se salta este proceso\n' % xml_name)
         sys.exit(1)
 
-    for ev in cat:
+    for i, ev in enumerate(cat):
+        pref_orig = ev.preferred_origin()
+        watcher = Watcher(pref_orig)
+        if watcher.exist_in_db():
+            print(f'\n\t\033[91m{pref_orig.time} - {ev.event_descriptions[0].text}\033[0m')
+            print('\tEl evento ya existe en la base de datos, se elimina')
+            del cat[i]
+            continue
         del ev.origins[:-1]
 
     cat.write(output_fn, format='SC3ML', validate=True, event_removal=True,
@@ -61,6 +74,98 @@ def change_xml_version(ev_file='events_final.xml'):
         f.write(''.join(lines))
 
 
+class Watcher:
+    origin: obs.core.event.Origin
+    mydb = mysql.connector.connect(
+        host="10.100.100.232",
+        user="consulta",
+        passwd="consulta",
+        database="seiscomp3"
+    )
+    
+    def __init__(self, origin):
+        self.origin = origin
+    
+    @property
+    def origin_time(self):
+        return self.origin.time.datetime
+    
+    @property
+    def main_dir(self):
+        return os.path.dirname(os.path.abspath(__file__))
+    
+    @property
+    def sql_path(self):
+        return os.path.join(self.main_dir, 'latest_events.sql')
+    
+    @property
+    def tf(self):
+        # current time in UTC
+        return datetime.datetime.now() + datetime.timedelta(hours=5)
+    
+    @property
+    def ti(self):
+        # tf - 2 hours
+        return self.tf - datetime.timedelta(hours=2)
+    
+    @property
+    def lat(self):
+        return self.origin.latitude
+    
+    @property
+    def lon(self):
+        return self.origin.longitude
+    
+    @property
+    def query(self):
+        return open(self.sql_path).read().format(**{'ti': self.ti, 'tf': self.tf})
+    
+    @property
+    def df(self):
+        return pd.read_sql(self.query, self.mydb, parse_dates=['orig_time'])
+    
+    def exist_in_db(self):
+        """Compare event time and geographic localization with events in seiscomp db
+        
+    
+        Returns
+        -------
+        bool
+            True if event is in db, False if not
+        """
+        print(self.df)
+        if self.check_time() and self.check_location():
+            return True
+        else:
+            return False
+    
+    def check_time(self):
+        """Check if event time is in db
+        
+        Returns
+        -------
+        bool
+            True if event is in db, False if not
+        """
+        diff_sec = (self.df['orig_time']
+                    - self.origin_time).abs().dt.total_seconds()
+        
+        return np.any(diff_sec < 60)
+    
+    def check_location(self):
+        """Check if event location is in db
+        
+        Returns
+        -------
+        bool
+            True if event is in db, False if not
+        """
+        # distance in meters between event and db events
+        dist_m = self.df.apply(lambda row: gps2dist_azimuth(row['lat'], row['lon'],
+                                                            self.lat, self.lon)[0], axis=1)
+        # check if any distance is less than 50 km
+        return np.any(dist_m < 50000)
+    
 if __name__ == "__main__":
     import sys
     

@@ -64,7 +64,14 @@ def prep_client_params(params):
     params['dt'] = timedelta(seconds=int(params['dt']))
 
     client_params = ['ip', 'port', 'starttime', 'endtime', 'dt', 'locator_dict']
-    client_dict = dict((key, params[key]) for key in client_params)
+    try:
+        client_dict = dict((key, params[key]) for key in client_params)
+    # default value for locator_dict
+    except KeyError as missing_key:
+        client_dict = dict((key, params[key]) for key in client_params[:-1])
+        if missing_key.args[0] == 'locator_dict':
+            client_dict['locator_dict'] = '{"LOCSAT": "iasp91"}'
+    
     return client_dict
 
 
