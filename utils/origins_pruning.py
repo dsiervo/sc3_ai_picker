@@ -21,7 +21,7 @@ from obspy.geodetics import gps2dist_azimuth
 @click.option('-o', "--output_fn", prompt=True, help='Output xml file name', default="origenes_preferidos.xml")"""
 
 
-def origins_pruning(xml_name, output_fn='origenes_preferidos.xml'):
+def origins_pruning(xml_name, output_fn='origenes_preferidos.xml', check_db=False):
     """Delete all origins that are not the prefered origin
     in a seiscomp event xml file. Returns a xml with origins only
 
@@ -42,16 +42,22 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml'):
         print('\n\t No existe el archivo %s, se salta este proceso\n' % xml_name)
         sys.exit(1)
 
+    # para acada evento en el xml de eventos
     for i, ev in enumerate(cat):
-        pref_orig = ev.preferred_origin()
-        watcher = Watcher(pref_orig)
-        if watcher.exist_in_db():
-            print(f'\n\t\033[91m{pref_orig.time} - {ev.event_descriptions[0].text}\033[0m')
-            print('\tEl evento ya existe en la base de datos, se elimina')
-            del cat[i]
-            continue
+        # Si check_db es True, se verifica si el evento ya esta en la base de datos
+        # en caso de que si, se elimina el evento del xml
+        if check_db:
+            pref_orig = ev.preferred_origin()
+            watcher = Watcher(pref_orig)
+            if watcher.exist_in_db():
+                print(f'\n\n\t\033[91m{pref_orig.time} - {ev.event_descriptions[0].text}\033[0m')
+                print('\tEl evento ya existe en la base de datos, se elimina\n\n')
+                del cat[i]
+                continue
+        # elimina orígenes que no son el preferido
         del ev.origins[:-1]
 
+    # se escribe xml con solo los orígenes preferidos
     cat.write(output_fn, format='SC3ML', validate=True, event_removal=True,
               verbose=True)
 
@@ -173,9 +179,9 @@ if __name__ == "__main__":
         the xml name and the name of the output file'
         
     if len(sys.argv) == 2:
-        origins_pruning(sys.argv[1])
+        origins_pruning(sys.argv[1], check_db=True)
     elif len(sys.argv) == 3:
-        origins_pruning(sys.argv[1], sys.argv[2])
+        origins_pruning(sys.argv[1], sys.argv[2], check_db=True)
     else:
         print('\n\tTo many arguments you need to provide the xml name \
             or the xml name and the name of the input file. Example:\n\

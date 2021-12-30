@@ -105,12 +105,12 @@ def logger(ti, tf):
     f.close()
 
 
-def runner(every_m, buf, ip_db, usr_db, psw_db, sc4_ai_picker_dir):
-    """Excecute ai_picker.py every every_m hours with a 5 min buffer
+def runner(wf_length, buf, ip_db, usr_db, psw_db, sc4_ai_picker_dir, time_step):
+    """Excecute ai_picker.py every wf_length hours with a 5 min buffer
 
     Parameters
     ----------
-    every_m : int
+    wf_length : int
         Time delta in hours between init and end time
     buf : int
         Buffer in minutes, default: 2
@@ -122,12 +122,12 @@ def runner(every_m, buf, ip_db, usr_db, psw_db, sc4_ai_picker_dir):
 
     # taking current time in UTC
     t = datetime.datetime.now() + datetime.timedelta(hours=(5))
-    t_i = t - datetime.timedelta(minutes=(every_m + buf))
+    t_i = t - datetime.timedelta(minutes=(wf_length + buf))
 
     # change the init, end time and dt in ai_picker.inp
     change_times(t_i.strftime("%Y-%m-%d %H:%M:%S"),
                  t.strftime("%Y-%m-%d %H:%M:%S"),
-                 (every_m + buf)*60)
+                 (wf_length + buf)*60)
 
     print(f'\n\n\trunning from {t_i} to {t}\n\n')
     os.system('head -10 ai_picker.inp')
@@ -162,7 +162,7 @@ def runner(every_m, buf, ip_db, usr_db, psw_db, sc4_ai_picker_dir):
     else:
         print('\n\n\tNo existe mag.xml!\n\n')
     print('\n\tSiguiente ejecucion a las: ',
-          t + datetime.timedelta(minutes=(every_m)), 'UT\n')
+          t + datetime.timedelta(minutes=(time_step)), 'UT\n')
 
     tf = datetime.datetime.now() + datetime.timedelta(hours=(5))
 
@@ -172,19 +172,21 @@ def runner(every_m, buf, ip_db, usr_db, psw_db, sc4_ai_picker_dir):
 if __name__ == "__main__":
 
     every_minutes = 10
-    minutes = 20  # period of excecution in minutes
+    minutes = 20  # length in minutes of the waveforms to pick
     buffer = 0 # buffer or overlapping in minutes
     
     ip_db = '10.100.100.94'
     usr_db = 'sysop'
     psw_db = "0rcada2020.\$1"
+    
     # directorio en el servidor seiscomp4 en el que se guardaran los xml con los eventos.
     # Asegurese que el directorio exista.
     sc4_ai_picker_dir = '/home/sysop/ai_picker/'
     
     schedule.every(every_minutes).minutes.do(runner, minutes, buffer,
                                              ip_db, usr_db, psw_db,
-                                             sc4_ai_picker_dir)
+                                             sc4_ai_picker_dir,
+                                             every_minutes)
 
     while True:
         schedule.run_pending()

@@ -134,9 +134,15 @@ def prep_mysqldb_params(params):
     params = params.copy()
     
     # value by default. It will be replaced if it exist in ai_picker.inp
-    mysql_dict = {'db_sc':'mysql://sysop:sysopp@10.100.100.13/seiscomp3'}
+    mysql_dict = {'db_sc': 'mysql://sysop:sysopp@10.100.100.13/seiscomp3',
+                  'check_db': False}
     for key in mysql_dict:
         if key in params.keys():
+            if key == 'check_db':
+                if params[key] in ('Yes', 'yes', 'YES', 'True', 'true', 'TRUE'):
+                    mysql_dict[key] = True
+                else:
+                    mysql_dict[key] = False
             mysql_dict[key] = params[key]
     
     return mysql_dict
@@ -211,7 +217,7 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict)
 
     # pruning origins that are not the prefered
     pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
-    origins_pruning(evf_path, pref_orig_path)
+    origins_pruning(evf_path, pref_orig_path, mysqldb_dict["check_db"])
 
 def run_EQTransformer(client_dict, download_data,eqt_dict, mysqldb_dict):
 
@@ -237,7 +243,7 @@ def run_EQTransformer(client_dict, download_data,eqt_dict, mysqldb_dict):
 
     # pruning origins that are not the prefered
     pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
-    origins_pruning(evf_path, pref_orig_path)
+    origins_pruning(evf_path, pref_orig_path, mysqldb_dict["check_db"])
 
 def run(inp_file):
 
