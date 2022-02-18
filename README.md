@@ -158,9 +158,9 @@ Los parámetros de solo EQTransformer: eqt_detection_threshold, eqt_P_threshold,
  Ambos pueden usarse para picar sismicidad en archivos de formas de onda de estaciones portátiles o para reprocesar formas de onda asociadas a ejambres sísmicos o réplicas.
 
 #### Uso discontinuous_picker.py
-Para ejecutar el programa debe tener configurado previamente en el directorio de ejecución el archivo de configuración `temp_ai_picker.inp`. Para esto copie en su directorio de trabajo el archivo `ai_picker.inp` que se encuentra en la ruta `<su ruta a sgc_ai_picker>/ai_picker.inp`, luego cámbiele el nombre por `temp_ai_picker.inp` y finalmente edite los parámetros dentro de éste según sus preferencias. Una vez ubicado en su directorio de trabajo ejecute el programa con el siguiente comando: 
+Para ejecutar el programa debe tener configurado previamente en el directorio de ejecución el archivo de configuración `temp_ai_picker.inp` (toma todos los parámetros excepto las fechas inicial y final). Para esto copie en su directorio de trabajo el archivo `ai_picker.inp` que se encuentra en la ruta `<su ruta a sgc_ai_picker>/ai_picker.inp`, luego cámbiele el nombre por `temp_ai_picker.inp` y finalmente edite los parámetros dentro de éste según sus preferencias. Una vez ubicado en su directorio de trabajo ejecute el programa con el siguiente comando: 
 
-    $ discontinuous_picker.py
+    $ discontinuous_picker.py -s "2020-01-22 00:00:00" -e "2020-01-23 00:00:00" -n 2
 
 #### Salida discontinuous_picker.py
 Una vez ejecutado este generará en el directorio especificado en el parámetro general_output_dir del archivo temp_ai_picker.inp una carpeta por cada 7 días que contendrá los archivos xml de salida correspondientes a los picks, orígenes y eventos (para más detalles de los xml generados por favor remítase a la sección [Salida ai_picker.py](#salida-ai_picker.py) de este documento), por lo tanto habrán un xml de eventos por cada carpeta de 7 días.
