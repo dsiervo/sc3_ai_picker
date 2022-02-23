@@ -154,13 +154,20 @@ Los parámetros de solo EQTransformer: eqt_detection_threshold, eqt_P_threshold,
 
 ### discontinuous_picker.py (ejecución offline)
  Dependiendo de la cantidad de datos que se desee picar, puede usar el ai_picker.py directamente o usar el script de ayuda **discontinuous_picker.py**.
- En caso de que desee picar más de 2 días de datos con más de 10 estaciones se recomienda usar el script de ayuda **discontinuous_picker.py**.
+ En caso de que desee picar más de 2 días de datos con más de 10 estaciones se recomienda usar el script **discontinuous_picker.py**.
  Ambos pueden usarse para picar sismicidad en archivos de formas de onda de estaciones portátiles o para reprocesar formas de onda asociadas a ejambres sísmicos o réplicas.
 
 #### Uso discontinuous_picker.py
-Para ejecutar el programa debe tener configurado previamente en el directorio de ejecución el archivo de configuración `temp_ai_picker.inp` (toma todos los parámetros excepto las fechas inicial y final). Para esto copie en su directorio de trabajo el archivo `ai_picker.inp` que se encuentra en la ruta `<su ruta a sgc_ai_picker>/ai_picker.inp`, luego cámbiele el nombre por `temp_ai_picker.inp` y finalmente edite los parámetros dentro de éste según sus preferencias. Una vez ubicado en su directorio de trabajo ejecute el programa con el siguiente comando: 
+Para ejecutar el programa debe tener configurado previamente en el directorio de ejecución el archivo de configuración `temp_ai_picker.inp` (toma todos los parámetros excepto las fechas inicial y final, por lo que puede dejar las que estén por defecto). Para esto copie en su directorio de trabajo el archivo `ai_picker.inp` que se encuentra en la ruta `<su ruta a sgc_ai_picker>/ai_picker.inp`, luego cámbiele el nombre por `temp_ai_picker.inp` y finalmente edite los parámetros dentro de éste según sus preferencias  (estaciones a picar, ruta de los directorios donde se guardarán las formas de onda y donde se generarán los archivos de salida, etc). Una vez ubicado en su directorio de trabajo ejecute el programa de a acuerdo al rego de fechas que desee. Si por ejemplo desea picar entre el 1/1/2020 al 31/7/2020 puede ejecutar en consola el siguiente comando: 
 
-    $ discontinuous_picker.py -s "2020-01-22 00:00:00" -e "2020-01-23 00:00:00" -n 2
+    $ discontinuous_picker.py -s "2020-01-01 00:00:00" -e "2020-07-31 23:59:59"
+
+El programa empezará a picar y guardará los resultados en carpetas de 7 días. Si desea en cambio que guarde en un rango de tiempo distinto, puede modificarlo con la opción -n seguido del número de días en el que desea que se vayan guardando los datos.
+
+Puede acceder a las opciones del programa ejecutando:
+    
+        $ discontinuous_picker.py --help
+
 
 #### Salida discontinuous_picker.py
 Una vez ejecutado este generará en el directorio especificado en el parámetro general_output_dir del archivo temp_ai_picker.inp una carpeta por cada 7 días que contendrá los archivos xml de salida correspondientes a los picks, orígenes y eventos (para más detalles de los xml generados por favor remítase a la sección [Salida ai_picker.py](#salida-ai_picker.py) de este documento), por lo tanto habrán un xml de eventos por cada carpeta de 7 días.
