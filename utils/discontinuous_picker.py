@@ -25,12 +25,16 @@ import click
               help='Run ai_picker every n_days\n')
 @click.option('-d', "--db", required=False, prompt=False, default='None',
               help='Seiscomp database to migrate events every n_days. Could be 10.100.100.13')
-def discontinuous_picker(start, end, n_days, db):
+@click.option('-cq', "--check_quadrant", prompt=True, default='None', nargs=2, type=float,
+              help='Check origins in the given quadrant\n')
+def discontinuous_picker(start, end, n_days, db, check_quadrant):
 
     start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
     end = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
     dt = datetime.timedelta(days=n_days)
 
+    assert start < end, 'Start date must be before end date'
+    
     temp_inp = 'temp_ai_picker.inp'
     params = read_params(temp_inp)
     wav_dir = params['general_data_dir']

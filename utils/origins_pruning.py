@@ -21,7 +21,8 @@ from obspy.geodetics import gps2dist_azimuth
 @click.option('-o', "--output_fn", prompt=True, help='Output xml file name', default="origenes_preferidos.xml")"""
 
 
-def origins_pruning(xml_name, output_fn='origenes_preferidos.xml', check_db=False):
+def origins_pruning(xml_name, output_fn='origenes_preferidos.xml', check_db=False,
+                    quadrant="None"):
     """Delete all origins that are not the prefered origin
     in a seiscomp event xml file. Returns a xml with origins only
 
@@ -44,12 +45,16 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml', check_db=Fals
 
     # para acada evento en el xml de eventos
     for i, ev in enumerate(cat):
-        # Si check_db es True, se verifica si el evento ya esta en la base de datos
-        # en caso de que si, se elimina el evento del xml
-        if check_db:
+        # Si check_db es True se verifica si el evento ya esta en la base de datos
+        # en caso de que si devuelve True, se elimina el evento del xml
+        if check_db or quadrant != "None":
             pref_orig = ev.preferred_origin()
             watcher = Watcher(pref_orig)
-            if watcher.exist_in_db():
+            if check_db and watcher.exist_in_db():
+                print(f'\n\n\t El evento\033[91m {pref_orig.time} - {ev.event_descriptions[0].text}\033[0m ya existe en la base de datos, se elimina del xml\n\n')
+                del cat[i]
+                continue
+            if quadrant != "None" and watcher.check_in_quadrant():
                 print(f'\n\n\t El evento\033[91m {pref_orig.time} - {ev.event_descriptions[0].text}\033[0m ya existe en la base de datos, se elimina del xml\n\n')
                 del cat[i]
                 continue
@@ -131,6 +136,7 @@ class Watcher:
     
     def exist_in_db(self):
         """Compare event time and geographic localization with events in seiscomp db
+        Inspects events in the last 5 hours
         
     
         Returns
@@ -158,7 +164,7 @@ class Watcher:
         return np.any(diff_sec < 60)
     
     def check_location(self):
-        """Check if event location is in db
+        """Check if event location less than 50 km to an event in db
         
         Returns
         -------
@@ -170,6 +176,24 @@ class Watcher:
                                                             self.lat, self.lon)[0], axis=1)
         # check if any distance is less than 50 km
         return np.any(dist_m < 50000)
+    
+    def check_in_quadrant(self, quadrant):
+        """Check if event location is in a quadrant
+        
+        Parameters
+        ----------
+        quadrant : Tuple
+            Quadrant to check in format (lat_min, lon_min, lat_max, lon_max)
+        
+        Returns
+        -------
+        bool
+            True if event is in quadrant, False if not
+        """
+        return (quadrant[0] < self.lat < quadrant[2] and
+                quadrant[1] < self.lon < quadrant[3])
+                
+ 
     
 if __name__ == "__main__":
     import sys
