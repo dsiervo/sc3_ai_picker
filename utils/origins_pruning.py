@@ -50,8 +50,7 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml', check_db=Fals
             pref_orig = ev.preferred_origin()
             watcher = Watcher(pref_orig)
             if watcher.exist_in_db():
-                print(f'\n\n\t\033[91m{pref_orig.time} - {ev.event_descriptions[0].text}\033[0m')
-                print('\tEl evento ya existe en la base de datos, se elimina\n\n')
+                print(f'\n\n\t El evento\033[91m {pref_orig.time} - {ev.event_descriptions[0].text}\033[0m ya existe en la base de datos, se elimina del xml\n\n')
                 del cat[i]
                 continue
         # elimina orígenes que no son el preferido
