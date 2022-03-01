@@ -8,6 +8,7 @@ Created on Nov 24 13:01:33 2020
 import os
 import numpy as np
 import obspy as obs
+from obspy import Catalog
 import sys
 import pandas as pd
 import datetime
@@ -21,8 +22,8 @@ from obspy.geodetics import gps2dist_azimuth
 @click.option('-o', "--output_fn", prompt=True, help='Output xml file name', default="origenes_preferidos.xml")"""
 
 
-def origins_pruning(xml_name, output_fn='origenes_preferidos.xml', check_db=False,
-                    quadrant="None"):
+def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
+                    check_db=False, quadrant="None"):
     """Delete all origins that are not the prefered origin
     in a seiscomp event xml file. Returns a xml with origins only
 
@@ -43,26 +44,28 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml', check_db=Fals
         print('\n\t No existe el archivo %s, se salta este proceso\n' % xml_name)
         sys.exit(1)
 
+    cat2 = Catalog()
     # para acada evento en el xml de eventos
     for i, ev in enumerate(cat):
+        add_event = True
         # Si check_db es True se verifica si el evento ya esta en la base de datos
         # en caso de que si devuelve True, se elimina el evento del xml
         if check_db or quadrant != "None":
-            pref_orig = ev.preferred_origin()
+            pref_orig = cat[i].preferred_origin()
             watcher = Watcher(pref_orig)
             if check_db and watcher.exist_in_db():
                 print(f'\n\n\t El evento\033[91m {pref_orig.time} - {ev.event_descriptions[0].text}\033[0m ya existe en la base de datos, se elimina del xml\n\n')
-                del cat[i]
-                continue
-            if quadrant != "None" and watcher.check_in_quadrant():
-                print(f'\n\n\t El evento\033[91m {pref_orig.time} - {ev.event_descriptions[0].text}\033[0m ya existe en la base de datos, se elimina del xml\n\n')
-                del cat[i]
-                continue
-        # elimina orígenes que no son el preferido
-        del ev.origins[:-1]
-
+                add_event = False
+            if quadrant != "None" and not watcher.check_in_quadrant(quadrant):
+                print(f'\n\n\t El evento\033[91m {pref_orig.time} : {pref_orig.latitude}, {pref_orig.longitude} : {ev.event_descriptions[0].text}\033[0m está fuera del cuadrante {quadrant}, se elimina del xml\n\n')
+                add_event = False
+        if add_event:
+            # elimina orígenes que no son el preferido
+            del cat[i].origins[:-1]
+            cat2.append(cat[i])
+        
     # se escribe xml con solo los orígenes preferidos
-    cat.write(output_fn, format='SC3ML', validate=True, event_removal=True,
+    cat2.write(output_fn, format='SC3ML', validate=True, event_removal=True,
               verbose=True)
 
     remove_id_prefix(output_fn)
@@ -144,7 +147,6 @@ class Watcher:
         bool
             True if event is in db, False if not
         """
-        print(self.df)
         if self.check_time() and self.check_location():
             return True
         else:
@@ -183,17 +185,15 @@ class Watcher:
         Parameters
         ----------
         quadrant : Tuple
-            Quadrant to check in format (lat_min, lon_min, lat_max, lon_max)
+            Quadrant to check in format (lat_min, lat_max, lon_min,  lon_max)
         
         Returns
         -------
         bool
             True if event is in quadrant, False if not
         """
-        return (quadrant[0] < self.lat < quadrant[2] and
-                quadrant[1] < self.lon < quadrant[3])
-                
- 
+        return (quadrant[0] <= self.lat <= quadrant[1]
+                and quadrant[2] <= self.lon <= quadrant[3]) 
     
 if __name__ == "__main__":
     import sys
@@ -205,6 +205,9 @@ if __name__ == "__main__":
         origins_pruning(sys.argv[1], check_db=True)
     elif len(sys.argv) == 3:
         origins_pruning(sys.argv[1], sys.argv[2], check_db=True)
+    elif len(sys.argv) == 4:
+        print('en cuadrante')
+        origins_pruning(sys.argv[1], sys.argv[2], check_db=False, quadrant=(3.5, 4.5, -72, -71))
     else:
         print('\n\tTo many arguments you need to provide the xml name \
             or the xml name and the name of the input file. Example:\n\

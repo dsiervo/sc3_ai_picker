@@ -269,9 +269,15 @@ class Dashboard(object):
         for col, type_ in zip([col1, col2, col3],
                              ['magnitude', 'rms [s]', 'depth [km]']):
             with col:
-                counts, bins = np.histogram(df[type_], bins=range(int(df[type_].min()), int(df[type_].max()+1)))
+                print(type_)
+                bins = range(int(df[type_].min()), int(df[type_].max()+1))
+                print(list(bins))
+                if len(bins) == 1:
+                    bins = range(0, 2)
+                counts, bins = np.histogram(df[type_], bins=bins)
                 bins = 0.5 * (bins[:-1] + bins[1:])
-                fig = px.bar(x=bins, y=counts, labels={'x':type_, 'y':'Number of EQ'}, height=500)
+
+                fig = px.bar(x=bins, y=counts, labels={'x': type_, 'y': 'Number of EQ'}, height=500)
                 # Option-1:  using fig.update_yaxes()
                 fig.update_yaxes(visible=False, showticklabels=True)
                 st.plotly_chart(fig, use_container_width=True)

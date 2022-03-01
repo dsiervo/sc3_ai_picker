@@ -25,9 +25,7 @@ import click
               help='Run ai_picker every n_days\n')
 @click.option('-d', "--db", required=False, prompt=False, default='None',
               help='Seiscomp database to migrate events every n_days. Could be 10.100.100.13')
-@click.option('-cq', "--check_quadrant", prompt=True, default='None', nargs=2, type=float,
-              help='Check origins in the given quadrant\n')
-def discontinuous_picker(start, end, n_days, db, check_quadrant):
+def discontinuous_picker(start, end, n_days, db):
 
     start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
     end = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
@@ -45,6 +43,9 @@ def discontinuous_picker(start, end, n_days, db, check_quadrant):
         t = datetime.datetime.now() + datetime.timedelta(hours=(5))
 
         final_time = start + dt
+        if final_time > end:
+            final_time = end
+
         print(f'\n\n\trunning from {start} to {final_time}\n\n')
 
         os.system('rm -fr %s' % wav_dir)
@@ -93,7 +94,7 @@ def discontinuous_picker(start, end, n_days, db, check_quadrant):
             else:
                 print('\n\n\tArchivo vacio!\n\n')
         else:
-            print('\n\n\tNo existe %s!\n\n' % output_path)
+            print('\n\n\tNo se encontró origenes_preferidos.xml!\n\n')
 
         start += dt
         tf = datetime.datetime.now() + datetime.timedelta(hours=(5))

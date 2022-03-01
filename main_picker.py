@@ -135,7 +135,8 @@ def prep_mysqldb_params(params):
     
     # value by default. It will be replaced if it exist in ai_picker.inp
     mysql_dict = {'db_sc': 'mysql://sysop:sysopp@10.100.100.13/seiscomp3',
-                  'check_db': False}
+                  'check_db': False,
+                  'check_quadrant': "None"}
     for key in mysql_dict:
         if key in params.keys():
             if key == 'check_db':
@@ -143,6 +144,10 @@ def prep_mysqldb_params(params):
                     mysql_dict[key] = True
                 else:
                     mysql_dict[key] = False
+            elif key == 'check_quadrant':
+                quadrant = params[key].split(',')
+                quadrant = tuple(map(float, quadrant))
+                params[key] = quadrant
             mysql_dict[key] = params[key]
     
     return mysql_dict
@@ -243,7 +248,9 @@ def run_EQTransformer(client_dict, download_data,eqt_dict, mysqldb_dict):
 
     # pruning origins that are not the prefered
     pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
-    origins_pruning(evf_path, pref_orig_path, mysqldb_dict["check_db"])
+    origins_pruning(evf_path, pref_orig_path, mysqldb_dict["check_db"],
+                    mysqldb_dict['check_quadrant'])
+
 
 def run(inp_file):
 
