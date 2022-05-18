@@ -61,10 +61,16 @@ class EventSumamry(object):
         self.csv_path = os.path.join(os.path.dirname(self.xml_path), 'all_events.csv')
 
     def get_mag(self, x, key):
-        return float(x[0]['magnitude'][key])
+        try:
+            return float(x[0]['magnitude'][key])
+        except TypeError:
+            return -2
 
     def get_mag_count(self, x):
-        return int(x[0]['stationCount'])
+        try:
+            return int(x[0]['stationCount'])
+        except TypeError:
+            return -2
 
     def get_from_dict(self, x, key, time=False):
         if not time:
@@ -142,7 +148,7 @@ class Dashboard(object):
     def __init__(self, csv_path):
         self.csv_path = csv_path
 
-    @st.cache(persist=True)
+    @st.cache(persist=False)
     def load_data(self):
         # Loading data as a pandas DataFrame retriving only the columns of our interest
         df = pd.read_csv(self.csv_path, index_col=0, parse_dates=[6])
@@ -173,6 +179,7 @@ class Dashboard(object):
         st.title("Catalog Exploration")
 
         st.sidebar.header('Data filter')
+        print('len(df)', len(df))
         filter_type = st.sidebar.radio('Filter type', ('slider', 'number input'))
         #st.sidebar.subheader("Magnitude")
         if filter_type == 'slider':
@@ -234,14 +241,15 @@ class Dashboard(object):
                                                        min_value=df['date'].min(),
                                                        max_value=df['date'].max())
             
-        query = f'latitude >= {lat_range[0]} and latitude < {lat_range[1]} \
-                and longitude >= {lon_range[0]} and longitude < {lon_range[1]}\
-                and magnitude >= {mag_range[0]} and magnitude < {mag_range[1]}\
-                and `depth [km]` >= {depth_range[0]} and `depth [km]` < {depth_range[1]}\
-                and `rms [s]` >= {rms_range[0]} and `rms [s]` < {rms_range[1]}\
+        query = f'latitude >= {lat_range[0] - 1} and latitude < {lat_range[1] + 2} \
+                and longitude >= {lon_range[0] - 1} and longitude < {lon_range[1]+ 2}\
+                and magnitude >= {mag_range[0] - 1} and magnitude < {mag_range[1]+ 2}\
+                and `depth [km]` >= {depth_range[0] - 1} and `depth [km]` < {depth_range[1]+ 2}\
+                and `rms [s]` >= {rms_range[0] - 1} and `rms [s]` < {rms_range[1]+ 2}\
                 and date >= "{date_min}" and date < "{date_max}"'
 
         df = df.query(query)
+        print('len(df) after query:', len(df))
         
         show_table = st.checkbox("Show raw data", True)
         if show_table:

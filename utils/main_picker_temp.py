@@ -145,9 +145,15 @@ def prep_mysqldb_params(params):
                 else:
                     mysql_dict[key] = False
             elif key == 'check_quadrant':
-                quadrant = params[key].split(',')
-                quadrant = tuple(map(float, quadrant))
-                params[key] = quadrant
+                # if a BNA file is provided
+                if params[key].split('.')[-1] == 'bna':
+                    mysql_dict[key] = params[key]
+                else:
+                    quadrant = params[key].split(',')
+                    quadrant = tuple(map(float, quadrant))
+                    # check if quadrant has 4 values
+                    assert len(quadrant) == 4, "The quadrant must have 4 values"
+                    params[key] = quadrant
             mysql_dict[key] = params[key]
     
     return mysql_dict
@@ -222,7 +228,8 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict)
 
     # pruning origins that are not the prefered
     pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
-    origins_pruning(evf_path, pref_orig_path, mysqldb_dict["check_db"])
+    origins_pruning(evf_path, pref_orig_path, mysqldb_dict["check_db"],
+                    mysqldb_dict['check_quadrant'])
 
 def run_EQTransformer(client_dict, download_data,eqt_dict, mysqldb_dict):
 

@@ -52,7 +52,9 @@ $ git clone https://github.com/wayneweiqiang/PhaseNet.git
 #### Cree ambiente virtual para Phasenet e instalelo con el siguiente comando:
 ```bash
 $ cd PhaseNet
-$ conda env create -f env.yml
+$ conda env create -f env.yml -n pnet
+$ conda activate pnet
+(pnet) $ pip install mysql-connector-python
 ```
 
 
