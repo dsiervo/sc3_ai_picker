@@ -68,12 +68,17 @@ n_processor = len(station_dic)
 ```
 
 #### Configure los entornos virtuales en el ai_picker.py
-Abra el archivo `<su ruta a sgc_ai_picker>/ai_picker.py` y en la función función **change_env** modifique el valor de la variable `anaconda_path` por la ruta hacia su anaconda3.
+1. Abra el archivo `<su ruta a sgc_ai_picker>/ai_picker.py`
+2. Asegúrese que la primera línea esté como sigue:
+```python
+#!<su ruta a anaconda3>/envs/eqt/bin/python
+```
+3. En la función función **change_env** modifique el valor de la variable `anaconda_path` por la ruta hacia su anaconda3.
 ```python
 anaconda_path = '<su ruta a anaconda3>'
 ```
 
-##### Agregue sgc_ai_picker y sgc_ai_picker/utils a su PATH
+#### Agregue sgc_ai_picker y sgc_ai_picker/utils a su PATH
 1. Edite el archivo `~/.bashrc` y agregue la siguientes 2 líneas:
 ```bash
 export PATH="<su ruta a sgc_ai_picker>:$PATH"
@@ -154,12 +159,12 @@ Los parámetros de solo EQTransformer: eqt_detection_threshold, eqt_P_threshold,
 
 **-** `eqt_number_of_plots`: Número de figuras a guardar de las formas de onda con los picks generados por EQTransformer.
 
-### discontinuous_picker.py (ejecución offline)
+## Ejecución offline (discontinuous_picker.py)
  Dependiendo de la cantidad de datos que se desee picar, puede usar el ai_picker.py directamente o usar el script de ayuda **discontinuous_picker.py**.
  En caso de que desee picar más de 2 días de datos con más de 10 estaciones se recomienda usar el script **discontinuous_picker.py**.
  Ambos pueden usarse para picar sismicidad en archivos de formas de onda de estaciones portátiles o para reprocesar formas de onda asociadas a ejambres sísmicos o réplicas.
 
-#### Uso discontinuous_picker.py
+### Uso discontinuous_picker.py
 Para ejecutar el programa debe tener configurado previamente en el directorio de ejecución el archivo de configuración `temp_ai_picker.inp` (toma todos los parámetros excepto las fechas inicial y final, por lo que puede dejar las que estén por defecto). Para esto copie en su directorio de trabajo el archivo `ai_picker.inp` que se encuentra en la ruta `<su ruta a sgc_ai_picker>/ai_picker.inp`, luego cámbiele el nombre por `temp_ai_picker.inp` y finalmente edite los parámetros dentro de éste según sus preferencias  (estaciones a picar, ruta de los directorios donde se guardarán las formas de onda y donde se generarán los archivos de salida, etc). Una vez ubicado en su directorio de trabajo ejecute el programa de a acuerdo al rego de fechas que desee. Si por ejemplo desea picar entre el 1/1/2020 al 31/7/2020 puede ejecutar en consola el siguiente comando: 
 
     $ discontinuous_picker.py -s "2020-01-01 00:00:00" -e "2020-07-31 23:59:59"
@@ -171,11 +176,11 @@ Puede acceder a las opciones del programa ejecutando:
         $ discontinuous_picker.py --help
 
 
-#### Salida discontinuous_picker.py
+### Salida discontinuous_picker.py
 Una vez ejecutado este generará en el directorio especificado en el parámetro general_output_dir del archivo temp_ai_picker.inp una carpeta por cada 7 días que contendrá los archivos xml de salida correspondientes a los picks, orígenes y eventos (para más detalles de los xml generados por favor remítase a la sección [Salida ai_picker.py](#salida-ai_picker.py) de este documento), por lo tanto habrán un xml de eventos por cada carpeta de 7 días.
 
-##### Inspección de eventos generados
-###### Uniendo xmls y revisión en dashboard
+#### Inspección de eventos generados
+##### Uniendo xmls y revisión en dashboard
 Debido a que los eventos localizados se generan en diferentes xml resulta conveniente unir todos archivos xml de eventos en un solo archivo xml. Para esto puede ejecutar en el directorio que contiene las carpetas con los xml el siguiente comando:
 
     $ prune_and_count_events.py
@@ -184,7 +189,7 @@ El programa prune_and_count_events.py unirá en el archivo **main_events_pruned.
 
 En el panel izquierdo del dashboard podrá filtrar los eventos por magnitud, coordenadas, profundidad, RMS e intervalo temporal. En el lado derecho de la página se mostrará una tabla con información resumida de los eventos localizados que puede ser ordenada por la columna de preferencia. Adicionalmente se generarán histogramas sobre el número de eventos por valor de magnitud, rms y profundidad. Cómo también la evolución temporal de la sismicidad, perfiles de profundidad y un mapa con la sismicidad.
 
-### Ejecución en tiempo semi-real (ai_scheduler.py y ai_scheduler_sc4.py)
+## Ejecución en tiempo semi-real (ai_scheduler.py y ai_scheduler_sc4.py)
 Los scripts **ai_scheduler.py** y **ai_scheduler_sc4.py** permiten picar en tiempo semi-real las formas de onda de la red con el ai_picker y enviar los eventos generados a un servidor de seiscomp de forma automática (SeisComP3 en el caso del ai_scheduler.py y SeisComP4 en el caso del ai_scheduler_sc4.py).
 
 ### Configuración ai_scheduler.py (seiscomp3)
@@ -222,7 +227,7 @@ Edite el los parámetros de ai_picker_scdl.inp según sus preferencias (se recom
 
 **Se recomienda configurar el programa para que se ejecute cada 15 minutos picando trazas de la última media hora (implicitamente un overlaping de 5 minutos) configurando el valor de `minutes` como 30, el de `every_minutes` como 15 y el de `buffer` como 0.**
 
-#### Uso ai_scheduler.py y ai_scheduler_sc4.py
+### Uso ai_scheduler.py y ai_scheduler_sc4.py
 Para ambos scripts la ejecución es igual, una ves configurado el .py y .inp, se debe primero activar el entorno de anaconda correspodiente al picker seleccionado en el archivo ai_picker_scdl.inp y luego ejecutar con python el script.
 
 Si se seleccionó `eqt` (EQTransformer), el cual es el picker recomendado, se debe ejecutar:

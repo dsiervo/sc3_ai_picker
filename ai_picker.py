@@ -9,6 +9,7 @@ Created on Jul 2020
 from main_picker import read_params
 import os
 
+
 def change_env(picker, main_dir):
     """Change the environment excecution in the first line in the original ai_picker.py
     
