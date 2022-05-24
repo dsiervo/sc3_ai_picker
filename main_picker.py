@@ -11,19 +11,8 @@ from datetime import timedelta
 from utils.cwav import Cwav_PhaseNet, Cwav_EQTransformer
 from utils.merge_xml_picks import merge_xml_picks
 from utils.origins_pruning import origins_pruning
+from ai_picker import read_params
 
-def read_params(par_file='ai_picker.inp'):
-    lines = open(par_file, encoding='utf-8').readlines()
-    par_dic = {}
-    for line in lines:
-        if line[0] == '#' or line.strip('\n').strip() == '':
-            continue
-        else:
-            #print(line)
-            l = line.strip('\n').strip()
-            key, value = l.split('=')
-            par_dic[key.strip()] = value.strip()
-    return par_dic
 
 def prep_download_list(params):
     params = params.copy()

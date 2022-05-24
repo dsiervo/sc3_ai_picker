@@ -13,6 +13,7 @@ from obspy import Catalog
 import sys
 import pandas as pd
 import datetime
+print(sys.executable)
 import mysql.connector
 from obspy.geodetics import gps2dist_azimuth
 from utils.in_or_out import is_inside_polygon

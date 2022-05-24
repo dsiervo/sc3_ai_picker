@@ -1,5 +1,6 @@
 import os
 import sys
+#from main_picker import read_params
 
 # Para poder correr en usuario ecastillo
 # EQTransformer_path = "/home/ecastillo/EQTransformer"
@@ -7,13 +8,33 @@ import sys
 # sys.path.insert(0,EQTransformer_path)
 # sys.path.insert(0,sgc_ai_picker )
 
+def read_params(par_file='ai_picker.inp'):
+    lines = open(par_file, encoding='utf-8').readlines()
+    par_dic = {}
+    for line in lines:
+        if line[0] == '#' or line.strip('\n').strip() == '':
+            continue
+        else:
+            #print(line)
+            l = line.strip('\n').strip()
+            key, value = l.split('=')
+            par_dic[key.strip()] = value.strip()
+    return par_dic
+
 try:
     env = os.environ['CONDA_DEFAULT_ENV']
 except KeyError:
     env = 'none'
 
-if (env == 'pnet' 
-  or sys.executable == '/home/dsiervo/anaconda3/envs/pnet/bin/python'):
+
+execution_directory = os.path.dirname(os.path.abspath(__file__))
+# level above execution_directory
+main_dir = os.path.join(execution_directory, '..')
+anaconda_path = read_params(os.path.join(main_dir, 'anaconda_path.txt'))['anaconda_path']
+python_pnet = os.path.join(anaconda_path, 'envs/pnet/bin/python')
+python_eqt = os.path.join(anaconda_path, 'envs/eqt/bin/python')
+if (env == 'pnet'
+  or sys.executable == python_pnet):
 
     from obspy.clients.fdsn import Client
     from obspy import read
@@ -30,7 +51,7 @@ if (env == 'pnet'
     from utils.picks2xml import main_picks
 
 elif (os.environ['CONDA_DEFAULT_ENV'] == 'eqt' 
-     or sys.executable == '/home/dsiervo/anaconda3/envs/eqt/bin/python'):
+     or sys.executable == python_eqt):
     from EQTransformer.utils.downloader import makeStationList
     from EQTransformer.utils.downloader import downloadMseeds
     from EQTransformer.utils.hdf5_maker import preprocessor

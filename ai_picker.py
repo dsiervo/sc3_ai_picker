@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/envs/eqt/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on Jul 2020
@@ -6,7 +6,6 @@ Created on Jul 2020
 @author: Emanuel Castillo T. [ecastillot@unal.edu.co], Daniel Siervo P. [ddsiervop@unal.edu.co]
 """
 
-from main_picker import read_params
 import os
 
 
@@ -30,7 +29,8 @@ def change_env(picker, main_dir):
 
     assert picker in ('pnet', 'eqt'), 'El picker debe ser "eqt" o "pnet", usó "%s"\n'%picker
 
-    anaconda_path = '/home/dsiervo/anaconda3/'
+    anaconda_path = read_params(os.path.join(main_dir, 'anaconda_path.txt'))['anaconda_path']
+    #anaconda_path = '/home/dsiervo/anaconda3/'
     exc_env_path = os.path.join(anaconda_path, 'envs/%s/bin/python'%picker)
     exc_env = '#!%s\n'%exc_env_path
     #exc_env = '#!/home/dsiervo/anaconda3/envs/%s/bin/python\n'%picker
@@ -38,7 +38,20 @@ def change_env(picker, main_dir):
 
     with open(os.path.join(main_dir, 'main_picker.py'), 'w') as f:
         f.writelines(lines)
-    
+
+
+def read_params(par_file='ai_picker.inp'):
+    lines = open(par_file, encoding='utf-8').readlines()
+    par_dic = {}
+    for line in lines:
+        if line[0] == '#' or line.strip('\n').strip() == '':
+            continue
+        else:
+            #print(line)
+            l = line.strip('\n').strip()
+            key, value = l.split('=')
+            par_dic[key.strip()] = value.strip()
+    return par_dic
 
 if __name__ == '__main__':
 

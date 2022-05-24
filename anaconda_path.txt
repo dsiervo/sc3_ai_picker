@@ -1,0 +1,1 @@
+anaconda_path = /home/dsiervo/anaconda3/

@@ -54,7 +54,7 @@ $ git clone https://github.com/wayneweiqiang/PhaseNet.git
 $ cd PhaseNet
 $ conda env create -f env.yml -n pnet
 $ conda activate pnet
-(pnet) $ pip install mysql-connector-python
+(pnet) $ pip install mysql-connector-python obsplus
 ```
 
 
@@ -68,13 +68,9 @@ n_processor = len(station_dic)
 ```
 
 #### Configure los entornos virtuales en el ai_picker.py
-1. Abra el archivo `<su ruta a sgc_ai_picker>/ai_picker.py`
-2. Asegúrese que la primera línea esté como sigue:
-```python
-#!<su ruta a anaconda3>/envs/eqt/bin/python
+1. Abra el archivo `<su ruta a sgc_ai_picker>/anaconda_path.txt`
+2. Modifique el valor de la variable `anaconda_path` por la ruta hacia su anaconda3.
 ```
-3. En la función función **change_env** modifique el valor de la variable `anaconda_path` por la ruta hacia su anaconda3.
-```python
 anaconda_path = '<su ruta a anaconda3>'
 ```
 
