@@ -13,7 +13,6 @@ from obspy import Catalog
 import sys
 import pandas as pd
 import datetime
-print(sys.executable)
 import mysql.connector
 from obspy.geodetics import gps2dist_azimuth
 from utils.in_or_out import is_inside_polygon
@@ -296,9 +295,9 @@ if __name__ == "__main__":
         the xml name and the name of the output file'
 
     if len(sys.argv) == 2:
-        origins_pruning(sys.argv[1], check_db=True)
+        origins_pruning(sys.argv[1], check_db=False)
     elif len(sys.argv) == 3:
-        origins_pruning(sys.argv[1], sys.argv[2], check_db=True)
+        origins_pruning(sys.argv[1], sys.argv[2], check_db=False)
     elif len(sys.argv) == 4:
         print('en cuadrante')
         origins_pruning(sys.argv[1], sys.argv[2],
