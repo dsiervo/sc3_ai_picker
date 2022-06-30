@@ -364,6 +364,7 @@ class Dashboard(object):
 
 if __name__ == '__main__':
     
+    # streamlit run real_time_events_dashboard.py
     load_and_dashboard(min_lat=5.8, max_lat=6, min_lon=-75.8, max_lon=-75.3,
                     ti='2021-01-01 00:00:00')
         
