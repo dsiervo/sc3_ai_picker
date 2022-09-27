@@ -1,11 +1,11 @@
-# sgc_ai_picker
+# sc3_ai_picker
 
 ![GitHub last commit](https://img.shields.io/github/last-commit/dsiervo/sgc_ai_picker)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 --------------
 ## Descripción 
-Implementación en el sistema SeisComP3 del Servicio Geológico Colombiano de [PhaseNet](https://github.com/wayneweiqiang/PhaseNet) y [EQTransformer](https://github.com/smousavi05/EQTransformer).
+Implementación en el sistema SeisComP3 de [PhaseNet](https://github.com/wayneweiqiang/PhaseNet) y [EQTransformer](https://github.com/smousavi05/EQTransformer).
 Permite la creación de eventos en seiscomp a partir de los picks obtenidos con EQTransformer o PhaseNet.
 
 
