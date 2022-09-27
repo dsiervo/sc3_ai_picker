@@ -74,6 +74,8 @@ n_processor = len(station_dic)
 ```
 anaconda_path = '<su ruta a anaconda3>'
 ```
+3. Modifique la ruta hacia el directorio anaconda3 en los archivos prune_and_count_evnets.py y run_dashboard.sh
+4. Modifique la ruta hacia el sc3_ai_picker en run_dashboard.sh
 
 #### Agregue sgc_ai_picker y sgc_ai_picker/utils a su PATH
 1. Edite el archivo `~/.bashrc` y agregue la siguientes 2 líneas:
