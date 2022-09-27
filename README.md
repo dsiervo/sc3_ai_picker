@@ -5,7 +5,7 @@
 
 --------------
 ## Descripción 
-Implementación en el sistema SeisComP3 de [PhaseNet](https://github.com/wayneweiqiang/PhaseNet) y [EQTransformer](https://github.com/smousavi05/EQTransformer).
+Creacion de eventos en SeisComP3 usando [PhaseNet](https://github.com/wayneweiqiang/PhaseNet) y [EQTransformer](https://github.com/smousavi05/EQTransformer).
 Permite la creación de eventos en seiscomp a partir de los picks obtenidos con EQTransformer o PhaseNet.
 
 
