@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/bin/python
+#!/home/daniel/anaconda3/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jan 2021

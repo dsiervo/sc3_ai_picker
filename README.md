@@ -52,9 +52,10 @@ $ git clone https://github.com/wayneweiqiang/PhaseNet.git
 #### Cree ambiente virtual para Phasenet e instalelo con el siguiente comando:
 ```bash
 $ cd PhaseNet
+$ git checkout a9383be2138c01ca4f1d514f6a5b9b95fb9a7cba
 $ conda env create -f env.yml -n pnet
 $ conda activate pnet
-(pnet) $ pip install mysql-connector-python obsplus
+(pnet) $ python -m pip install mysql-connector-python obsplus
 ```
 
 

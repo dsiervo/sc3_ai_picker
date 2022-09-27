@@ -13,6 +13,9 @@ dt = 21600
 # se calcularán las amplitudes en las trazas para el cálculo de magnitud
 db_sc = mysql://sysop:sysopp@10.100.100.13/seiscomp3
 
+#check_db = yes
+# lat_min, lat_max, lon_min, lon_max, or bna file
+check_quadrant = 
 ##############################------------ SECTION 2): Stations to download ------------############################
 
 download_data = CM.ARAMC.00.HH*, CM.DORAC.00.HH*, CM.CLEJA.10.HN*, CM.URMC.00.HH*, CM.CLBC.20.EH*, CM.TAPM.00.HH*, CM.CHI.00.HH*, CM.PRA.00.HH*, CM.ORTC.00.HH*, CM.PIRM.00.HH*, CM.MACC.00.HH*, CM.VIL.20.EH*

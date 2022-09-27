@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/envs/eqt/bin/python
+#!/home/daniel/anaconda3/envs/pnet/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jul 2020
@@ -230,6 +230,7 @@ def run_EQTransformer(client_dict, download_data,eqt_dict, mysqldb_dict):
     cwav_eqt.download_mseed()
     if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):
         cwav_eqt.mseedpredictor()
+        pass
     elif eqt_dict['eqt_predictor'] in ('hdf5','HDF5'):
         cwav_eqt.preprocessor()
         cwav_eqt.predictor()

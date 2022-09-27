@@ -54,7 +54,7 @@ def init():
 
     print('\n\tExcecuting PhaseNet\n')
     if params['mode'] == 'train':
-        command = f"python run.py --mode={params['mode']} \
+        command = f"run.py --mode={params['mode']} \
             --train_dir={params['data_dir']} --train_list={params['data_list']} \
             --output_dir={params['output_dir']} --plot_figure --save_result \
             --batch_size={params['batch_size']} --input_length={params['input_length']}\

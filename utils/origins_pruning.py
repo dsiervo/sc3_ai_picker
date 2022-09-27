@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/envs/eqt/bin/python
+#!/home/daniel/anaconda3/envs/pnet/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Nov 24 13:01:33 2020
@@ -137,9 +137,9 @@ def pass_origin_quality(origin, magnitude):
 class Watcher:
     origin: obs.core.event.Origin
     mydb = mysql.connector.connect(
-        host="10.100.100.232",
-        user="consulta",
-        passwd="consulta",
+        host="sc3primary.beg.utexas.edu",
+        user="sysop",
+        passwd="sysop",
         database="seiscomp3"
     )
 

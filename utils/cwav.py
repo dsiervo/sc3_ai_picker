@@ -155,7 +155,8 @@ class Cwav_PhaseNet(object):
         client object
             Returns the client object according to the 'ip' and 'port' client parameters
         """
-        return Client(self.client_dict['ip']+":"+self.client_dict['port'])
+        #print(self.client_dict['ip'])
+        return Client(self.client_dict['ip'])
 
     @property
     def stations_to_download(self):
@@ -335,7 +336,7 @@ class Cwav_PhaseNet(object):
 
     def run_pnet(self):
         run_execute= os.path.join(self.pnet_dict['pnet_repository_dir'],'run.py')
-        command = f"{run_execute} --mode={self.pnet_dict['pnet_mode']} \
+        command = f"{python_pnet} {run_execute} --mode={self.pnet_dict['pnet_mode']} \
             --model_dir={self.pnet_dict['pnet_model_dir']} --data_dir={self.pnet_dict['pnet_data_dir']} \
             --data_list={self.pnet_dict['pnet_data_list']} --output_dir={self.pnet_dict['pnet_output_dir']}\
             --batch_size={self.pnet_dict['pnet_batch_size']} --input_mseed"
@@ -366,7 +367,7 @@ class Cwav_PhaseNet(object):
             * Group origins into events
         """
         for key in locator_dict:
-            assert key in ('Hypo71', 'LOCSAT', 'NonLinLoc'), 'locator must be Hypo71, LOCSAT or NonLinLoc'
+            assert key in ('Hypo71', 'LOCSAT', 'NonLinLoc', 'NonLinLoc3'), 'locator must be Hypo71, LOCSAT or NonLinLoc'
         xml_picks_file = self.pick_xml_path
 
         # Verifing if the xml file with picks from phasenet exist
@@ -464,7 +465,7 @@ class Cwav_EQTransformer(object):
         client object
             Returns the client object according to the 'ip' and 'port' client parameters
         """
-        return Client(self.client_dict['ip']+":"+self.client_dict['port'])
+        return Client(self.client_dict['ip'])
 
     @property
     def stations_to_download(self):
@@ -508,7 +509,7 @@ class Cwav_EQTransformer(object):
             json_list = makeStationList(
                     json_path=os.path.join(self.eqt_dict['eqt_data_dir'],
                                             'station_list.json'),
-                    client_list=[f"{self.client_dict['ip']}:{self.client_dict['port']}"], 
+                    client_list=[f"{self.client_dict['ip']}"], 
                     min_lat=None, max_lat=None, 
                     min_lon=None, max_lon=None, 
                     network=network, station=station,
@@ -523,7 +524,7 @@ class Cwav_EQTransformer(object):
         if self.download_data not in ('No','no','n','False',False):
             network,station,location,channel = self.prepare_eqt_stations
             downloadMseeds(
-                    client_list=[f"{self.client_dict['ip']}:{self.client_dict['port']}"],
+                    client_list=[f"{self.client_dict['ip']}"],
                     stations_json= os.path.join(self.eqt_dict['eqt_data_dir'],
                                                 'station_list.json'),
                     output_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
@@ -601,7 +602,7 @@ class Cwav_EQTransformer(object):
         xml_picks_file = self.pick_xml_path
 
         for key in locator_dict:
-            assert key in ('Hypo71', 'LOCSAT', 'NonLinLoc'), 'locator must be Hypo71, LOCSAT or NonLinLoc'
+            assert key in ('Hypo71', 'LOCSAT', 'NonLinLoc', 'NonLinLoc3'), 'locator must be Hypo71, LOCSAT or NonLinLoc'
         # Verifing if the xml file with picks from phasenet exist
         assert os.path.isfile(xml_picks_file), \
             '\n\n\tNo existe el archivo %s en el directorio\n'%xml_picks_file

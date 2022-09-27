@@ -423,7 +423,7 @@ class Pick:
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
-        <agencyID>SGC</agencyID>
+        <agencyID>TEXNET</agencyID>
         <author>{author}</author>
         <creationTime>{creation_time}</creationTime>
       </creationInfo>
@@ -440,7 +440,7 @@ class Pick:
       <phaseHint>{phaseHint}</phaseHint>
       <evaluationMode>{evaluation}</evaluationMode>
       <creationInfo>
-        <agencyID>SGC</agencyID>
+        <agencyID>TEXNET</agencyID>
         <author>{author}</author>
         <creationTime>{creation_time}</creationTime>
       </creationInfo>
