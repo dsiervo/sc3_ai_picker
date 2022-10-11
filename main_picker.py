@@ -91,13 +91,23 @@ def prep_eqt_params(params):
                 'eqt_create_json', 'eqt_create_hdf5',\
                 'eqt_plot_mode',\
                 'eqt_predictor']
-
+    eqt_gpu = ['eqt_gpu_limit', 'eqt_gpuid']
     # get script path directory
     script_dir = os.path.dirname(os.path.realpath(__file__))
     model_default_path = os.path.join(script_dir, 'model', 'EqT_model.h5')
     
     eqt_dict = {'eqt_n_processor': 2,
-                'eqt_model_dir': model_default_path}
+                'eqt_model_dir': model_default_path,
+                'eqt_gpuid':None,
+                'eqt_gpu_limit':None}
+    
+    for key in eqt_gpu:
+        if key in params:
+            if key == 'eqt_gpu_limit':
+                eqt_float.append(key)
+            elif key == 'eqt_gpuid':
+                eqt_int.append(key)
+
     for key in eqt_int: params[f'{key}'] = int(params[f'{key}'])
     for key in eqt_float: params[f'{key}'] = float(params[f'{key}'])
 

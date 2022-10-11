@@ -36,7 +36,7 @@ python_eqt = os.path.join(anaconda_path, 'envs/eqt/bin/python')
 if (env == 'pnet'
   or sys.executable == python_pnet):
 
-    from obspy.clients.fdsn import Client
+    from obspy.clients.fdsn import Client, header
     from obspy import read
     from obspy import UTCDateTime
     import csv
@@ -148,7 +148,7 @@ class Cwav_PhaseNet(object):
         self.__dict__.update(kwargs)
 
     @property
-    def client(self):
+    def clients(self):
         """
         Returns
         -------
@@ -156,7 +156,9 @@ class Cwav_PhaseNet(object):
             Returns the client object according to the 'ip' and 'port' client parameters
         """
         #print(self.client_dict['ip'])
-        return Client(self.client_dict['ip'])
+        clients = [x.strip() for x in self.client_dict['ip'].split(',')]
+        return [Client(x) for x in clients]
+        #return Client(self.client_dict['ip'])
 
     @property
     def stations_to_download(self):
@@ -269,14 +271,29 @@ class Cwav_PhaseNet(object):
         no_filt_msg = f'\n\t\t\t\t STREAM: {to_msg}'
         no_st = f'\n\t\t\t\t NO STREAM: {to_msg}'
 
+
         try:
+            self.client = self.clients[0]
+            #print(f'Trying to retrive data from station: {parameters[1]} client: {client}')
             st = self.client.get_waveforms( network=parameters[0], station=parameters[1], 
                 location= parameters[2], channel=parameters[3],
                 starttime=self.client_dict['starttime'],
-                endtime=self.client_dict['endtime']  )
-        except:
-            st= 'None'
-            print(no_st)
+                endtime=self.client_dict['endtime'])
+        except (header.FDSNNoDataException, header.FDSNException):
+            if len(self.clients) > 1:
+                self.client = self.clients[1]
+                #print(f'Trying to retrive data from station: {parameters[1]} client: {client}')
+                try:
+                    st = self.client.get_waveforms( network=parameters[0], station=parameters[1], 
+                        location= parameters[2], channel=parameters[3],
+                        starttime=self.client_dict['starttime'],
+                        endtime=self.client_dict['endtime'])
+                except (header.FDSNNoDataException, header.FDSNException):
+                    st= 'None'
+                    print(no_st)
+            else:
+                st= 'None'
+                print(no_st)
 
         if st != 'None':    
             if self.filter_data in ('all', 'All', 'ALL'):
@@ -509,7 +526,7 @@ class Cwav_EQTransformer(object):
             json_list = makeStationList(
                     json_path=os.path.join(self.eqt_dict['eqt_data_dir'],
                                             'station_list.json'),
-                    client_list=[f"{self.client_dict['ip']}"], 
+                    client_list=[x.strip() for x in self.client_dict['ip'].split(',')], 
                     min_lat=None, max_lat=None, 
                     min_lon=None, max_lon=None, 
                     network=network, station=station,
@@ -523,8 +540,11 @@ class Cwav_EQTransformer(object):
     def download_mseed(self):
         if self.download_data not in ('No','no','n','False',False):
             network,station,location,channel = self.prepare_eqt_stations
+            print('in download mseed')
+            clients = [x.strip() for x in self.client_dict['ip'].split(',')]
+            print(clients)
             downloadMseeds(
-                    client_list=[f"{self.client_dict['ip']}"],
+                    client_list=clients,
                     stations_json= os.path.join(self.eqt_dict['eqt_data_dir'],
                                                 'station_list.json'),
                     output_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
@@ -576,7 +596,9 @@ class Cwav_EQTransformer(object):
                 number_of_plots=self.eqt_dict['eqt_number_of_plots'], 
                 plot_mode=self.eqt_dict['eqt_plot_mode'], 
                 overlap=self.eqt_dict['eqt_overlap'], 
-                batch_size=self.eqt_dict['eqt_batch_size'])
+                batch_size=self.eqt_dict['eqt_batch_size'])#,
+                #gpuid=self.eqt_dict['eqt_gpuid'],
+                #gpu_limit=self.eqt_dict['eqt_gpu_limit'])
 
     def picks2xml(self):
         """Transform EQTransformer output file into Seiscomp XML file

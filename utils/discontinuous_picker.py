@@ -40,7 +40,7 @@ def discontinuous_picker(start, end, n_days, db):
 
     while start <= end:
         # taking current time in UTC
-        t = datetime.datetime.now() + datetime.timedelta(hours=(5))
+        t = datetime.datetime.utcnow()
 
         final_time = start + dt
         if final_time > end:
@@ -97,7 +97,7 @@ def discontinuous_picker(start, end, n_days, db):
             print('\n\n\tNo se encontró origenes_preferidos.xml!\n\n')
 
         start += dt
-        tf = datetime.datetime.now() + datetime.timedelta(hours=(5))
+        tf = datetime.datetime.utcnow()
 
         logger(t, tf)
 

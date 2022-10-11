@@ -327,11 +327,12 @@ class Dashboard(object):
                                            'satellite-streets-v11'])
             opacity = st.slider('Color opacity', 0.0, 1.0, value=0.6)
         with colm2:
+            mag_scale = st.slider('Magnitude scale', 1.0, 5.0, value=2.0)
             pass
 
-        self.map(df, opacity, style)
+        self.map(df, opacity, style, mag_scale)
     
-    def map(self, data, opacity, style):
+    def map(self, data, opacity, style, mag_scale):
         # custom map
         cmap = cm.batlow_r
 
@@ -339,6 +340,9 @@ class Dashboard(object):
         # matplotlib cmap properly
         norm = Normalize(vmin=0, vmax=300)
         data['norm'] = data['depth [km]'].apply(norm)
+
+        # magnitude scale for the map
+        data['mag_scale2'] = 800 * (mag_scale ** data.magnitude)
 
         def get_color(depth_norm):
             # cmap returns a tuple of normalized rgba elements
@@ -362,7 +366,7 @@ class Dashboard(object):
                 stroked=True,
                 opacity=opacity,
                 get_position='[longitude, latitude]',
-                get_radius='mag_scale',
+                get_radius='mag_scale2',
                 get_fill_color='color',
                 get_line_color=[0, 0, 0],
                 line_width_min_pixels=0.3

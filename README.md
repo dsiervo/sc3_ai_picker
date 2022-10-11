@@ -38,7 +38,7 @@ $ conda activate eqt
 
 #### Instale EQTransformer y las dependencias de los scripts para la generación de dashboards interactivos.
 ```bash
-(eqt) $ pip install -r requirements.txt
+(eqt) $ python -m pip install -r requirements.txt
 (eqt) $ conda deactivate
 $
 ```

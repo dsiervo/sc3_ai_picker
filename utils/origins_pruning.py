@@ -38,10 +38,9 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
         Name of output SeisComP3 xml file.
     """
 
-    change_xml_version(xml_name)
-
     print('\n\nRemoving origins that are not the prefered one in the xml %s\n' % xml_name)
     try:
+        change_xml_version(xml_name)
         cat = obs.read_events(xml_name, id_prefix='', format='SC3ML')
     except FileNotFoundError:
         print('\n\t No existe el archivo %s, se salta este proceso\n' % xml_name)
@@ -254,7 +253,11 @@ class Watcher:
         """
 
         if region.split('.')[-1] == 'bna':
-            polygon = self.get_polygon(region)
+            try:
+                polygon = self.get_polygon(region)
+            except FileNotFoundError:
+                print(f'\n\n\t {region} file not found\n\n')
+                raise ValueError('Debe proporcionar un cuadrante o un archivo bna')
             return is_inside_polygon(polygon, (self.lon, self.lat))
         elif isinstance(region, tuple):
             return self.check_in_quadrant(region)
