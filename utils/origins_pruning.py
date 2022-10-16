@@ -160,12 +160,17 @@ class Watcher:
     @property
     def tf(self):
         # current time in UTC
-        return datetime.datetime.now() + datetime.timedelta(hours=5)
+        #return datetime.datetime.utcnow()
+        # returning origin time + 2 minutes
+        return self.origin_time + datetime.timedelta(minutes=2)
+
 
     @property
     def ti(self):
         # tf - 2 hours
-        return self.tf - datetime.timedelta(hours=2)
+        #return self.tf - datetime.timedelta(hours=2)
+        # returning origin time - 2 minutes
+        return self.origin_time - datetime.timedelta(minutes=2)
 
     @property
     def lat(self):
@@ -251,14 +256,14 @@ class Watcher:
             Region to check in format (lat_min, lat_max, lon_min,  lon_max) or the name of a
             bna file with the polygon
         """
-
-        if region.split('.')[-1] == 'bna':
-            try:
-                polygon = self.get_polygon(region)
-            except FileNotFoundError:
-                print(f'\n\n\t {region} file not found\n\n')
-                raise ValueError('Debe proporcionar un cuadrante o un archivo bna')
-            return is_inside_polygon(polygon, (self.lon, self.lat))
+        if isinstance(region, str):
+            if region.split('.')[-1] == 'bna':
+                try:
+                    polygon = self.get_polygon(region)
+                    return is_inside_polygon(polygon, (self.lon, self.lat))
+                except FileNotFoundError:
+                    print(f'\n\n\t {region} file not found\n\n')
+                    raise ValueError('Debe proporcionar un cuadrante o un archivo bna')
         elif isinstance(region, tuple):
             return self.check_in_quadrant(region)
         else:
@@ -290,6 +295,18 @@ class Watcher:
                 pass
         return polygon1
 
+def read_params(par_file='ai_picker.inp'):
+    lines = open(par_file, encoding='utf-8').readlines()
+    par_dic = {}
+    for line in lines:
+        if line[0] == '#' or line.strip('\n').strip() == '':
+            continue
+        else:
+            #print(line)
+            l = line.strip('\n').strip()
+            key, value = l.split('=')
+            par_dic[key.strip()] = value.strip()
+    return par_dic
 
 if __name__ == "__main__":
     import sys
@@ -304,7 +321,12 @@ if __name__ == "__main__":
     elif len(sys.argv) == 4:
         print('en cuadrante')
         origins_pruning(sys.argv[1], sys.argv[2],
-                        check_db=False, quadrant='zonavmm_border.bna')
+                        check_db=True, quadrant=sys.argv[3])
+        
+        # running scevent to create an event xml
+        scevent_cmd = 'scevent -u playback --ep %s  > %s'%(sys.argv[2], sys.argv[2].split('.')[0]+'_ev.xml')
+        print(scevent_cmd)
+        os.system(scevent_cmd)
     else:
         print('\n\tTo many arguments you need to provide the xml name \
             or the xml name and the name of the input file. Example:\n\

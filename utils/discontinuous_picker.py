@@ -30,6 +30,7 @@ def discontinuous_picker(start, end, n_days, db):
     start = datetime.datetime.strptime(start, '%Y-%m-%d %H:%M:%S')
     end = datetime.datetime.strptime(end, '%Y-%m-%d %H:%M:%S')
     dt = datetime.timedelta(days=n_days)
+    overlap_rate = 0.05
 
     assert start < end, 'Start date must be before end date'
     
@@ -96,7 +97,7 @@ def discontinuous_picker(start, end, n_days, db):
         else:
             print('\n\n\tNo se encontró origenes_preferidos.xml!\n\n')
 
-        start += dt
+        start += dt*(1-overlap_rate)
         tf = datetime.datetime.utcnow()
 
         logger(t, tf)
