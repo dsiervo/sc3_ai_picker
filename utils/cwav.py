@@ -33,6 +33,8 @@ main_dir = os.path.join(execution_directory, '..')
 anaconda_path = read_params(os.path.join(main_dir, 'anaconda_path.txt'))['anaconda_path']
 python_pnet = os.path.join(anaconda_path, 'envs/pnet/bin/python')
 python_eqt = os.path.join(anaconda_path, 'envs/eqt/bin/python')
+python_eqcc = os.path.join(anaconda_path, 'envs/eqcc/bin/python')
+
 if (env == 'pnet'
   or sys.executable == python_pnet):
 
@@ -50,8 +52,8 @@ if (env == 'pnet'
     from utils.playback import playback
     from utils.picks2xml import main_picks
 
-elif (os.environ['CONDA_DEFAULT_ENV'] == 'eqt' 
-     or sys.executable == python_eqt):
+elif (os.environ['CONDA_DEFAULT_ENV'] in ('eqt', 'eqcc') 
+     or sys.executable in (python_eqt, python_eqcc)):
     from EQTransformer.utils.downloader import makeStationList
     from EQTransformer.utils.downloader import downloadMseeds
     from EQTransformer.utils.hdf5_maker import preprocessor
@@ -437,6 +439,7 @@ class Cwav_EQTransformer(object):
     #db_sc = 'mysql://sysop:sysop@10.100.100.232/seiscomp3'
     
     def __init__(self, download_data, eqt_dict, client_dict,
+                picker,
                  mysqldb_dict=None):
         """Download mseed files and run them in PhaseNet algorithm
         Parameters
@@ -471,6 +474,7 @@ class Cwav_EQTransformer(object):
         self.eqt_dict = eqt_dict
         self.client_dict = client_dict
         self.mysqldb_dict = mysqldb_dict
+        self.picker = picker
         self.pick_xml_path = os.path.join(self.eqt_dict['eqt_output_dir'], 'picks.xml')
         self.db_sc = mysqldb_dict['db_sc']
 
@@ -571,7 +575,6 @@ class Cwav_EQTransformer(object):
             pass
 
     def predictor(self):
-
         predictor(input_dir= os.path.join( self.eqt_dict['eqt_data_dir'],'mseed_processed_hdfs'), 
                 input_model=self.eqt_dict['eqt_model_dir'], 
                 output_dir=self.eqt_dict['eqt_output_dir'], 
@@ -583,22 +586,41 @@ class Cwav_EQTransformer(object):
 
     def mseedpredictor(self):
 
-        mseed_predictor(
-                input_dir=os.path.join( self.eqt_dict['eqt_data_dir'],
-                                        'mseed'),
-                input_model=self.eqt_dict['eqt_model_dir'],
+        if self.picker in ('eqcc', 'eqcctps'):
+            from utils.mseed_predictor import mseed_predictor_two
+            mseed_predictor_two(
+                input_dir = os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'),
+                input_modelP = self.eqt_dict['eqcc_P_model_dir'],
+                input_modelS = self.eqt_dict['eqcc_S_model_dir'],
                 stations_json=os.path.join(self.eqt_dict['eqt_data_dir'],
                                         'station_list.json'),
-                output_dir=self.eqt_dict['eqt_output_dir'],
-                detection_threshold=self.eqt_dict['eqt_detection_threshold'],
-                P_threshold=self.eqt_dict['eqt_P_threshold'], 
-                S_threshold=self.eqt_dict['eqt_S_threshold'],
-                number_of_plots=self.eqt_dict['eqt_number_of_plots'], 
-                plot_mode=self.eqt_dict['eqt_plot_mode'], 
-                overlap=self.eqt_dict['eqt_overlap'], 
-                batch_size=self.eqt_dict['eqt_batch_size'])#,
-                #gpuid=self.eqt_dict['eqt_gpuid'],
-                #gpu_limit=self.eqt_dict['eqt_gpu_limit'])
+                output_dir = self.eqt_dict['eqt_output_dir'],
+                #detection_threshold = self.eqt_dict['eqt_detection_threshold'],
+                P_threshold = self.eqt_dict['eqt_P_threshold'],
+                S_threshold = self.eqt_dict['eqt_S_threshold'],
+                number_of_plots = self.eqt_dict['eqt_number_of_plots'],
+                #plot_mode = self.eqt_dict['eqt_plot_mode'],
+                normalization_mode = 'std',
+                overlap=self.eqt_dict['eqt_overlap'],
+                batch_size=self.eqt_dict['eqt_batch_size'])
+        else:
+            mseed_predictor(
+                    input_dir=os.path.join( self.eqt_dict['eqt_data_dir'],
+                                            'mseed'),
+                    input_model=self.eqt_dict['eqt_model_dir'],
+                    stations_json=os.path.join(self.eqt_dict['eqt_data_dir'],
+                                            'station_list.json'),
+                    output_dir=self.eqt_dict['eqt_output_dir'],
+                    detection_threshold=self.eqt_dict['eqt_detection_threshold'],
+                    P_threshold=self.eqt_dict['eqt_P_threshold'], 
+                    S_threshold=self.eqt_dict['eqt_S_threshold'],
+                    number_of_plots=self.eqt_dict['eqt_number_of_plots'], 
+                    plot_mode=self.eqt_dict['eqt_plot_mode'], 
+                    overlap=self.eqt_dict['eqt_overlap'], 
+                    batch_size=self.eqt_dict['eqt_batch_size'])#,
+                    #gpuid=self.eqt_dict['eqt_gpuid'],
+                    #gpu_limit=self.eqt_dict['eqt_gpu_limit'])
+
 
     def picks2xml(self):
         """Transform EQTransformer output file into Seiscomp XML file
@@ -610,7 +632,7 @@ class Cwav_EQTransformer(object):
         """
         
         main_picks(input_file=self.eqt_dict['eqt_output_dir'],
-                   output_file=self.pick_xml_path, ai='eqt')
+                   output_file=self.pick_xml_path, ai=self.picker)
 
     def playback(self, locator_dict):
         """Excecute seiscomp playback from picks.xml:

@@ -42,8 +42,8 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob_p=0.6,
     # Obtaining list of Picks objects from file
     if ai == 'pnet':
         pick_list = read_picks(input_file, dt, min_prob_p, min_prob_s)
-    elif ai == 'eqt':
-        pick_list = prepare_eqt(input_file)
+    elif ai in ('eqt', 'eqcc', 'eqcctps'):
+        pick_list = prepare_eqt(input_file, ai)
 
     # Creating xml text
     xml_text = picks2xml(pick_list)
@@ -61,7 +61,7 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob_p=0.6,
     print(f'\nOutput file: {output_file}')
 
 
-def prepare_eqt(input_dir):
+def prepare_eqt(input_dir, ai):
     """Merge X_prediction_results.csv files of each station in a list of Picks objects
 
     Parameters
@@ -75,9 +75,15 @@ def prepare_eqt(input_dir):
     df = pd.concat([pd.read_csv(os.path.join(sta, 'X_prediction_results.csv')) \
                 for sta in sta_dirs])
     
-    interest_col = ['network', 'station', 'instrument_type', 'detection_probability',
-                    'p_arrival_time', 'p_probability', 'p_snr',
-                    's_arrival_time', 's_probability', 's_snr']
+    if ai == 'eqt':
+        interest_col = ['network', 'station', 'instrument_type', 'detection_probability',
+                        'p_arrival_time', 'p_probability', 'p_snr',
+                        's_arrival_time', 's_probability', 's_snr']
+
+    elif ai in ('eqcc', 'eqcctps'):
+        interest_col = ['network', 'station', 'instrument_type', 'detection_probability',
+                        'p_arrival_time', 'p_probability',
+                        's_arrival_time', 's_probability']
     # Keeping with columns of interest
     df = df[interest_col]
     # Deleting rows without P phase
@@ -90,18 +96,72 @@ def prepare_eqt(input_dir):
     # Writting in csv the data
     df.to_csv(os.path.join(input_dir, 'all_picks.csv'), index=False)
 
-    # Create a list of picks
-    p_list = read_eqt_picks(df['network'].tolist(), df['station'].tolist(),
-                            df['instrument_type'].tolist(),
-                            df['p_arrival_time'].tolist(),
-                            df['p_probability'].tolist(),
-                            df['s_arrival_time'].tolist(),
-                            df['s_probability'].tolist(),
-                            p_snrs=df['p_snr'].tolist(),
-                            s_snrs=df['p_snr'].tolist())
+    if ai == 'eqt':
+        # Create a list of picks
+        p_list = read_eqt_picks(df['network'].tolist(), df['station'].tolist(),
+                                df['instrument_type'].tolist(),
+                                df['p_arrival_time'].tolist(),
+                                df['p_probability'].tolist(),
+                                df['s_arrival_time'].tolist(),
+                                df['s_probability'].tolist(),
+                                p_snrs=df['p_snr'].tolist(),
+                                s_snrs=df['p_snr'].tolist())
+    elif ai in ('eqcc', 'eqcctps'):
+        # Create a list of picks
+        p_list = read_eqcc_picks(df['network'].tolist(), df['station'].tolist(),
+                                df['instrument_type'].tolist(),
+                                df['p_arrival_time'].tolist(),
+                                df['p_probability'].tolist(),
+                                df['s_arrival_time'].tolist(),
+                                df['s_probability'].tolist())
 
     return p_list
 
+def read_eqcc_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs):
+    """Iterate over picks to generate list of Picks objects
+
+    Parameters
+    ----------
+    nets : list
+        Networks list
+    stations : list
+        Stations list
+    chs : list
+        Channels list
+    p_times : list
+        P pick times
+    p_probs : list
+        P picks probabilities
+    s_times : list
+        S picks times
+    s_probs : list
+        S picks probabilities
+    """
+    picks_list = []
+
+    for i in range(len(s_times)):
+        net, station, ch = nets[i], stations[i], chs[i]
+        s_pick = None
+        loc = '00'
+        if ch == 'EH':
+            loc = '20'
+        elif ch == 'HN':
+            loc = '10'
+
+        ch += 'Z'
+
+        p_t, p_prob = p_times[i], p_probs[i]
+        p_pick = eqt_pick_constructor(p_t, p_prob, net,
+                                        station, loc, ch, 'P')
+        picks_list.append(p_pick)
+
+        s_t, s_prob = s_times[i], s_probs[i]
+        s_pick = eqt_pick_constructor(s_t, s_prob, net, station, loc, ch, 'S')
+        picks_list.append(s_pick)
+
+        print(f'{i}. {station}, p_t:{p_t}, p_prob:{p_prob}, s_t:{s_t}, s_prob:{s_prob}')
+
+    return picks_list
 
 def read_eqt_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs,
                    p_snrs, s_snrs):

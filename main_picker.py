@@ -1,4 +1,4 @@
-#!/home/daniel/anaconda3/envs/pnet/bin/python
+#!/home/daniel/anaconda3/envs/eqcc/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jul 2020
@@ -95,9 +95,13 @@ def prep_eqt_params(params):
     # get script path directory
     script_dir = os.path.dirname(os.path.realpath(__file__))
     model_default_path = os.path.join(script_dir, 'model', 'EqT_model.h5')
+    model_eqcc_P_path = os.path.join(script_dir, 'model', 'ModelPS', 'test_trainer_024.h5')
+    model_eqcc_S_path = os.path.join(script_dir, 'model', 'ModelPS', 'test_trainer_021.h5')
     
     eqt_dict = {'eqt_n_processor': 2,
                 'eqt_model_dir': model_default_path,
+                'eqcc_P_model_dir': model_eqcc_P_path,
+                'eqcc_S_model_dir': model_eqcc_S_path,
                 'eqt_gpuid':None,
                 'eqt_gpu_limit':None}
     
@@ -230,14 +234,15 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict)
     origins_pruning(evf_path, pref_orig_path, mysqldb_dict["check_db"],
                     mysqldb_dict['check_quadrant'])
 
-def run_EQTransformer(client_dict, download_data,eqt_dict, mysqldb_dict):
+def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict):
 
     cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict,
-                                  mysqldb_dict=mysqldb_dict)
+                                picker=picker,
+                                mysqldb_dict=mysqldb_dict)
     
     print(f'\ncwav_eqt object:\n\t{cwav_eqt.__dict__}\n')
-    cwav_eqt.create_json()
-    cwav_eqt.download_mseed()
+    #cwav_eqt.create_json()
+    #cwav_eqt.download_mseed()
     if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):
         cwav_eqt.mseedpredictor()
         pass
@@ -266,8 +271,8 @@ def run(inp_file):
     if picker in ('PhaseNet','pnet','phasenet'):
         run_PhaseNet(client_dict, download_data, filter_data, pnet_dict, mysqldb_dict=mysqldb_dict)
 
-    elif picker in ('EQTransformer','eqt','eqtransformer'):
-        run_EQTransformer(client_dict, download_data, eqt_dict, mysqldb_dict=mysqldb_dict)
+    elif picker in ('EQTransformer','eqt','eqtransformer', 'eqcctps', 'eqcc'):
+        run_EQTransformer(client_dict, download_data, eqt_dict, picker=picker, mysqldb_dict=mysqldb_dict)
 
 if __name__ == "__main__":
     
