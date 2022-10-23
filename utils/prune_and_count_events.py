@@ -29,7 +29,7 @@ def apply_scevent(xml_paths: list, output_filename: str):
     output_filename : str
         Name of the output seiscomp event xml
     """
-    db = 'db_sc = mysql://sysop:sysopp@10.100.100.13/seiscomp3'
+    db = 'mysql://sysop:sysop@sc3primary.beg.utexas.edu/seiscomp3'
     
     N = len(xml_paths)
     with ProcessPoolExecutor(max_workers=8) as excecutor:
@@ -37,6 +37,7 @@ def apply_scevent(xml_paths: list, output_filename: str):
 
 
 def exc_scevent(output_filename, origin_path, db):
+    change_xml_version(origin_path)
     event_path = os.path.join(os.path.dirname(origin_path), output_filename)
     scevent_cmd = 'scevent -u playback --ep %s -d %s  > %s' % (origin_path,
                                                                db, event_path)

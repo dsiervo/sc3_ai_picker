@@ -37,8 +37,6 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob_p=0.6,
         AI type, can be: pnet or eqt (phasenet or eqtransformer)
     """
 
-    print('Input files is:', input_file)
-
     # Obtaining list of Picks objects from file
     if ai == 'pnet':
         pick_list = read_picks(input_file, dt, min_prob_p, min_prob_s)
@@ -81,9 +79,10 @@ def prepare_eqt(input_dir, ai):
                         's_arrival_time', 's_probability', 's_snr']
 
     elif ai in ('eqcc', 'eqcctps'):
-        interest_col = ['network', 'station', 'instrument_type', 'detection_probability',
+        interest_col = ['file_name', 'station',
                         'p_arrival_time', 'p_probability',
                         's_arrival_time', 's_probability']
+
     # Keeping with columns of interest
     df = df[interest_col]
     # Deleting rows without P phase
@@ -107,9 +106,16 @@ def prepare_eqt(input_dir, ai):
                                 p_snrs=df['p_snr'].tolist(),
                                 s_snrs=df['p_snr'].tolist())
     elif ai in ('eqcc', 'eqcctps'):
+        # exctracting from the file_name column the network, location and channel
+        # the file_name column has the following format: station/network.station.location.channel__starttime__endtime.mseed
+        df['network'] = df['file_name'].str.split('/').str[1].str.split('.').str[0]
+        df['location'] = df['file_name'].str.split('/').str[1].str.split('.').str[2]
+        df['channel'] = df['file_name'].str.split('/').str[1].str.split('.').str[3].str.split('__').str[0].str[:-1]
+
+
         # Create a list of picks
         p_list = read_eqcc_picks(df['network'].tolist(), df['station'].tolist(),
-                                df['instrument_type'].tolist(),
+                                df['channel'].tolist(), df['location'].tolist(),
                                 df['p_arrival_time'].tolist(),
                                 df['p_probability'].tolist(),
                                 df['s_arrival_time'].tolist(),
@@ -117,7 +123,7 @@ def prepare_eqt(input_dir, ai):
 
     return p_list
 
-def read_eqcc_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs):
+def read_eqcc_picks(nets, stations, chs, locs, p_times, p_probs, s_times, s_probs):
     """Iterate over picks to generate list of Picks objects
 
     Parameters
@@ -140,13 +146,8 @@ def read_eqcc_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs):
     picks_list = []
 
     for i in range(len(s_times)):
-        net, station, ch = nets[i], stations[i], chs[i]
+        net, station, ch, loc = nets[i], stations[i], chs[i], locs[i]
         s_pick = None
-        loc = '00'
-        if ch == 'EH':
-            loc = '20'
-        elif ch == 'HN':
-            loc = '10'
 
         ch += 'Z'
 
@@ -156,8 +157,9 @@ def read_eqcc_picks(nets, stations, chs, p_times, p_probs, s_times, s_probs):
         picks_list.append(p_pick)
 
         s_t, s_prob = s_times[i], s_probs[i]
-        s_pick = eqt_pick_constructor(s_t, s_prob, net, station, loc, ch, 'S')
-        picks_list.append(s_pick)
+        if s_t != 'no pick':
+            s_pick = eqt_pick_constructor(s_t, s_prob, net, station, loc, ch, 'S')
+            picks_list.append(s_pick)
 
         print(f'{i}. {station}, p_t:{p_t}, p_prob:{p_prob}, s_t:{s_t}, s_prob:{s_prob}')
 
@@ -329,6 +331,7 @@ def picks2xml(pick_list):
 
 
 def eqt_pick_constructor(time, prob, net, station, loc, ch, ph):
+    print(station, ph, time)
     time = UTCDateTime(time)
     id_ = id_maker(time, net, station, loc, ch, ph, 'EQTransformer')
     creation_t = UTCDateTime()

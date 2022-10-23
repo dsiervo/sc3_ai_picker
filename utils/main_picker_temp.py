@@ -241,8 +241,8 @@ def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict)
                                 mysqldb_dict=mysqldb_dict)
     
     print(f'\ncwav_eqt object:\n\t{cwav_eqt.__dict__}\n')
-    #cwav_eqt.create_json()
-    #cwav_eqt.download_mseed()
+    cwav_eqt.create_json()
+    cwav_eqt.download_mseed()
     if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):
         cwav_eqt.mseedpredictor()
         pass
