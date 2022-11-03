@@ -27,7 +27,7 @@ def change_env(picker, main_dir):
 
     lines = open(script_path).readlines()
 
-    assert picker in ('pnet', 'eqt'), 'El picker debe ser "eqt" o "pnet", usó "%s"\n'%picker
+    assert picker in ('pnet', 'eqt', 'eqcc', 'eqcctps'), 'El picker debe ser "eqt" o "pnet", usó "%s"\n'%picker
 
     anaconda_path = read_params(os.path.join(main_dir, 'anaconda_path.txt'))['anaconda_path']
     #anaconda_path = '/home/dsiervo/anaconda3/'
@@ -70,7 +70,10 @@ if __name__ == '__main__':
     
     par = read_params(inp_path)
 
-    # changing the excecution line 
+    # changing the excecution line
+    # using eqt as environment if the picker is eqcc or eqcctps
+    if par['picker'] in ('eqcc', 'eqcctps'):
+        par['picker'] = 'eqcc'
     change_env(par['picker'], main_dir)
 
     # runing ai_picker 

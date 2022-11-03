@@ -4,7 +4,11 @@ from obspy import UTCDateTime
 from obspy.clients.fdsn import Client
 import os, multiprocessing
 from datetime import timedelta
-from utils.merge_xml_picks import merge_xml_picks
+try:
+    from utils.merge_xml_picks import merge_xml_picks
+except ModuleNotFoundError:
+    from merge_xml_picks import merge_xml_picks
+
 
 def get_xml_Origins(xml_picks,output_file,locator_type="LOCSAT",
                     locator_profile="iasp91",
@@ -186,7 +190,7 @@ class playback:
         self.events_dir = os.path.join(self.general_dir, 'xml_events')
         
         if not os.path.exists(self.events_dir):
-            os.makedirs(self.events_dir)    
+            os.makedirs(self.events_dir, exist_ok=True)    
 
     def wf_extraction(self):
     
@@ -272,7 +276,7 @@ class playback:
     def merge_picks(self):
         merge_xml_picks(self.picks_dir)
         
-    def playback_commands(self):
+    def playback_commands(self, picks2events=False):
         """Excecute seiscomp playback comands to group picks, compute amplitudes,
         compute magnitudes and create seiscomp events.
 
@@ -283,11 +287,26 @@ class playback:
         locator_dict : dict
             Dictionary with locator and velocity models
         """
-        self.event_path = os.path.join(self.events_dir, self.event_name)
+        print('self.out_dir', self.out_dir)
+        print('self.events_dir', self.events_dir)
+        origins_name = 'origins.xml'
+        amplitudes_name = 'amp.xml'
+        magnitudes_name = 'mag.xml'
+        # keep only the file name of the self.xml_picks_file path
+        picks_file_name = os.path.split(self.xml_picks_file)[-1]
+        # if we are events from picks outside of the ai_picker
+        if picks2events:
+            self.event_name = 'ev_'+picks_file_name
+            origins_name = 'origins_'+picks_file_name
+            amplitudes_name = 'amp_'+picks_file_name
+            magnitudes_name = 'mag_'+picks_file_name
+            self.event_path = os.path.join(self.events_dir, self.event_name)
+        else:
+            self.event_path = os.path.join(self.events_dir, self.event_name)
         
-        origin_path = os.path.join(self.out_dir, 'origins.xml')
-        amp_path = os.path.join(self.out_dir, 'amp.xml')
-        mag_path = os.path.join(self.out_dir, 'mag.xml')
+        origin_path = os.path.join(self.out_dir, origins_name)
+        amp_path = os.path.join(self.out_dir, amplitudes_name)
+        mag_path = os.path.join(self.out_dir, magnitudes_name)
 
         if self.sc_scanloc == 'scanloc':
             scanloc_cmd = get_scanloc_msg(picks_file=self.xml_picks_file,
@@ -299,7 +318,7 @@ class playback:
                                                             self.xml_picks_file,
                                                             self.db, origin_path)
         
-        scamp_cmd = 'scamp -u playback --ep %s -d %s  > %s'%(origin_path,
+        scamp_cmd = 'scamp -u playback --ep %s -d %s > %s'%(origin_path,
                                                             self.db, amp_path)
 
         scmag_cmd = 'scmag -u playback --ep %s -d %s  > %s'%(amp_path, self.db, mag_path)
