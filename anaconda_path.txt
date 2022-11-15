@@ -1,1 +1,1 @@
-anaconda_path = /home/daniel/anaconda3/
+anaconda_path = /home/seiscomp/anaconda3

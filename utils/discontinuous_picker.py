@@ -1,4 +1,4 @@
-#!/home/daniel/anaconda3/bin/python
+#!/home/seiscomp/anaconda3/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jan 2021
@@ -21,7 +21,7 @@ import click
               help='Starting date in format like "2020-01-22 00:00:00"')
 @click.option('-e', "--end", required=True, prompt='End date [yyyy-MM-dd hh:mm:ss]',
               help='Ending date in format like "2020-01-22 00:00:00"')
-@click.option('-n', "--n_days", prompt=True, default=7,
+@click.option('-n', "--n_days", prompt=True, default=7, type=float,
               help='Run ai_picker every n_days\n')
 @click.option('-d', "--db", required=False, prompt=False, default='None',
               help='Seiscomp database to migrate events every n_days. Could be 10.100.100.13')
@@ -50,12 +50,15 @@ def discontinuous_picker(start, end, n_days, db):
         print(f'\n\n\trunning from {start} to {final_time}\n\n')
 
         os.system('rm -fr %s' % wav_dir)
-        output_dir = '%s%s%s-%s%s%s' % (str(start.day).rjust(2, '0'),
+
+        # output_dir name ddmmyyyy-hhmmss_ddmmyy-hhmmss
+        output_dir = start.strftime('%d%m%Y-%H%M%S') + '_' + final_time.strftime('%d%m%Y-%H%M%S')
+        """output_dir = '%s%s%s-%s%s%s' % (str(start.day).rjust(2, '0'),
                                         str(start.month).rjust(2, '0'),
                                         str(start.year),
                                         str(final_time.day).rjust(2, '0'),
                                         str(final_time.month).rjust(2, '0'),
-                                        str(final_time.year))
+                                        str(final_time.year))"""
         general_output_dir = os.path.join(params['general_output_dir'],
                                           output_dir)
         
