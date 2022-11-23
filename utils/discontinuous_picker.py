@@ -1,4 +1,4 @@
-#!/home/seiscomp/anaconda3/bin/python
+#!/home/siervod/anaconda3/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jan 2021

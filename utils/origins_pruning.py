@@ -1,4 +1,4 @@
-#!/home/daniel/anaconda3/envs/pnet/bin/python
+#!/home/siervod/anaconda3/envs/eqt/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Nov 24 13:01:33 2020
@@ -243,6 +243,9 @@ class Watcher:
         bool
             True if event is in quadrant, False if not
         """
+        assert len(quadrant) == 4, 'Quadrant must be a tuple with 4 elements'
+        assert quadrant[0] < quadrant[1], 'lat_min must be less than lat_max'
+        assert quadrant[2] < quadrant[3], 'lon_min must be less than lon_max'
         return (quadrant[0] <= self.lat <= quadrant[1]
                 and quadrant[2] <= self.lon <= quadrant[3])
 
@@ -317,6 +320,7 @@ if __name__ == "__main__":
     if len(sys.argv) == 2:
         origins_pruning(sys.argv[1], check_db=False)
     elif len(sys.argv) == 3:
+        #origins_pruning(sys.argv[1], sys.argv[2], quadrant=(31.5722,31.66405,-104.04678,-103.9269), check_db=False)
         origins_pruning(sys.argv[1], sys.argv[2], check_db=False)
     elif len(sys.argv) == 4:
         print('en cuadrante')

@@ -1,4 +1,4 @@
-#!/home/seiscomp/anaconda3/envs/eqt/bin/python
+#!/home/siervod/anaconda3/envs/eqt/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Feb 5 2021
