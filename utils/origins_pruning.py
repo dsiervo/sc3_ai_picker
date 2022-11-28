@@ -67,11 +67,12 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
                 print(
                     f'\n\n\t El evento\033[91m {pref_orig.time} - {region}\033[0m ya existe en la base de datos, se elimina del xml\n\n')
                 continue
-            if quadrant != "None" and not watcher.check_in_region(quadrant):
-                print(f'region {region}')
-                print(
-                    f'\n\n\t El evento\033[91m {pref_orig.time} : {pref_orig.latitude}, {pref_orig.longitude} : {region}\033[0m fuera del cuadrante {quadrant}, se elimina del xml\n\n')
-                continue
+            if quadrant != "None":
+                if not watcher.check_in_region(quadrant):
+                    print(f'region {region}')
+                    print(
+                        f'\n\n\t El evento\033[91m {pref_orig.time} : {pref_orig.latitude}, {pref_orig.longitude} : {region}\033[0m fuera del cuadrante {quadrant}, se elimina del xml\n\n')
+                    continue
 
         del cat[i].origins[:-1]
         cat2.append(cat[i])
@@ -230,7 +231,7 @@ class Watcher:
         # check if any distance is less than 50 km
         return np.any(dist_m < 50000)
 
-    def check_in_quadrant(self, quadrant):
+    def check_in_quadrant(self, quadrant: tuple) -> bool:
         """Check if event location is in a quadrant
 
         Parameters
@@ -244,8 +245,8 @@ class Watcher:
             True if event is in quadrant, False if not
         """
         assert len(quadrant) == 4, 'Quadrant must be a tuple with 4 elements'
-        assert quadrant[0] < quadrant[1], 'lat_min must be less than lat_max'
-        assert quadrant[2] < quadrant[3], 'lon_min must be less than lon_max'
+        assert quadrant[0] < quadrant[1], 'The minimum latitude must be less than the maximum latitude'
+        assert quadrant[2] < quadrant[3], 'The minimum longitude must be less than the maximum longitude'
         return (quadrant[0] <= self.lat <= quadrant[1]
                 and quadrant[2] <= self.lon <= quadrant[3])
 
@@ -267,6 +268,12 @@ class Watcher:
                 except FileNotFoundError:
                     print(f'\n\n\t {region} file not found\n\n')
                     raise ValueError('Debe proporcionar un cuadrante o un archivo bna')
+            elif len(region.split(',')) == 4:
+                quadrant = region.split(',')
+                quadrant = tuple(map(float, quadrant))
+                return self.check_in_quadrant(quadrant)
+            else:
+                raise ValueError('Debe proporcionar un cuadrante o un archivo bna')
         elif isinstance(region, tuple):
             return self.check_in_quadrant(region)
         else:
@@ -328,6 +335,7 @@ if __name__ == "__main__":
                         check_db=True, quadrant=sys.argv[3])
         
         # running scevent to create an event xml
+        change_xml_version(sys.argv[2])
         scevent_cmd = 'scevent -u playback --ep %s  > %s'%(sys.argv[2], sys.argv[2].split('.')[0]+'_ev.xml')
         print(scevent_cmd)
         os.system(scevent_cmd)
