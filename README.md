@@ -60,7 +60,7 @@ $ conda activate pnet
 
 
 
-#### Configure la optimización de descaga de formas de onda
+## Configure la optimización de descaga de formas de onda
 El siguiente paso es necesario para mejorar el desempeño al descargar señales usando EQTransformer.
 Edite el archivo `<su ruta a anaconda3>/envs/eqt/lib/python3.7/site-packages/EQTransformer/utils/downloader.py` y agregue la siguiente línea dentro de la función **downloadMseeds** justo antes de la línea `with ThreadPool(n_processor) as p:`
 
@@ -68,16 +68,16 @@ Edite el archivo `<su ruta a anaconda3>/envs/eqt/lib/python3.7/site-packages/EQT
 n_processor = len(station_dic)
 ```
 
-#### Configure los entornos virtuales en el ai_picker.py
+## Configure los entornos virtuales en el ai_picker.py
 1. Abra el archivo `<su ruta a sgc_ai_picker>/anaconda_path.txt`
 2. Modifique el valor de la variable `anaconda_path` por la ruta hacia su anaconda3.
 ```
 anaconda_path = '<su ruta a anaconda3>'
 ```
-3. Modifique la ruta hacia el directorio anaconda3 en los archivos prune_and_count_evnets.py y run_dashboard.sh
-4. Modifique la ruta hacia el sc3_ai_picker en run_dashboard.sh
+3. Modifique la ruta hacia el directorio anaconda3 en los archivos prune_and_count_evnets.py. run_dashboard.sh y discontinuos_picker.py
 
-#### Agregue sgc_ai_picker y sgc_ai_picker/utils a su PATH
+
+## Agregue sgc_ai_picker y sgc_ai_picker/utils a su PATH
 1. Edite el archivo `~/.bashrc` y agregue la siguientes 2 líneas:
 ```bash
 export PATH="<su ruta a sgc_ai_picker>:$PATH"

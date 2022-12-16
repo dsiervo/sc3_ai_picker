@@ -1,4 +1,4 @@
-#!/home/daniel/anaconda3/envs/eqcc/bin/python
+#!/home/siervod/anaconda3/envs/eqcc/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jul 2020
@@ -51,6 +51,9 @@ def prep_client_params(params):
     except ValueError:
         raise ValueError("\n\nAsegúrese de ingresar fechas válidas con el formato: YYYY-MM-D hh:mm:ss\n")
     params['dt'] = timedelta(seconds=int(params['dt']))
+
+    # check if starttime - endtime is larger than dt
+    assert timedelta(params['endtime'] - params['starttime']) > params['dt'], "The time window needs to be larger than dt"
 
     client_params = ['ip', 'port', 'starttime', 'endtime', 'dt', 'locator_dict']
     try:

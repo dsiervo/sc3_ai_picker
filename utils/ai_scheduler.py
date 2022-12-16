@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/bin/python
+#!/home/siervod/anaconda3/envs/eqt/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Sep 2020
@@ -105,15 +105,15 @@ def logger(ti, tf):
     f.close()
 
 
-def runner(every_m, buf=2, db='10.100.100.13:4803'):
+def runner(every_m, delay=0, db='10.100.100.13:4803'):
     """Excecute ai_picker.py every every_m hours with a 5 min buffer
 
     Parameters
     ----------
     every_m : int
         Time delta in hours between init and end time
-    buf : int
-        Buffer in minutes, default: 2
+    delay : int
+        Delay in minutes, default: 0
     """
 
     params = read_params('ai_picker_scdl.inp')
@@ -121,13 +121,13 @@ def runner(every_m, buf=2, db='10.100.100.13:4803'):
     os.system('rm -fr %s' % main_path)
 
     # taking current time in UTC
-    t = datetime.datetime.now() + datetime.timedelta(hours=(5))
-    t_i = t - datetime.timedelta(minutes=(every_m + buf))
+    t = datetime.datetime.utcnow() - datetime.timedelta(minutes=delay)
+    t_i = t - datetime.timedelta(minutes=(every_m))
 
     # change the init, end time and dt in ai_picker.inp
     change_times(t_i.strftime("%Y-%m-%d %H:%M:%S"),
                  t.strftime("%Y-%m-%d %H:%M:%S"),
-                 (every_m + buf)*60)
+                 (every_m)*60)
 
     print(f'\n\n\trunning from {t_i} to {t}\n\n')
     os.system('head -10 ai_picker.inp')
@@ -138,7 +138,7 @@ def runner(every_m, buf=2, db='10.100.100.13:4803'):
     # getting the picks path
     picks_path = get_origins_path(main_path, 'picks.xml')
 
-    cmd_picks = 'scdispatch -i %s -H %s -u ai_sgc' % (picks_path, db)
+    cmd_picks = 'scdispatch -i %s -H %s -u ai_texnet' % (picks_path, db)
     print(cmd_picks)
     os.system(cmd_picks)
 
@@ -146,15 +146,15 @@ def runner(every_m, buf=2, db='10.100.100.13:4803'):
         # if the file is not empty
         if os.path.getsize(output_path):
             print('xml a modificar:', output_path)
-            # changing the xml version of the origins file (mags.xml)
-            # change_xml_version(output_path)
+            # changing the xml version of the origins file
+            change_xml_version(output_path)
 
             print('\n\n\tUploading to db\n\n')
             os.system('head -3 %s' % output_path)
 
             # random number to avoid repetead users
             num = random.randint(1, 10)
-            cmd = 'scdispatch -i %s -H %s -u ai_sgc_%d' % (output_path, db, num)
+            cmd = 'scdispatch -i %s -H %s -u ai_texnet_%d' % (output_path, db, num)
             print(cmd)
             os.system(cmd)
         else:
@@ -171,10 +171,10 @@ def runner(every_m, buf=2, db='10.100.100.13:4803'):
 
 if __name__ == "__main__":
 
-    every_minutes = 15
-    minutes = 30  # period of excecution in minutes
-    buffer = 0    # buffer or overlapping in minutes
-    schedule.every(every_minutes).minutes.do(runner, every_m=minutes, buf=buffer, db='10.100.100.232:4803')
+    every_minutes = 60
+    minutes = 120  # period of excecution in minutes
+    delay = 60    # delay in minutes
+    schedule.every(every_minutes).minutes.do(runner, every_m=minutes, delay=delay, db='sc3primary.beg.utexas.edu')
 
     while True:
         schedule.run_pending()

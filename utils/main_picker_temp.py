@@ -52,6 +52,9 @@ def prep_client_params(params):
         raise ValueError("\n\nAsegúrese de ingresar fechas válidas con el formato: YYYY-MM-D hh:mm:ss\n")
     params['dt'] = timedelta(seconds=int(params['dt']))
 
+    # check if starttime - endtime is larger than dt
+    assert timedelta(params['endtime'] - params['starttime']) > params['dt'], "The time window needs to be larger than dt"
+
     client_params = ['ip', 'port', 'starttime', 'endtime', 'dt', 'locator_dict']
     try:
         client_dict = dict((key, params[key]) for key in client_params)

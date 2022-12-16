@@ -309,10 +309,14 @@ class playback:
         mag_path = os.path.join(self.out_dir, magnitudes_name)
 
         if self.sc_scanloc == 'scanloc':
-            scanloc_cmd = get_scanloc_msg(picks_file=self.xml_picks_file,
+            """scanloc_cmd = get_scanloc_msg(picks_file=self.xml_picks_file,
                                             origins_file=origin_path,
                                             origins_loc=self.locator_dict, # { "LOCSAT": "iasp91", "Hypo71":"RSNC" }
-                                            db = self.db)
+                                            db = self.db)"""
+            locator_type = list(self.locator_dict.keys())[0]
+            locator_profile = self.locator_dict[locator_type]
+            scanloc_cmd = f'scanloc -u playback --locator-type {locator_type} --locator-profile {locator_profile} '
+            scanloc_cmd += '--ep %s -d %s  > %s'%(self.xml_picks_file, self.db, origin_path)
         else:
             scanloc_cmd = '%s -u playback --ep %s -d %s  > %s'%(self.sc_scanloc,
                                                             self.xml_picks_file,
@@ -326,10 +330,15 @@ class playback:
         scevent_cmd = 'scevent -u playback --ep %s -d %s  > %s'%(mag_path, self.db,
                                                                 self.event_path)
         
-        all_cmd = ';'.join([scanloc_cmd, scamp_cmd, scmag_cmd, scevent_cmd])
+        all_cmd = ';'.join([scamp_cmd, scmag_cmd, scevent_cmd])
         
+        print(scanloc_cmd)
         print(all_cmd)
         
+        os.system(scanloc_cmd)
+
+        clean_nll_origin(origin_path)
+
         os.system(all_cmd)
         
     def scdb(self):
@@ -352,7 +361,17 @@ def read_params(par_file):
             par_dic[key.strip()] = value.strip()
     return par_dic
 
-
+def clean_nll_origin(xml_path):
+    """
+    Remove the NLL lines at the beginning of the xml file
+    """
+    with open(xml_path, 'r') as f:
+        lines = f.readlines()
+        for i, line in enumerate(lines):
+            if line.startswith('<'):
+                break
+    with open(xml_path, 'w') as f:
+        f.writelines(lines[i:])
 
 if __name__ == '__main__':
 

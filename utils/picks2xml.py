@@ -153,12 +153,12 @@ def read_eqcc_picks(nets, stations, chs, locs, p_times, p_probs, s_times, s_prob
 
         p_t, p_prob = p_times[i], p_probs[i]
         p_pick = eqt_pick_constructor(p_t, p_prob, net,
-                                        station, loc, ch, 'P')
+                                        station, loc, ch, 'P', 'EQCC')
         picks_list.append(p_pick)
 
         s_t, s_prob = s_times[i], s_probs[i]
         if s_t != 'no pick':
-            s_pick = eqt_pick_constructor(s_t, s_prob, net, station, loc, ch, 'S')
+            s_pick = eqt_pick_constructor(s_t, s_prob, net, station, loc, ch, 'S', 'EQCC')
             picks_list.append(s_pick)
 
         print(f'{i}. {station}, p_t:{p_t}, p_prob:{p_prob}, s_t:{s_t}, s_prob:{s_prob}')
@@ -330,10 +330,10 @@ def picks2xml(pick_list):
     return xml_file
 
 
-def eqt_pick_constructor(time, prob, net, station, loc, ch, ph):
+def eqt_pick_constructor(time, prob, net, station, loc, ch, ph, author='EQTransformer'):
     print(station, ph, time)
     time = UTCDateTime(time)
-    id_ = id_maker(time, net, station, loc, ch, ph, 'EQTransformer')
+    id_ = id_maker(time, net, station, loc, ch, ph, author)
     creation_t = UTCDateTime()
 
     evaluation = 'automatic'
@@ -341,7 +341,7 @@ def eqt_pick_constructor(time, prob, net, station, loc, ch, ph):
         evaluation = 'manual'
 
     pick = Pick(id_, time, net, station, loc, ch, prob,
-                ph, creation_t, evaluation, 'EQTransformer')
+                ph, creation_t, evaluation, author)
 
     return pick
 
