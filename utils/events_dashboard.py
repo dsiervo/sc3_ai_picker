@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/envs/streamlit/bin/python
+#!/home/seiscomp/anaconda3/envs/eqt/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Feb 19 2021
@@ -65,12 +65,18 @@ class EventSumamry(object):
             return float(x[0]['magnitude'][key])
         except TypeError:
             return -2
+        except KeyError:
+            print('It returned the dict instead of the list of dicts (get_mag)')
+            return float(x['magnitude'][key])
 
     def get_mag_count(self, x):
         try:
             return int(x[0]['stationCount'])
         except TypeError:
             return -2
+        except KeyError:
+            print('It returned the dict instead of the list of dicts (get_mag_count)')
+            return int(x['stationCount'])
 
     def get_from_dict(self, x, key, time=False):
         if not time:
