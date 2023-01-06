@@ -26,7 +26,7 @@ import obsplus
 
 
 def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
-                    check_db=False, quadrant="None"):
+                    check_db=False, quadrant="None", check_quality=True):
     """Delete all origins that are not the prefered origin
     in a seiscomp event xml file. Returns a xml with origins only
 
@@ -52,7 +52,7 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
         magnitude = ev.preferred_magnitude().mag
         pref_orig = cat[i].preferred_origin()
 
-        if not pass_origin_quality(pref_orig, magnitude):
+        if check_quality and not pass_origin_quality(pref_orig, magnitude):
             # imprime en rojo que el evento no pasó el filtro de calidad
             print(
                 f'\033[91m Evento {pref_orig.time} no pasó el filtro de calidad \033[0m')
@@ -328,7 +328,7 @@ if __name__ == "__main__":
         origins_pruning(sys.argv[1], check_db=False)
     elif len(sys.argv) == 3:
         #origins_pruning(sys.argv[1], sys.argv[2], quadrant=(31.5722,31.66405,-104.04678,-103.9269), check_db=False)
-        origins_pruning(sys.argv[1], sys.argv[2], check_db=False)
+        origins_pruning(sys.argv[1], sys.argv[2], check_db=False, check_quality=False)
     elif len(sys.argv) == 4:
         print('en cuadrante')
         origins_pruning(sys.argv[1], sys.argv[2],
