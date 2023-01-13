@@ -149,10 +149,11 @@ class EventTypeChanger:
     def change_event_type(self, event_id):
         cmd = f'scsendjournal -H {self.host} {event_id} EvType "{self.ev_type}" --debug'
         # print in red and bold the command
-        print(f'\033[1;31m{cmd}\033[0m')
+        print(f'\n\033[1;32m{cmd}\033[0m\n')
         os.system(cmd)
     
     def run(self):
+        print(self.reported_origins)
         for origin_id in self.reported_origins:
             # Check if origin_id is not an empty string
             if not origin_id:
@@ -161,7 +162,7 @@ class EventTypeChanger:
             # if event_id is not None, change event type
             if event_id:
                 # print in green and bold that the event type will is being changed to earthquake
-                print(f'\033[1;32mChanging event type to {self.ev_type} for {event_id}\033[0m')
+                print(f'\n\n\033[1;32mChanging event type to {self.ev_type} for {event_id}\033[0m\n\n')
                 self.change_event_type(event_id)
             else:
             # print in red and bold that the origin_id was not found in the database
