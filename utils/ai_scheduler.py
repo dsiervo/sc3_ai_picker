@@ -12,6 +12,7 @@ import schedule
 import time
 import datetime
 import random
+import mysql.connector # pip install mysql-connector-python
 
 
 def read_params(par_file='phaseNet.inp'):
@@ -74,10 +75,13 @@ def change_times(ti: str, tf: str, dt: int):
 
 
 def change_xml_version(ev_file='events_final.xml'):
-    lines = open(ev_file).readlines()
-    lines[1] = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10" version="0.10">\n'
-    with open(ev_file, 'w') as f:
-        f.write(''.join(lines))
+    lines = open(ev_file, encoding='utf-8').readlines()
+    new_line = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10" version="0.10">\n'
+    with open(ev_file, 'w', encoding='utf-8') as f:
+        for line in lines:
+            if line.startswith('<seiscomp xmlns='):
+                line = new_line
+            f.write(line)
 
 
 def get_origins_path(path, xmlfile):
@@ -105,7 +109,66 @@ def logger(ti, tf):
     f.close()
 
 
-def runner(every_m, delay=0, db='10.100.100.13:4803'):
+class EventTypeChanger:
+    """Reads the list of origins ids from reported_origins.txt iterates over them,
+    searches the event id and changes the event type to 'earthquake'
+    using scsendjournal (scsendjournal -H sc3primary.beg.utexas.edu texnet2023attj EvType "earthquake" --debug)
+    """
+
+    query_str = """
+    select POE.publicID 
+    from Event left join PublicObject AS POE ON Event._oid = POE._oid
+    where Event.preferredOriginID = '{origin_id}'"""
+
+    def __init__(self, host, ev_type='earthquake', orig_ids_file='reported_origins.txt'):
+        self.host = host
+        self._mydb = mysql.connector.connect(host=host,
+                                    user="sysop",
+                                    passwd="sysop",
+                                    database="seiscomp3")
+        self.ev_type = ev_type
+        self.orig_ids_file = orig_ids_file
+
+    @property
+    def reported_origins(self):
+        if not os.path.isfile(self.orig_ids_file):
+            return []
+        with open(self.orig_ids_file, 'r') as f:
+            lines = f.readlines()
+        return [line.strip().strip('\n') for line in lines]
+    
+    def get_event_id(self, origin_id):
+        mycursor = self._mydb.cursor()
+        mycursor.execute(self.query_str.format(origin_id=origin_id))
+        myresult = mycursor.fetchall()
+        # if myresult is empty, return None
+        if not myresult:
+            return None
+        return myresult[0][0]
+    
+    def change_event_type(self, event_id):
+        cmd = f'scsendjournal -H {self.host} {event_id} EvType "{self.ev_type}" --debug'
+        # print in red and bold the command
+        print(f'\033[1;31m{cmd}\033[0m')
+        os.system(cmd)
+    
+    def run(self):
+        for origin_id in self.reported_origins:
+            # Check if origin_id is not an empty string
+            if not origin_id:
+                continue
+            event_id = self.get_event_id(origin_id)
+            # if event_id is not None, change event type
+            if event_id:
+                # print in green and bold that the event type will is being changed to earthquake
+                print(f'\033[1;32mChanging event type to {self.ev_type} for {event_id}\033[0m')
+                self.change_event_type(event_id)
+            else:
+            # print in red and bold that the origin_id was not found in the database
+                print(f'\033[1;31m{origin_id} not found as preferred in the database\033[0m')
+
+
+def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
     """Excecute ai_picker.py every every_m hours with a 5 min buffer
 
     Parameters
@@ -131,16 +194,19 @@ def runner(every_m, delay=0, db='10.100.100.13:4803'):
 
     print(f'\n\n\trunning from {t_i} to {t}\n\n')
     os.system('head -10 ai_picker.inp')
-    os.system('time ai_picker.py')
+    cmd = f'time {ai_picker}'
+    # print in red and bold the command
+    print(f'\033[1;31m{cmd}\033[0m')
+    os.system(cmd)
 
     # getting the origins path
     output_path = get_origins_path(main_path, 'origenes_preferidos.xml')
     # getting the picks path
-    picks_path = get_origins_path(main_path, 'picks.xml')
+    #picks_path = get_origins_path(main_path, 'picks.xml')
 
-    cmd_picks = 'scdispatch -i %s -H %s -u ai_texnet' % (picks_path, db)
-    print(cmd_picks)
-    os.system(cmd_picks)
+    #cmd_picks = 'scdispatch -i %s -H %s -u ai_texnet' % (picks_path, db)
+    #print(cmd_picks)
+    #os.system(cmd_picks)
 
     if output_path is not None:
         # if the file is not empty
@@ -154,9 +220,16 @@ def runner(every_m, delay=0, db='10.100.100.13:4803'):
 
             # random number to avoid repetead users
             num = random.randint(1, 10)
-            cmd = 'scdispatch -i %s -H %s -u ai_texnet_%d' % (output_path, db, num)
+            cmd = 'scdispatch -i %s -H %s -u aitexnet%d' % (output_path, db, num)
             print(cmd)
             os.system(cmd)
+
+            # wait 15 seconds 
+            time.sleep(15)
+            
+            # change the event type to earthquake
+            EventTypeChanger(db).run()
+
         else:
             print('\n\n\tArchivo vacio!\n\n')
     else:

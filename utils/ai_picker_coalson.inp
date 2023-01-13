@@ -9,11 +9,6 @@ starttime = 2022-11-15 00:00:00
 endtime = 2022-11-17 23:53:00
 dt = 5400
 
-# if true, the preferred origins that have depth < 30 km and hypocentral uncertainties < 20 km
-# will be written as evaluation status 'reported' and evaluation mode 'manual'
-# and reported_origins.txt will be created with the preferred origins IDs of the reported origins 
-write_reported = true
-
 # localizadores y modelos de velocidades que se usarán para localizar los eventos.
 # Si hay mas de un elemento en el diccionario se unirán los orígenes que se encuentren
 # con cada localizador para que luego el scevent una en un mismo evento a aquellos
@@ -29,7 +24,7 @@ db_sc = mysql://sysop:sysop@sc3primary.beg.utexas.edu/seiscomp3
 # lat_min, lat_max, lon_min, lon_max, or bna file
 #check_quadrant = ellington_circle.bna
 # latitude BETWEEN 32.4 AND 32.6 AND longitude BETWEEN -101.3 AND -101.2
-#check_quadrant = 31.5722,31.68,-104.083,-103.9269
+check_quadrant = 31.5722,31.68,-104.083,-103.9269
 ##############################------------ SECTION 2): Stations to download ------------############################
 # PB28, PB37, PB35, PB36, PB29, PB38, SA02, SA07
 #download_data = TX.PB28.00.HH*, TX.PB37.00.HH*, TX.PB35.00.HH*, TX.PB36.00.HH*, TX.PB29.00.HH*, TX.PB38.00.HH*, 4O.SA02.00.HH*, 4O.SA07.00.HH*

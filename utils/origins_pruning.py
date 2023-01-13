@@ -26,9 +26,8 @@ import obsplus
 @click.option('-o', "--output_fn", prompt=True, help='Output xml file name', default="origenes_preferidos.xml")"""
 
 
-def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
-                    check_db=False, quadrant="None", check_quality=True,
-                    change_to_reported=False):
+def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',change_to_reported = False,
+                    check_db=False, quadrant="None", check_quality=True):
     """Delete all origins that are not the prefered origin
     in a seiscomp event xml file. Returns a xml with origins only
 
@@ -39,6 +38,13 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
     output_fn : str
         Name of output SeisComP3 xml file.
     """
+    try:
+        params = read_params()
+        if "write_reported" in params:
+            if params["write_reported"] in ["True", "true", "TRUE", "yes", "Yes", "YES"]:
+                change_to_reported = True
+    except FileNotFoundError:
+        print("File ai_picker.inp not found, using change_to_reported = False")
 
     print('\n\nRemoving origins that are not the prefered one in the xml %s\n' % xml_name)
     try:
@@ -48,6 +54,8 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
         print('\n\t No existe el archivo %s, se salta este proceso\n' % xml_name)
         sys.exit(1)
 
+    # text file with the origins ids of the reported origins
+    f_reported = open('reported_origins.txt', 'w')
     # automatic
     cat2 = Catalog()
     reported_cat = Catalog()
@@ -86,6 +94,8 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
                 print(f'\n\tEl origen preferido del evento {pref_orig.time} cumple con los criterios para ser reportado\n')
                 # if so, keep just the preferred origin, append it to the reported catalog
                 del_append_pref_origins(cat[i], reported_cat)
+                # adding a new line to the text file with the reported origin id
+                f_reported.write(f'{pref_orig.resource_id.id}\n')
             else:
                 print(f'\n\tEl origen preferido del evento {pref_orig.time} no cumple con los criterios para ser reportado\n')
                 # if not, write it as automatic
@@ -96,15 +106,20 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
     if change_to_reported:
         output_rep_fn = output_fn.replace('.xml', '_reported.xml')
         write_and_remove_id_prefix(reported_cat, output_rep_fn)
+        # change xml version
+        change_xml_version(output_rep_fn)
         change_status_and_eval_mode(output_rep_fn, status='reported', eval_mode='manual')
 
         # write the xml for automatic origins
         output_auto_fn = output_fn.replace('.xml', '_auto.xml')
         write_and_remove_id_prefix(cat2, output_auto_fn)
+        # change xml version
+        change_xml_version(output_auto_fn)
 
         # merge the xmls
         merge_xmls(output_auto_fn, output_rep_fn, output_fn)
     
+    f_reported.close()
     print('\n\tFiles with preferred origins to migrate to SeisComP3:\n\n\t  %s\n' % output_fn)
 
 def merge_xmls(xml1, xml2, output_fn):
@@ -150,11 +165,20 @@ def remove_id_prefix(xml_name):
     with open(xml_name, "w") as f:
         f.write(new_content)
 
+"""def change_xml_version(ev_file='events_final.xml'):
+    lines = open(ev_file, encoding='utf-8').readlines()
+    lines[1] = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.11" version="0.11">\n'
+    with open(ev_file, 'w', encoding='utf-8') as f:
+        f.write(''.join(lines))"""
+
 def change_xml_version(ev_file='events_final.xml'):
     lines = open(ev_file, encoding='utf-8').readlines()
-    lines[1] = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10" version="0.10">\n'
+    new_line = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10" version="0.10">\n'
     with open(ev_file, 'w', encoding='utf-8') as f:
-        f.write(''.join(lines))
+        for line in lines:
+            if line.startswith('<seiscomp xmlns='):
+                line = new_line
+            f.write(line)
 
 def change_status_and_eval_mode(xml_path, status='reported', eval_mode='manual'):
     """
@@ -196,6 +220,9 @@ def pass_reported_quality(origin):
     # check if the depth (m) is less than 30 km and lon, lat and depth (m) uncertainties are less than 20 km
     # if not, return False
     print(origin.depth, origin.longitude_errors.uncertainty, origin.latitude_errors.uncertainty, origin.depth_errors.uncertainty)
+    # check that none of the values are None
+    if any([x is None for x in [origin.depth, origin.longitude_errors.uncertainty, origin.latitude_errors.uncertainty, origin.depth_errors.uncertainty]]):
+        return False
     if origin.depth > 30000 or origin.longitude_errors.uncertainty > 20 \
         or origin.latitude_errors.uncertainty > 20 or origin.depth_errors.uncertainty > 20000:
         return False
