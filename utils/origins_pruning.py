@@ -26,8 +26,9 @@ import obsplus
 @click.option('-o', "--output_fn", prompt=True, help='Output xml file name', default="origenes_preferidos.xml")"""
 
 
-def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',change_to_reported = False,
-                    check_db=False, quadrant="None", check_quality=True):
+def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
+                    check_db=False, quadrant="None", check_quality=True,
+                    change_to_reported = False):
     """Delete all origins that are not the prefered origin
     in a seiscomp event xml file. Returns a xml with origins only
 
@@ -72,7 +73,7 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',change_to_repo
 
         # Si check_db es True se verifica si el evento ya esta en la base de datos
         # en caso de que si devuelve True, se elimina el evento del xml
-        if check_db or quadrant != "None":
+        if check_db in ("yes", "YES", "Yes", "true", "True", "TRUE") or quadrant != "None":
             watcher = Watcher(pref_orig)
             region = ev.event_descriptions[0].text.encode('utf-8')
             if check_db and watcher.exist_in_db():

@@ -234,8 +234,8 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict)
 
     # pruning origins that are not the prefered
     pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
-    origins_pruning(evf_path, pref_orig_path, mysqldb_dict["check_db"],
-                    mysqldb_dict['check_quadrant'])
+    origins_pruning(evf_path, pref_orig_path, check_db=mysqldb_dict["check_db"],
+                    quadrant=mysqldb_dict['check_quadrant'])
 
 def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict):
 
@@ -263,8 +263,9 @@ def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict)
 
     # pruning origins that are not the prefered
     pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
-    origins_pruning(evf_path, pref_orig_path, mysqldb_dict["check_db"],
-                    mysqldb_dict['check_quadrant'])
+    print(f'\n\n\033[95m check_db in main_picker_temp: {mysqldb_dict["check_db"]}\033[0m')
+    origins_pruning(evf_path, pref_orig_path, check_db=mysqldb_dict["check_db"],
+                    quadrant=mysqldb_dict['check_quadrant'])
 
 
 def run(inp_file):

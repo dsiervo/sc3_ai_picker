@@ -337,7 +337,7 @@ def eqt_pick_constructor(time, prob, net, station, loc, ch, ph, author='EQTransf
     creation_t = UTCDateTime()
 
     evaluation = 'automatic'
-    if prob >= 0.95:
+    if prob >= 1.95:
         evaluation = 'manual'
 
     pick = Pick(id_, time, net, station, loc, ch, prob,

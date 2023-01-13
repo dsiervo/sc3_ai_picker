@@ -115,10 +115,23 @@ class EventTypeChanger:
     using scsendjournal (scsendjournal -H sc3primary.beg.utexas.edu texnet2023attj EvType "earthquake" --debug)
     """
 
-    query_str = """
-    select POE.publicID 
+    query_str_evID = """
+    select POE.publicID,
+    Origin.quality_usedPhaseCount
     from Event left join PublicObject AS POE ON Event._oid = POE._oid
-    where Event.preferredOriginID = '{origin_id}'"""
+    inner join OriginReference on Event._oid=OriginReference._parent_oid
+    inner join PublicObject POO on POO.publicID=OriginReference.originID
+    inner join Origin on POO._oid=Origin._oid
+    where OriginReference.originID = '{origin_id}'"""
+
+    query_str_eval_mode = """
+    select
+    Origin.evaluationMode, Origin.creationInfo_author, Origin.quality_usedPhaseCount
+    from Event left join PublicObject AS POE ON Event._oid = POE._oid
+    left join PublicObject as POOri ON Event.preferredOriginID=POOri.publicID 
+    left join Origin ON POOri._oid=Origin._oid
+    where
+    POE.publicID = '{event_id}'"""
 
     def __init__(self, host, ev_type='earthquake', orig_ids_file='reported_origins.txt'):
         self.host = host
@@ -139,15 +152,30 @@ class EventTypeChanger:
     
     def get_event_id(self, origin_id):
         mycursor = self._mydb.cursor()
-        mycursor.execute(self.query_str.format(origin_id=origin_id))
+        mycursor.execute(self.query_str_evID.format(origin_id=origin_id))
         myresult = mycursor.fetchall()
         # if myresult is empty, return None
         if not myresult:
-            return None
-        return myresult[0][0]
+            return None, None
+        return myresult[0]
     
+    def get_eval_mode(self, event_id):
+        print('In get_eval_mode')
+        mycursor = self._mydb.cursor()
+        mycursor.execute(self.query_str_eval_mode.format(event_id=event_id))
+        # the query returns a tuple with the evaluation mode and the author
+        myresult = mycursor.fetchall()
+        return myresult[0]
+
     def change_event_type(self, event_id):
         cmd = f'scsendjournal -H {self.host} {event_id} EvType "{self.ev_type}" --debug'
+        # print in red and bold the command
+        print(f'\n\033[1;32m{cmd}\033[0m\n')
+        os.system(cmd)
+    
+    def fix_as_prefered(self, origin_id, event_id):
+        # scsendjournal -H sc3primary.beg.utexas.edu texnet2023attj EvPrefOrgID Origin/20230111205800.706844.48175 --debug
+        cmd = f'scsendjournal -H {self.host} {event_id} EvPrefOrgID {origin_id} --debug'
         # print in red and bold the command
         print(f'\n\033[1;32m{cmd}\033[0m\n')
         os.system(cmd)
@@ -158,15 +186,27 @@ class EventTypeChanger:
             # Check if origin_id is not an empty string
             if not origin_id:
                 continue
-            event_id = self.get_event_id(origin_id)
+            event_id, orig_phases = self.get_event_id(origin_id)
+            # print in blue and bold the origin_id and origin phases
+            print(f'\n\033[1;34m{origin_id} {orig_phases}\033[0m\n')
             # if event_id is not None, change event type
             if event_id:
+                eval_mode, author, pref_phases = self.get_eval_mode(event_id)
+                # print evaluation mode and event_id in red and bold
+                print(f'\n\n\033[1;31m{eval_mode} {event_id} {author} {pref_phases}\033[0m\n\n')
+                if eval_mode == 'manual':
+                    if author == 'EQCCT' and int(orig_phases) > int(pref_phases):
+                        print(f'\033[1;31m new EQCCT origin has more phases than the preferred one, changing preferred origin\033[0m')
+                        self.fix_as_prefered(origin_id, event_id)
+                    print(f'\033[1;31m{event_id} has a manual solution already, skiping...\033[0m')
+                    continue
                 # print in green and bold that the event type will is being changed to earthquake
                 print(f'\n\n\033[1;32mChanging event type to {self.ev_type} for {event_id}\033[0m\n\n')
                 self.change_event_type(event_id)
+                self.fix_as_prefered(origin_id, event_id)
             else:
-            # print in red and bold that the origin_id was not found in the database
-                print(f'\033[1;31m{origin_id} not found as preferred in the database\033[0m')
+                # print in red and bold that the origin_id was not found in the database
+                print(f'\033[1;31m{origin_id} not found in the database\033[0m')
 
 
 def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
@@ -245,7 +285,7 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
 
 if __name__ == "__main__":
 
-    every_minutes = 60
+    every_minutes = 60  # period of excecution in minutes
     minutes = 120  # period of excecution in minutes
     delay = 60    # delay in minutes
     schedule.every(every_minutes).minutes.do(runner, every_m=minutes, delay=delay, db='sc3primary.beg.utexas.edu')
