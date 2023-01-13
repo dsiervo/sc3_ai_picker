@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/envs/pnet/bin/python
+#!/home/siervod/anaconda3/envs/eqcc/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Jul 2020

@@ -76,5 +76,7 @@ if __name__ == '__main__':
         par['picker'] = 'eqcc'
     change_env(par['picker'], main_dir)
 
-    # runing ai_picker 
-    os.system('main_picker.py')
+    # runing ai_picker
+    main_picker_path = os.path.join(main_dir, 'main_picker.py')
+    # excecuting the main_picker.py
+    os.system(main_picker_path) 
