@@ -120,8 +120,13 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
         # merge the xmls
         merge_xmls(output_auto_fn, output_rep_fn, output_fn)
     
-    f_reported.close()
+        f_reported.close()
+    else:
+        write_and_remove_id_prefix(cat2, output_fn)
+        # change xml version
+        change_xml_version(output_fn)
     print('\n\tFiles with preferred origins to migrate to SeisComP3:\n\n\t  %s\n' % output_fn)
+
 
 def merge_xmls(xml1, xml2, output_fn):
     """Merge two xmls into one using the seiscomp module scxmlmerge
@@ -139,6 +144,7 @@ def merge_xmls(xml1, xml2, output_fn):
     print(cmd)
     os.system(cmd)
 
+
 def del_append_pref_origins(event, new_cat):
     """Delete all origins that are not the prefered origin
     in a seiscomp event xml file. Returns a xml with origins only
@@ -155,10 +161,12 @@ def del_append_pref_origins(event, new_cat):
     del event.origins[:-1]
     new_cat.append(event)
 
+
 def write_and_remove_id_prefix(cat, output_fn):
     cat.write(output_fn, format='SC3ML', validate=True, event_removal=True,
                     verbose=True)
     remove_id_prefix(output_fn)
+
 
 def remove_id_prefix(xml_name):
     f = open(xml_name).read()
@@ -166,11 +174,6 @@ def remove_id_prefix(xml_name):
     with open(xml_name, "w") as f:
         f.write(new_content)
 
-"""def change_xml_version(ev_file='events_final.xml'):
-    lines = open(ev_file, encoding='utf-8').readlines()
-    lines[1] = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.11" version="0.11">\n'
-    with open(ev_file, 'w', encoding='utf-8') as f:
-        f.write(''.join(lines))"""
 
 def change_xml_version(ev_file='events_final.xml'):
     lines = open(ev_file, encoding='utf-8').readlines()
@@ -180,6 +183,7 @@ def change_xml_version(ev_file='events_final.xml'):
             if line.startswith('<seiscomp xmlns='):
                 line = new_line
             f.write(line)
+
 
 def change_status_and_eval_mode(xml_path, status='reported', eval_mode='manual'):
     """
@@ -209,13 +213,14 @@ def change_status_and_eval_mode(xml_path, status='reported', eval_mode='manual')
     print(len(origins))
     for i, origin in enumerate(origins):
         print(i, origin)
-        evaluationMode = origin.find('seiscomp:evaluationMode', ns)
-        evaluationMode.text = 'manual'
+        #evaluationMode = origin.find('seiscomp:evaluationMode', ns)
+        #evaluationMode.text = 'manual'
         evaluationStatus = origin.find('seiscomp:evaluationStatus', ns)
         if evaluationStatus is None:
             evaluationStatus = ET.SubElement(origin, 'evaluationStatus')
         evaluationStatus.text = 'reported'
     tree.write(xml_path, pretty_print=True)  
+
 
 def pass_reported_quality(origin):
     # check if the depth (m) is less than 30 km and lon, lat and depth (m) uncertainties are less than 20 km
@@ -228,6 +233,7 @@ def pass_reported_quality(origin):
         or origin.latitude_errors.uncertainty > 20 or origin.depth_errors.uncertainty > 20000:
         return False
     return True
+
 
 def pass_origin_quality(origin, magnitude):
     """Check if at least 2 stations have P and S phases picked, if not
@@ -434,6 +440,7 @@ class Watcher:
                 pass
         return polygon1
 
+
 def read_params(par_file='ai_picker.inp'):
     lines = open(par_file, encoding='utf-8').readlines()
     par_dic = {}
@@ -446,6 +453,7 @@ def read_params(par_file='ai_picker.inp'):
             key, value = l.split('=')
             par_dic[key.strip()] = value.strip()
     return par_dic
+
 
 if __name__ == "__main__":
     import sys

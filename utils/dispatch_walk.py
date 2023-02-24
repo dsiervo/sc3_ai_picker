@@ -4,6 +4,7 @@ import time
 from typing import List
 import sys
 
+
 def get_xml_path(path: str, xmlfile: str) -> List[str]:
     """
     Returns the list of paths of xml files with a given name in a directory and its subdirectories.
@@ -28,6 +29,7 @@ def get_xml_path(path: str, xmlfile: str) -> List[str]:
                 break
     return xml_paths
 
+
 def dispatch(xml_path: str, host: str) -> None:
     """
     Dispatch the xml file specified by xml_path to the host using scdispatch command.
@@ -48,12 +50,14 @@ def dispatch(xml_path: str, host: str) -> None:
     print(cmd)
     os.system(cmd)
 
+
 def check_file_size(file_path:str, threshold:float)->bool:
     file_size = os.path.getsize(file_path)
     if file_size > threshold:
         return True
     else:
         return False
+
 
 def update_author(file_path:str, new_author:str)->None:
     """
@@ -81,6 +85,7 @@ def update_author(file_path:str, new_author:str)->None:
             if "        <author>EQCCT</author>" in line:
                 line = line.replace("        <author>EQCCT</author>", new_str)
             f.write(line)
+
 
 def dispatch_walk(path: str, xmlfile: str, host: str, new_author=None, sleep_time: float=60) -> None:
     """
@@ -114,8 +119,9 @@ def dispatch_walk(path: str, xmlfile: str, host: str, new_author=None, sleep_tim
         else:
             print(f'File size of {xml_path} is too small. Skipping.')
 
+
 if __name__ == '__main__':
     path = '.'
-    xmlfile = sys.argv[1] # 'origenes_preferidos.xml'
+    xmlfile = sys.argv[1]  # 'origenes_preferidos.xml'
     host = 'sc3primary.beg.utexas.edu'
-    dispatch_walk(path, xmlfile, host, new_author='EQCCT_mid2022', sleep_time=60)
+    dispatch_walk(path, xmlfile, host, new_author='EQCCT_mid_20-21', sleep_time=60)

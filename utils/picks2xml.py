@@ -331,7 +331,6 @@ def picks2xml(pick_list):
 
 
 def eqt_pick_constructor(time, prob, net, station, loc, ch, ph, author='EQTransformer'):
-    print(station, ph, time)
     time = UTCDateTime(time)
     id_ = id_maker(time, net, station, loc, ch, ph, author)
     creation_t = UTCDateTime()

@@ -8,6 +8,7 @@ import sys
 # sys.path.insert(0,EQTransformer_path)
 # sys.path.insert(0,sgc_ai_picker )
 
+
 def read_params(par_file='ai_picker.inp'):
     lines = open(par_file, encoding='utf-8').readlines()
     par_dic = {}
