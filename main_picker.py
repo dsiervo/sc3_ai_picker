@@ -237,6 +237,7 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict)
     origins_pruning(evf_path, pref_orig_path, check_db=mysqldb_dict["check_db"],
                     quadrant=mysqldb_dict['check_quadrant'])
 
+
 def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict):
 
     cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict,
@@ -246,10 +247,10 @@ def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict)
     print(f'\ncwav_eqt object:\n\t{cwav_eqt.__dict__}\n')
     cwav_eqt.create_json()
     cwav_eqt.download_mseed()
-    if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):
+    if eqt_dict['eqt_predictor'] in ('mseed', 'MSEED'):
         cwav_eqt.mseedpredictor()
         pass
-    elif eqt_dict['eqt_predictor'] in ('hdf5','HDF5'):
+    elif eqt_dict['eqt_predictor'] in ('hdf5', 'HDF5'):
         cwav_eqt.preprocessor()
         cwav_eqt.predictor()
     cwav_eqt.picks2xml()

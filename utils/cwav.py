@@ -62,6 +62,7 @@ elif (os.environ['CONDA_DEFAULT_ENV'] in ('eqt', 'eqcc')
     from EQTransformer.core.predictor import predictor
     from utils.playback import playback
     from utils.picks2xml import main_picks
+    from obspy.clients.fdsn import header
 
 
 class Cwav_PhaseNet(object):
@@ -528,17 +529,33 @@ class Cwav_EQTransformer(object):
                 os.makedirs(self.eqt_dict['eqt_data_dir'])
 
             network,station,location,channel = self.prepare_eqt_stations
-            json_list = makeStationList(
-                    json_path=os.path.join(self.eqt_dict['eqt_data_dir'],
-                                            'station_list.json'),
-                    client_list=[x.strip() for x in self.client_dict['ip'].split(',')], 
-                    min_lat=None, max_lat=None, 
-                    min_lon=None, max_lon=None, 
-                    network=network, station=station,
-                    location=location, channel=channel,
-                    start_time=self.client_dict['starttime'], 
-                    end_time=self.client_dict['endtime'], 
-                    channel_list=[], filter_network=[], filter_station=[])
+            clients = [x.strip() for x in self.client_dict['ip'].split(',')]
+            for i, cl in enumerate(clients):
+                client = [cl]
+                try:
+                    json_list = makeStationList(
+                            json_path=os.path.join(self.eqt_dict['eqt_data_dir'],
+                                                    'station_list.json'),
+                            client_list=client, 
+                            min_lat=None, max_lat=None, 
+                            min_lon=None, max_lon=None, 
+                            network=network, station=station,
+                            location=location, channel=channel,
+                            start_time=self.client_dict['starttime'], 
+                            end_time=self.client_dict['endtime'], 
+                            channel_list=[], filter_network=[], filter_station=[])
+                    break
+                except (header.FDSNNoDataException):
+                    if i == len(clients)-1:
+                        print('No station data available for these parameters')
+                        print(f'clients: {clients}')
+                        print(f"start_time: {self.client_dict['starttime']}")
+                        print(f"end_time: {self.client_dict['endtime']}")
+                        print(f'network: {network}')
+                        print(f'station: {station}')
+                        print(f'location: {location}')
+                        print(f'channel: {channel}')
+                        pass
         else:   
             pass
 
@@ -558,7 +575,7 @@ class Cwav_EQTransformer(object):
                     start_time=self.client_dict['starttime'], 
                     end_time=self.client_dict['endtime'],
                     chunk_size= self.eqt_dict['eqt_chunk_size'] / (3600*24), #se divide sobre 3600*24 para convertir horas a dias
-                    channel_list=['HH*', 'EH*', 'BH*', 'HN*', 'HL*'], 
+                    channel_list=['HH[ZNE12]', 'EH[ZNE12]', 'BH[ZNE12]', 'HN[ZNE12]', 'HL[ZNE12]', 'CH[ZNE12]'], 
                     n_processor=self.eqt_dict['eqt_n_processor'])
         else: 
             pass
