@@ -465,7 +465,7 @@ if __name__ == "__main__":
         origins_pruning(sys.argv[1], check_db=False)
     elif len(sys.argv) == 3:
         #origins_pruning(sys.argv[1], sys.argv[2], quadrant=(31.5722,31.66405,-104.04678,-103.9269), check_db=False)
-        origins_pruning(sys.argv[1], sys.argv[2], check_db=False, check_quality=False, change_to_reported=True)
+        origins_pruning(sys.argv[1], sys.argv[2], check_db=False, check_quality=False, change_to_reported=False)
     elif len(sys.argv) == 4:
         print('en cuadrante')
         origins_pruning(sys.argv[1], sys.argv[2],

@@ -1,4 +1,4 @@
-#!/home/dsiervo/anaconda3/envs/pnet/bin/python
+#!/home/siervod/anaconda3/envs/eqcc/bin/python
 # -*- coding: utf-8 -*-
 """
 Created on Mar 25 11:25:33 2020
@@ -40,7 +40,7 @@ def main_picks(input_file='picks.csv', output_file=None, min_prob_p=0.6,
     # Obtaining list of Picks objects from file
     if ai == 'pnet':
         pick_list = read_picks(input_file, dt, min_prob_p, min_prob_s)
-    elif ai in ('eqt', 'eqcc', 'eqcctps'):
+    elif ai in ('eqt', 'eqcc', 'eqcctps', 'eqcct'):
         pick_list = prepare_eqt(input_file, ai)
 
     # Creating xml text
@@ -105,7 +105,7 @@ def prepare_eqt(input_dir, ai):
                                 df['s_probability'].tolist(),
                                 p_snrs=df['p_snr'].tolist(),
                                 s_snrs=df['p_snr'].tolist())
-    elif ai in ('eqcc', 'eqcctps'):
+    elif ai in ('eqcc', 'eqcctps', 'eqcct'):
         # exctracting from the file_name column the network, location and channel
         # the file_name column has the following format: station/network.station.location.channel__starttime__endtime.mseed
         df['network'] = df['file_name'].str.split('/').str[1].str.split('.').str[0]
@@ -145,6 +145,12 @@ def read_eqcc_picks(nets, stations, chs, locs, p_times, p_probs, s_times, s_prob
     """
     picks_list = []
 
+    key = 'eqt_station_thr_dict'
+    if key in read_params():
+        thr_dict = eval(read_params()[key])
+    else:
+        thr_dict = None
+
     for i in range(len(s_times)):
         net, station, ch, loc = nets[i], stations[i], chs[i], locs[i]
         s_pick = None
@@ -152,13 +158,27 @@ def read_eqcc_picks(nets, stations, chs, locs, p_times, p_probs, s_times, s_prob
         ch += 'Z'
 
         p_t, p_prob = p_times[i], p_probs[i]
+        
+        if thr_dict is not None:
+            if station in thr_dict:
+                try:
+                    thr = float(thr_dict[station])
+                except ValueError:
+                    thr = 0.001
+                    # print in red and bold that the threshold is not a float
+                    print(f'\033[1;31m{station} threshold is not a float, using {thr}\033[0m')
+                if p_prob < thr:
+                    # print in red and bold that the pick will be discarded because of the threshold
+                    print(f'\033[1;33m{station} {p_t} picks discarded, p_prob:{p_prob} < {thr}\033[0m')
+                    continue
+                    
         p_pick = eqt_pick_constructor(p_t, p_prob, net,
-                                        station, loc, ch, 'P', 'EQCC')
+                                        station, loc, ch, 'P', 'EQCCT')
         picks_list.append(p_pick)
 
         s_t, s_prob = s_times[i], s_probs[i]
         if s_t != 'no pick':
-            s_pick = eqt_pick_constructor(s_t, s_prob, net, station, loc, ch, 'S', 'EQCC')
+            s_pick = eqt_pick_constructor(s_t, s_prob, net, station, loc, ch, 'S', 'EQCCT')
             picks_list.append(s_pick)
 
         print(f'{i}. {station}, p_t:{p_t}, p_prob:{p_prob}, s_t:{s_t}, s_prob:{s_prob}')
@@ -344,6 +364,19 @@ def eqt_pick_constructor(time, prob, net, station, loc, ch, ph, author='EQTransf
 
     return pick
 
+
+def read_params(par_file='ai_picker.inp'):
+    lines = open(par_file, encoding='utf-8').readlines()
+    par_dic = {}
+    for line in lines:
+        if line[0] == '#' or line.strip('\n').strip() == '':
+            continue
+        else:
+            #print(line)
+            l = line.strip('\n').strip()
+            key, value = l.split('=')
+            par_dic[key.strip()] = value.strip()
+    return par_dic
 
 def pick_constructor(picks, prob, wf_name, ph_type, min_prob, dt):
     """Construct Pick objects
@@ -582,7 +615,7 @@ if __name__=='__main__':
     import sys
 
     if len(sys.argv) == 2:
-        main_picks(sys.argv[1])
+        main_picks(sys.argv[1], ai='eqcct')
     elif len(sys.argv) == 3:
         main_picks(sys.argv[1], sys.argv[2])
     elif len(sys.argv) == 4:

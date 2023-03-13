@@ -166,6 +166,9 @@ def change_times_dir(inp_file: str, ti: str, tf: str, general_output_dir: str):
         text = ''.join(f_lines)
         f.write(text)
 
+    # copy ai_picker.inp to general_output_dir
+    os.system(f'cp ai_picker.inp {general_output_dir}')
+
 
 def get_origins_path(path, xmlfile):
     orig_path = None

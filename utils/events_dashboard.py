@@ -112,7 +112,11 @@ class EventSumamry(object):
         # preparing events dataframe
         df['region'] = df['description'].apply(self.get_region_author, key='text')
         df['author'] = df['creationInfo'].apply(self.get_region_author, key='author')
-        df = df[['@publicID', 'preferredOriginID', 'author', 'region']]
+        
+        pref_cols = ['@publicID', 'preferredOriginID', 'author', 'region']
+        if "type" in df.columns:
+            pref_cols.append("type")
+        df = df[pref_cols]
 
         # preparing origins dataframe
         df_or['lat'] = df_or['latitude'].apply(self.get_from_dict, key='value')
