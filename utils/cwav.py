@@ -604,7 +604,7 @@ class Cwav_EQTransformer(object):
 
     def mseedpredictor(self):
 
-        if self.picker in ('eqcc', 'eqcctps'):
+        if self.picker in ('eqcc', 'eqcctps', 'eqcct'):
             from utils.mseed_predictor import mseed_predictor_two
             mseed_predictor_two(
                 input_dir = os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'),

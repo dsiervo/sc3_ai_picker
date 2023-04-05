@@ -53,23 +53,24 @@ def discontinuous_picker(start, end, n_days, db):
 
         # output_dir name ddmmyyyy-hhmmss_ddmmyy-hhmmss
         output_dir = start.strftime('%d%m%Y-%H%M%S') + '_' + final_time.strftime('%d%m%Y-%H%M%S')
-        """output_dir = '%s%s%s-%s%s%s' % (str(start.day).rjust(2, '0'),
-                                        str(start.month).rjust(2, '0'),
-                                        str(start.year),
-                                        str(final_time.day).rjust(2, '0'),
-                                        str(final_time.month).rjust(2, '0'),
-                                        str(final_time.year))"""
+
         general_output_dir = os.path.join(params['general_output_dir'],
                                           output_dir)
+
+        chunk_size_inp = int((final_time - start).total_seconds()*0.5)
         
         # change the init, end time and output dir in ai_picker.inp
         change_times_dir(temp_inp,
                          start.strftime("%Y-%m-%d %H:%M:%S"),
                          final_time.strftime("%Y-%m-%d %H:%M:%S"),
-                         general_output_dir)
+                         general_output_dir,
+                         str(chunk_size_inp))
 
         # excecuting ai_picker.py
         os.system('time ai_picker.py')
+        
+        # copy ai_picker.inp to general_output_dir
+        os.system(f'cp ai_picker.inp {general_output_dir}/')
 
         # getting the origins path
         output_path = get_origins_path(main_path, 'origenes_preferidos.xml')
@@ -131,7 +132,7 @@ def read_params(par_file='phaseNet.inp'):
     return par_dic
 
 
-def change_times_dir(inp_file: str, ti: str, tf: str, general_output_dir: str):
+def change_times_dir(inp_file: str, ti: str, tf: str, general_output_dir: str, dt: str):
     """Change starttime and endtime in ai_picker.inp file
 
     Parameters
@@ -154,20 +155,20 @@ def change_times_dir(inp_file: str, ti: str, tf: str, general_output_dir: str):
         elif line.startswith('endtime'):
             end_idx = idx
         elif line.startswith('general_output_dir'):
+            out_dir_idx = idx
+        elif line.startswith('dt'):
             dt_idx = idx
 
     # replacing start, end and dt time lines
     f_lines[start_idx] = f'starttime = {ti}\n'
     f_lines[end_idx] = f'endtime = {tf}\n'
-    f_lines[dt_idx] = f'general_output_dir = {general_output_dir}\n'
+    f_lines[out_dir_idx] = f'general_output_dir = {general_output_dir}\n'
+    f_lines[dt_idx] = f'dt = {dt}\n'
 
     # writing new file
     with open('ai_picker.inp', 'w') as f:
         text = ''.join(f_lines)
         f.write(text)
-
-    # copy ai_picker.inp to general_output_dir
-    os.system(f'cp ai_picker.inp {general_output_dir}')
 
 
 def get_origins_path(path, xmlfile):

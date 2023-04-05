@@ -4,9 +4,12 @@ import os
 
 def change_xml_version(ev_file='events_final.xml'):
     lines = open(ev_file, encoding='utf-8').readlines()
-    lines[1] = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10" version="0.10">\n'
+    new_line = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10" version="0.10">\n'
     with open(ev_file, 'w', encoding='utf-8') as f:
-        f.write(''.join(lines))
+        for line in lines:
+            if line.startswith('<seiscomp xmlns='):
+                line = new_line
+            f.write(line)
 
 def keep_just_preferd_orgin(event_xml_file):
     cat = obs.read_events(event_xml_file, id_prefix='', format='SC3ML')

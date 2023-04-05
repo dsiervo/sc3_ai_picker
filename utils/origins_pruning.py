@@ -462,14 +462,13 @@ if __name__ == "__main__":
         the xml name and the name of the output file'
 
     if len(sys.argv) == 2:
-        origins_pruning(sys.argv[1], check_db=False)
+        origins_pruning(sys.argv[1])
     elif len(sys.argv) == 3:
         #origins_pruning(sys.argv[1], sys.argv[2], quadrant=(31.5722,31.66405,-104.04678,-103.9269), check_db=False)
-        origins_pruning(sys.argv[1], sys.argv[2], check_db=False, check_quality=False, change_to_reported=False)
+        origins_pruning(sys.argv[1], sys.argv[2])
     elif len(sys.argv) == 4:
         print('en cuadrante')
-        origins_pruning(sys.argv[1], sys.argv[2],
-                        check_db=True, quadrant=sys.argv[3])
+        origins_pruning(sys.argv[1], sys.argv[2], quadrant=sys.argv[3])
         
         # running scevent to create an event xml
         change_xml_version(sys.argv[2])
