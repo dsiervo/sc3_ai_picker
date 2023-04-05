@@ -74,6 +74,8 @@ eqt_P_threshold = 0.001
 eqt_S_threshold = 0.02
 eqt_number_of_plots = 0
 eqt_plot_mode = time
+# threshold for the P pick in each station. If the probability of the P pick
+# is higher than the threshold, the pick will be saved.
 eqt_station_thr_dict = {'M044': 0.02, 'M048': 0.047}
 
 
