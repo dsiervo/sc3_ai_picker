@@ -620,7 +620,8 @@ class Cwav_EQTransformer(object):
                 #plot_mode = self.eqt_dict['eqt_plot_mode'],
                 normalization_mode = 'std',
                 overlap=self.eqt_dict['eqt_overlap'],
-                batch_size=self.eqt_dict['eqt_batch_size'])
+                batch_size=self.eqt_dict['eqt_batch_size'],
+                overwrite=True)
         else:
             mseed_predictor(
                     input_dir=os.path.join( self.eqt_dict['eqt_data_dir'],

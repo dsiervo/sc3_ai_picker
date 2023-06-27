@@ -17,7 +17,7 @@ import random
 import mysql.connector # pip install mysql-connector-python
 from icecream import ic
 #log_file_name = os.path.basename(__file__).replace('.py', '.log')
-log_file_name = '/home/siervod/projects/realtime/delaware_culberson/ai_scheduler_culberson.log'
+log_file_name = '/home/siervod/projects/delaware_M5_2022/scheduler/ai_scheduler_coalson.log'
 logging.basicConfig(filename=log_file_name, level=logging.DEBUG, format='%(message)s')
 
 
@@ -252,10 +252,6 @@ class EventTypeChanger:
                                 print(f'\033[1;31m{origin_id} has less phases or magnitude less than 1.9, not setting it as preferred on {event_id}\033[0m')
                     print(f'\033[1;31m{event_id} has a manual solution already, skiping...\033[0m')
                     continue
-                # the status is rejected and the event type is duplicate skip
-                elif pref_status == 'rejected' and ev_type in ('duplicate', 'not existing'):
-                    print(f'\033[1;31m{event_id} has a rejected solution, skiping...\033[0m')
-                    continue
                 # print in green and bold that the event type is being changed to earthquake
                 print(f'\n\n\033[1;32mChanging event type to {self.ev_type} on {event_id}\033[0m\n\n')
                 self.change_event_type(event_id)
@@ -341,7 +337,7 @@ if __name__ == "__main__":
 
     every_minutes = 30  # period of excecution in minutes
     #every_minutes = 1  # period of excecution in minutes
-
+    
     minutes = 40  # period of excecution in minutes
     #delay = 30    # delay in minutes
     delay = 0    # delay in minutes
@@ -353,4 +349,4 @@ if __name__ == "__main__":
 
     while True:
         schedule.run_pending()
-        time.sleep(10)  # wait one minute
+        time.sleep(1)  # wait one second

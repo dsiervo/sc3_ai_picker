@@ -2,6 +2,7 @@ import obspy as obs
 import sys
 import os
 
+
 def change_xml_version(ev_file='events_final.xml'):
     lines = open(ev_file, encoding='utf-8').readlines()
     new_line = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10" version="0.10">\n'
@@ -10,6 +11,7 @@ def change_xml_version(ev_file='events_final.xml'):
             if line.startswith('<seiscomp xmlns='):
                 line = new_line
             f.write(line)
+
 
 def keep_just_preferd_orgin(event_xml_file):
     cat = obs.read_events(event_xml_file, id_prefix='', format='SC3ML')
@@ -22,6 +24,7 @@ def keep_just_preferd_orgin(event_xml_file):
     # write only the preferred origins only
     origins_xml_path = os.path.join(os.path.dirname(event_xml_file), 'origenes_preferidos.xml')
     cat.write(origins_xml_path, format='SC3ML', event_removal=True)
+
 
 if __name__ == '__main__':
     event_xml_file = sys.argv[1]
