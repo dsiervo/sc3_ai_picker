@@ -56,7 +56,7 @@ def join_xml(xml_paths, output_filename):
         Name of merged xml event file
     """
     xmls = ' '.join(xml_paths)
-    cmd = f'scxmlmerge {xmls} > {output_filename}'
+    cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scxmlmerge {xmls} > {output_filename}'
     print(cmd)
     os.system(cmd)
 

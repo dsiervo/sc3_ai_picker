@@ -78,7 +78,7 @@ def discontinuous_picker(start, end, n_days, db):
         picks_path = get_origins_path(main_path, 'picks.xml')
 
         # migrating picks to seiscomp db
-        cmd_picks = 'scdispatch -i %s -H %s -u ai_sgc' % (picks_path, db)
+        cmd_picks = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -i %s -H %s -u ai_sgc' % (picks_path, db)
         #print(cmd_picks)
         #os.system(cmd_picks)
 
@@ -92,7 +92,7 @@ def discontinuous_picker(start, end, n_days, db):
 
                 # random number to avoid repetead users
                 num = random.randint(1, 10)
-                cmd = 'scdispatch -i %s -H %s -u ai_sgc_%d' % (output_path,
+                cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -i %s -H %s -u ai_sgc_%d' % (output_path,
                                                                db, num)
                 #print(cmd)
                 #os.system(cmd)

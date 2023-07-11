@@ -16,8 +16,8 @@ import datetime
 import random
 import mysql.connector # pip install mysql-connector-python
 from icecream import ic
-#log_file_name = os.path.basename(__file__).replace('.py', '.log')
-log_file_name = '/home/siervod/projects/realtime/delaware_culberson/ai_scheduler_culberson.log'
+log_file_name = os.path.basename(__file__).replace('.py', '.log')
+#log_file_name = '/home/siervod/projects/realtime/delaware_culberson/ai_scheduler_culberson.log'
 logging.basicConfig(filename=log_file_name, level=logging.DEBUG, format='%(message)s')
 
 
@@ -193,14 +193,14 @@ class EventTypeChanger:
         return myresult[0]
 
     def change_event_type(self, event_id):
-        cmd = f'scsendjournal -H {self.host} {event_id} EvType "{self.ev_type}" --debug'
+        cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scsendjournal -H {self.host} {event_id} EvType "{self.ev_type}" --debug'
         # print in red and bold the command
         ic(cmd)
         ic(os.system(cmd))
     
     def fix_as_prefered(self, origin_id, event_id):
         # scsendjournal -H sc3primary.beg.utexas.edu texnet2023attj EvPrefOrgID Origin/20230111205800.706844.48175 --debug
-        cmd = f'scsendjournal -H {self.host} {event_id} EvPrefOrgID {origin_id} --debug'
+        cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scsendjournal -H {self.host} {event_id} EvPrefOrgID {origin_id} --debug'
         # print in red and bold the command
         ic(cmd)
         ic(os.system(cmd))
@@ -316,7 +316,7 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
 
             # random number to avoid repetead users
             num = random.randint(1, 10)
-            cmd = 'scdispatch -i %s -H %s -u aitexnet%d' % (output_path, db, num)
+            cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -i %s -H %s -u aitexnet%d' % (output_path, db, num)
             ic(os.system(cmd))
 
             # wait 15 seconds

@@ -1,0 +1,15 @@
+[Unit]
+Description=EQCCT Coalson
+After=network.target
+
+[Service]
+ExecStart=/home/siervod/anaconda3/envs/eqt/bin/python ai_scheduler_coalson.py
+WorkingDirectory=/home/siervod/projects/realtime/delaware_coalson/
+Environment=PATH=/home/siervod/sc3_ai_picker/utils:/home/siervod/sc3_ai_picker:/home/siervod/anaconda3/bin:/home/siervod/anaconda3/condabin:/home/siervod/seiscomp3/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/siervod/.local/bin:/home/siervod/bin
+Environment=CONDA_DEFAULT_ENV=eqt
+Environment=SEISCOMP_ROOT=/home/siervod/seiscomp3
+Restart=always
+User=siervod
+
+[Install]
+WantedBy=multi-user.target

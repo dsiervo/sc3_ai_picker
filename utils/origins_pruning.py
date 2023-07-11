@@ -140,7 +140,7 @@ def merge_xmls(xml1, xml2, output_fn):
     output_fn : str
         Name of output xml file.
     """
-    cmd = f'scxmlmerge {xml1} {xml2} > {output_fn}'
+    cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scxmlmerge {xml1} {xml2} > {output_fn}'
     print(cmd)
     os.system(cmd)
 

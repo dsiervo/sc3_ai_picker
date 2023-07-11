@@ -46,7 +46,7 @@ def dispatch(xml_path: str, host: str) -> None:
     None
     """
     print(xml_path)
-    cmd = f'scdispatch -H {host} -i {xml_path}'
+    cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -H {host} -i {xml_path}'
     print(cmd)
     os.system(cmd)
 

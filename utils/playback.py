@@ -77,7 +77,7 @@ def merge_xml(xmls,output_file):
 
     xmls = " ".join(xmls)
 
-    msg = f"scxmlmerge {xmls} > {output_file}"
+    msg = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scxmlmerge {xmls} > {output_file}'
 
     # os.system(msg)
     return msg
@@ -315,19 +315,19 @@ class playback:
                                             db = self.db)"""
             locator_type = list(self.locator_dict.keys())[0]
             locator_profile = self.locator_dict[locator_type]
-            scanloc_cmd = f'scanloc -u playback --locator-type {locator_type} --locator-profile {locator_profile} '
+            scanloc_cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scanloc -u playback --locator-type {locator_type} --locator-profile {locator_profile} '
             scanloc_cmd += '--ep %s -d %s  > %s'%(self.xml_picks_file, self.db, origin_path)
         else:
-            scanloc_cmd = '%s -u playback --ep %s -d %s  > %s'%(self.sc_scanloc,
+            scanloc_cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec %s -u playback --ep %s -d %s  > %s'%(self.sc_scanloc,
                                                             self.xml_picks_file,
                                                             self.db, origin_path)
         
-        scamp_cmd = 'scamp -u playback --ep %s -d %s > %s'%(origin_path,
+        scamp_cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scamp -u playback --ep %s -d %s > %s'%(origin_path,
                                                             self.db, amp_path)
 
-        scmag_cmd = 'scmag -u playback --ep %s -d %s  > %s'%(amp_path, self.db, mag_path)
+        scmag_cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scmag -u playback --ep %s -d %s  > %s'%(amp_path, self.db, mag_path)
 
-        scevent_cmd = 'scevent -u playback --ep %s -d %s  > %s'%(mag_path, self.db,
+        scevent_cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scevent -u playback --ep %s -d %s  > %s'%(mag_path, self.db,
                                                                 self.event_path)
         
         all_cmd = ';'.join([scamp_cmd, scmag_cmd, scevent_cmd])

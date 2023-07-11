@@ -8,29 +8,11 @@ Created on Sep 2020
 Excecutes ai_picker.py in a periodic time
 """
 import os
-import sys
-import logging
 import schedule
 import time
 import datetime
 import random
 import mysql.connector # pip install mysql-connector-python
-from icecream import ic
-log_file_name = os.path.basename(__file__).replace('.py', '.log')
-#log_file_name = '/home/siervod/projects/delaware_M5_2022/scheduler/ai_scheduler_coalson.log'
-logging.basicConfig(filename=log_file_name, level=logging.DEBUG, format='%(message)s')
-
-
-def loggin_test(s):
-    logging.debug(s)
-    print(s, file=sys.stderr)
-
-
-def time_ic_debug():
-    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S: ')
-
-
-ic.configureOutput(prefix=time_ic_debug, outputFunction=loggin_test)
 
 
 def read_params(par_file='phaseNet.inp'):
@@ -110,20 +92,18 @@ def get_origins_path(path, xmlfile):
                 orig_path = os.path.join(dirpath, filename)
                 break
 
-    ic(xmlfile, orig_path)
+    print(xmlfile, orig_path)
     return orig_path
 
 
-def logger(ti, tf, start, end):
-    logfile = 'scheduler_times.log'
-    if not os.path.isfile(logfile):
+def logger(ti, tf):
+    logfile = 'scheduler.log'
+    if not os.path.isfile('scheduler.log'):
         f = open(logfile, 'w')
     else:
         f = open(logfile, 'a')
 
-    msg = f'From {ti} to {tf} with: {start} to {end}'
-
-    print(msg,
+    print(f'Inició ejecución a las: {ti}, terminó la ejecución a las: {tf}',
           file=f)
 
     f.close()
@@ -137,25 +117,19 @@ class EventTypeChanger:
 
     query_str_evID = """
     select POE.publicID,
-    Origin.quality_usedPhaseCount, Magnitude.magnitude_value
+    Origin.quality_usedPhaseCount
     from Event left join PublicObject AS POE ON Event._oid = POE._oid
     inner join OriginReference on Event._oid=OriginReference._parent_oid
     inner join PublicObject POO on POO.publicID=OriginReference.originID
     inner join Origin on POO._oid=Origin._oid
-    left join Magnitude ON Magnitude._parent_oid = POO._oid
-    where
-    OriginReference.originID = '{origin_id}'
-    and Magnitude.type = 'ML(TexNet)'"""
+    where OriginReference.originID = '{origin_id}'"""
 
     query_str_eval_mode = """
     select
-    Origin.evaluationMode, Origin.creationInfo_author, Origin.quality_usedPhaseCount,
-    Origin.evaluationStatus, Event.type, Magnitude.magnitude_value
+    Origin.evaluationMode, Origin.creationInfo_author, Origin.quality_usedPhaseCount
     from Event left join PublicObject AS POE ON Event._oid = POE._oid
     left join PublicObject as POOri ON Event.preferredOriginID=POOri.publicID 
     left join Origin ON POOri._oid=Origin._oid
-    left join PublicObject as POMag on Event.preferredMagnitudeID=POMag.publicID  
-    left join Magnitude ON Magnitude._oid = POMag._oid 
     where
     POE.publicID = '{event_id}'"""
 
@@ -186,6 +160,7 @@ class EventTypeChanger:
         return myresult[0]
     
     def get_eval_mode(self, event_id):
+        print('In get_eval_mode')
         mycursor = self._mydb.cursor()
         mycursor.execute(self.query_str_eval_mode.format(event_id=event_id))
         # the query returns a tuple with the evaluation mode and the author
@@ -195,65 +170,38 @@ class EventTypeChanger:
     def change_event_type(self, event_id):
         cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scsendjournal -H {self.host} {event_id} EvType "{self.ev_type}" --debug'
         # print in red and bold the command
-        ic(cmd)
-        ic(os.system(cmd))
+        print(f'\n\033[1;32m{cmd}\033[0m\n')
+        os.system(cmd)
     
     def fix_as_prefered(self, origin_id, event_id):
         # scsendjournal -H sc3primary.beg.utexas.edu texnet2023attj EvPrefOrgID Origin/20230111205800.706844.48175 --debug
         cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scsendjournal -H {self.host} {event_id} EvPrefOrgID {origin_id} --debug'
         # print in red and bold the command
-        ic(cmd)
-        ic(os.system(cmd))
+        print(f'\n\033[1;32m{cmd}\033[0m\n')
+        os.system(cmd)
     
     def run(self):
-        ic(self.reported_origins)
+        print(self.reported_origins)
         for origin_id in self.reported_origins:
-            ic(origin_id)
-            print(f'\n\n\033[1;31m Origin {origin_id} \033[0m\n\n')
             # Check if origin_id is not an empty string
             if not origin_id:
                 continue
-            try:
-                event_id, orig_phases, mag = ic(self.get_event_id(origin_id))
-            except ValueError:
-                ic(print(f'\n\n\033[1;31m Origin {origin_id} not found in the database. Skiping.. \033[0m\n\n'))
-                continue
+            event_id, orig_phases = self.get_event_id(origin_id)
             # print in blue and bold the origin_id and origin phases
-            ic(print(f'\n\033[1;34m{origin_id} {orig_phases}\033[0m\n'))
+            print(f'\n\033[1;34m{origin_id} {orig_phases}\033[0m\n')
             # if event_id is not None, change event type
             if event_id:
-                # get preferred origin values
-                eval_mode, author, pref_phases, pref_status, ev_type, pref_mag = ic(self.get_eval_mode(event_id))
+                eval_mode, author, pref_phases = self.get_eval_mode(event_id)
                 # print evaluation mode and event_id in red and bold
-                ic(print(f'\n\n\033[1;31m{eval_mode} {event_id} {author} {pref_phases} {ev_type} \033[0m\n\n'))
-                if eval_mode == 'manual' or pref_status == 'reported':
-                    ic(orig_phases)
-                    ic(pref_phases)
-                    ic(pref_mag)
-                    ic(mag)
-                    if author == 'EQCCT':
-                        # probably the EQCCT origin is the only one for this event
-                        if ev_type != self.ev_type:
-                            ic(print(f'\033[1;32mChanging event type to {self.ev_type} on {event_id}. New event added!\033[0m'))
-                            self.change_event_type(event_id)
-                        if float(pref_mag) < 1.9:
-                            ic(print(f'\033[1;31mPreferred EQCCT origin {origin_id} has magnitude less than 1.9, checking phases {event_id}\033[0m'))
-                            if (ic(int(orig_phases) > int(pref_phases))):
-                                ic(print(f'\033[1;31mEQCCT origin {origin_id} has more phases than previous EQCCT one, setting it as preferred on {event_id}\033[0m'))
-                                self.fix_as_prefered(origin_id, event_id)
-                        else:
-                            ic(print(f'\033[1;31mPreferred EQCCT origin {origin_id} has magnitude greater or equal to 1.9 {event_id}\033[0m'))
-                            # if the magnitude of the prefered EQCCT origin is greater or equal to 1.9,
-                            # the new origin will be set as preferred only if it has a magnitude greater or equal to 1.9
-                            if (ic(int(orig_phases) > int(pref_phases))) and (float(mag) >= 1.9):
-                                ic(print(f'\033[1;31mEQCCT origin {origin_id} has more phases than previous EQCCT one, setting it as preferred on {event_id}\033[0m'))
-                                self.fix_as_prefered(origin_id, event_id)
-                            else:
-                                print(f'\033[1;31m{origin_id} has less phases or magnitude less than 1.9, not setting it as preferred on {event_id}\033[0m')
+                print(f'\n\n\033[1;31m{eval_mode} {event_id} {author} {pref_phases}\033[0m\n\n')
+                if eval_mode == 'manual':
+                    if author == 'EQCCT' and int(orig_phases) > int(pref_phases):
+                        print(f'\033[1;31m new EQCCT origin has more phases than the preferred one, changing preferred origin\033[0m')
+                        self.fix_as_prefered(origin_id, event_id)
                     print(f'\033[1;31m{event_id} has a manual solution already, skiping...\033[0m')
                     continue
-                # print in green and bold that the event type is being changed to earthquake
-                print(f'\n\n\033[1;32mChanging event type to {self.ev_type} on {event_id}\033[0m\n\n')
+                # print in green and bold that the event type will is being changed to earthquake
+                print(f'\n\n\033[1;32mChanging event type to {self.ev_type} for {event_id}\033[0m\n\n')
                 self.change_event_type(event_id)
                 self.fix_as_prefered(origin_id, event_id)
             else:
@@ -276,9 +224,8 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
     main_path = params['general_output_dir']
     os.system('rm -fr %s' % main_path)
 
-    # taking current time in UTC - delay
-    end = datetime.datetime.utcnow()
-    t = end - datetime.timedelta(minutes=delay)
+    # taking current time in UTC
+    t = datetime.datetime.utcnow() - datetime.timedelta(minutes=delay)
     t_i = t - datetime.timedelta(minutes=(every_m))
 
     # change the init, end time and dt in ai_picker.inp
@@ -289,7 +236,9 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
     print(f'\n\n\trunning from {t_i} to {t}\n\n')
     os.system('head -10 ai_picker.inp')
     cmd = f'time {ai_picker}'
-    ic(os.system(cmd))
+    # print in red and bold the command
+    print(f'\033[1;31m{cmd}\033[0m')
+    os.system(cmd)
 
     # getting the origins path
     output_path = get_origins_path(main_path, 'origenes_preferidos.xml')
@@ -313,10 +262,11 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
             # random number to avoid repetead users
             num = random.randint(1, 10)
             cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -i %s -H %s -u aitexnet%d' % (output_path, db, num)
-            ic(os.system(cmd))
+            print(cmd)
+            os.system(cmd)
 
-            # wait 15 seconds
-            ic(time.sleep(30))
+            # wait 15 seconds 
+            time.sleep(15)
             
             # change the event type to earthquake
             EventTypeChanger(db).run()
@@ -328,24 +278,19 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
     print('\n\tSiguiente ejecucion a las: ',
           t + datetime.timedelta(minutes=(every_m)), 'UT\n')
 
-    now = datetime.datetime.utcnow()
+    tf = datetime.datetime.now() + datetime.timedelta(hours=(5))
 
-    logger(end, now, t_i, t)
+    logger(t, tf)
 
 
 if __name__ == "__main__":
 
     every_minutes = 30  # period of excecution in minutes
     #every_minutes = 1  # period of excecution in minutes
-    
-    minutes = 40  # period of excecution in minutes
-    #delay = 30    # delay in minutes
+    minutes = 60  # period of excecution in minutes
+    #delay = 60    # delay in minutes
     delay = 0    # delay in minutes
-
-    schedule.every(every_minutes).minutes.do(runner,
-                                             every_m=minutes,
-                                             delay=delay,
-                                             db='sc3primary.beg.utexas.edu')
+    schedule.every(every_minutes).minutes.do(runner, every_m=minutes, delay=delay, db='sc3primary.beg.utexas.edu')
 
     while True:
         schedule.run_pending()
