@@ -223,13 +223,13 @@ def change_status_and_eval_mode(xml_path, status='reported', eval_mode='manual')
 
 
 def pass_reported_quality(origin):
-    # check if the depth (m) is less than 30 km and lon, lat and depth (m) uncertainties are less than 20 km
+    # check if the depth (m) is less than 20 km and lon, lat and depth (m) uncertainties are less than 20 km
     # if not, return False
     print(origin.depth, origin.longitude_errors.uncertainty, origin.latitude_errors.uncertainty, origin.depth_errors.uncertainty)
     # check that none of the values are None
     if any([x is None for x in [origin.depth, origin.longitude_errors.uncertainty, origin.latitude_errors.uncertainty, origin.depth_errors.uncertainty]]):
         return False
-    if origin.depth > 30000 or origin.longitude_errors.uncertainty > 20 \
+    if origin.depth > 20000 or origin.longitude_errors.uncertainty > 20 \
         or origin.latitude_errors.uncertainty > 20 or origin.depth_errors.uncertainty > 20000:
         return False
     return True

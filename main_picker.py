@@ -92,7 +92,7 @@ def prep_eqt_params(params):
                 'eqt_P_threshold', 'eqt_S_threshold']
     eqt_str = ['general_data_dir','general_output_dir', \
                 'eqt_create_json', 'eqt_create_hdf5',\
-                'eqt_plot_mode',\
+                'eqt_plot_mode','eqcc_P_model_dir','eqcc_S_model_dir',\
                 'eqt_predictor']
     eqt_gpu = ['eqt_gpu_limit', 'eqt_gpuid']
     # get script path directory
@@ -122,14 +122,19 @@ def prep_eqt_params(params):
 
     # eqt_dict = dict((key, params[key]) for key in eqt_params)
     for key in eqt_params:
-        if key == 'general_data_dir' or key == 'general_output_dir':
-            g,x,_dir = key.split("_")
-            new_key = "_".join((x,_dir))
-            eqt_dict['eqt_'+str(new_key)] = os.path.join(params[key],'eqt')
-        if key == 'dt':
-            eqt_dict['eqt_chunk_size'] = params[key]
-        else :
-            eqt_dict[str(key)] = params[key]
+        if key in params.keys():
+            if key == 'general_data_dir' or key == 'general_output_dir':
+                g,x,_dir = key.split("_")
+                new_key = "_".join((x,_dir))
+                eqt_dict['eqt_'+str(new_key)] = os.path.join(params[key],'eqt')
+            if key == 'dt':
+                eqt_dict['eqt_chunk_size'] = params[key]
+            else:
+                eqt_dict[str(key)] = params[key]
+
+    # print in green and bold the eqcc_P_model_dir and eqcc_S_model_dir
+    print(f'\n\033[92m\033[1m eqcc_P_model_dir: {eqt_dict["eqcc_P_model_dir"]}\033[0m')
+    print(f'\033[92m\033[1m eqcc_S_model_dir: {eqt_dict["eqcc_S_model_dir"]}\033[0m\n')
 
     # if file params['eqt_model_dir'] does not exist, set it to default
     if not os.path.exists(eqt_dict['eqt_model_dir']):

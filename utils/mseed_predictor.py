@@ -1104,7 +1104,7 @@ def _mseed2nparry(args, matching, time_slots, comp_types, st_name):
         
     #print(st)          
     st.filter(type='bandpass', freqmin = 1.0, freqmax = 45, corners=2, zerophase=True)
-    st.taper(max_percentage=0.001, type='cosine', max_length=2) 
+    st.taper(max_percentage=0.001, type='cosine', max_length=2)
     if len([tr for tr in st if tr.stats.sampling_rate != 100.0]) != 0:
         try:
             st.interpolate(100, method="linear")

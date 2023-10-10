@@ -53,7 +53,7 @@ if (env == 'pnet'
     from utils.playback import playback
     from utils.picks2xml import main_picks
 
-elif (os.environ['CONDA_DEFAULT_ENV'] in ('eqt', 'eqcc') 
+elif (os.environ['CONDA_DEFAULT_ENV'] in ('eqt', 'eqcc', 'eqcct') 
      or sys.executable in (python_eqt, python_eqcc)):
     from EQTransformer.utils.downloader import makeStationList
     from EQTransformer.utils.downloader import downloadMseeds
