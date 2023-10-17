@@ -32,7 +32,7 @@ def discontinuous_picker(start, end, n_days, db):
     dt = datetime.timedelta(days=n_days)
     overlap_rate = 0.05
 
-    assert start < end, 'Start date must be before end date'
+    assert start < end, f'Start date must be before end date:\n Start {start},\n end: {end}'
     
     temp_inp = 'temp_ai_picker.inp'
     params = read_params(temp_inp)
