@@ -242,6 +242,7 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict)
     origins_pruning(evf_path, pref_orig_path, check_db=mysqldb_dict["check_db"],
                     quadrant=mysqldb_dict['check_quadrant'])
 
+
 def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict):
 
     cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict,
@@ -280,7 +281,7 @@ def run(inp_file):
     if picker in ('PhaseNet','pnet','phasenet'):
         run_PhaseNet(client_dict, download_data, filter_data, pnet_dict, mysqldb_dict=mysqldb_dict)
 
-    elif picker in ('EQTransformer','eqt','eqtransformer', 'eqcctps', 'eqcc'):
+    elif picker in ('EQTransformer','eqt','eqtransformer', 'eqcctps', 'eqcc', 'eqcct'):
         run_EQTransformer(client_dict, download_data, eqt_dict, picker=picker, mysqldb_dict=mysqldb_dict)
 
 if __name__ == "__main__":
