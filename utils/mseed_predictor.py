@@ -961,9 +961,12 @@ def mseed_predictor_two(input_dir='downloads_mseeds',
         station_list = [ev.split(".")[0] for ev in listdir(args['input_dir']) if ev.split("\\")[-1] != ".DS_Store"];
     else:     
         station_list = [ev.split(".")[0] for ev in listdir(args['input_dir']) if ev.split("/")[-1] != ".DS_Store"];
-        
+    
+    with open(args['stations_json']) as f:
+        stations_json = json.load(f).keys()
 
-    station_list = sorted(set(station_list))
+    # keep only the stations that are in the station json file and have data
+    station_list = sorted(set(station_list).intersection(set(stations_json)))
     
     data_track = dict()
 

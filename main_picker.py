@@ -7,6 +7,7 @@ Created on Jul 2020
 """
 import os
 from obspy import UTCDateTime
+import uuid
 from datetime import timedelta
 from utils.cwav import Cwav_PhaseNet, Cwav_EQTransformer
 from utils.merge_xml_picks import merge_xml_picks
@@ -245,11 +246,15 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict)
 
 def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict):
 
+    # Generate a random unique name for the json file
+    json_filename = f'{uuid.uuid4()}.json'
     cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict,
                                 picker=picker,
-                                mysqldb_dict=mysqldb_dict)
+                                mysqldb_dict=mysqldb_dict,
+                                json_filename=json_filename)
     
     print(f'\ncwav_eqt object:\n\t{cwav_eqt.__dict__}\n')
+
     cwav_eqt.create_json()
     cwav_eqt.download_mseed()
     if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):

@@ -442,7 +442,8 @@ class Cwav_EQTransformer(object):
     
     def __init__(self, download_data, eqt_dict, client_dict,
                 picker,
-                 mysqldb_dict=None):
+                 mysqldb_dict=None,
+                 **kwargs):
         """Download mseed files and run them in PhaseNet algorithm
         Parameters
         ----------
@@ -479,6 +480,10 @@ class Cwav_EQTransformer(object):
         self.picker = picker
         self.pick_xml_path = os.path.join(self.eqt_dict['eqt_output_dir'], 'picks.xml')
         self.db_sc = mysqldb_dict['db_sc']
+        self.__dict__.update(kwargs)
+        # if json_filename not in kwargs then use default 'station_list.json'
+        if 'json_filename' not in kwargs:
+            self.json_filename = 'station_list.json'
 
     @property
     def client(self):
@@ -530,13 +535,14 @@ class Cwav_EQTransformer(object):
 
             network,station,location,channel = self.prepare_eqt_stations
             clients = [x.strip() for x in self.client_dict['ip'].split(',')]
+
             for i, cl in enumerate(clients):
                 client = [cl]
                 try:
-                    json_list = makeStationList(
+                    self.json_list = makeStationList(
                             json_path=os.path.join(self.eqt_dict['eqt_data_dir'],
-                                                    'station_list.json'),
-                            client_list=client, 
+                                                   self.json_filename),
+                            client_list=client,
                             min_lat=None, max_lat=None, 
                             min_lon=None, max_lon=None, 
                             network=network, station=station,
@@ -568,7 +574,7 @@ class Cwav_EQTransformer(object):
             downloadMseeds(
                     client_list=clients,
                     stations_json= os.path.join(self.eqt_dict['eqt_data_dir'],
-                                                'station_list.json'),
+                                                self.json_filename),
                     output_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
                     min_lat=None, max_lat=None, 
                     min_lon=None, max_lon=None,
@@ -586,7 +592,7 @@ class Cwav_EQTransformer(object):
             preprocessor(
                 preproc_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'preproc_files'),
                 mseed_dir=os.path.join( self.eqt_dict['eqt_data_dir'],'mseed'), 
-                stations_json=os.path.join(self.eqt_dict['eqt_data_dir'],'station_list.json'), 
+                stations_json=os.path.join(self.eqt_dict['eqt_data_dir'], self.json_filename), 
                 overlap=self.eqt_dict['eqt_overlap'], 
                 n_processor=self.eqt_dict['eqt_n_processor'])
         else:
@@ -611,7 +617,7 @@ class Cwav_EQTransformer(object):
                 input_modelP = self.eqt_dict['eqcc_P_model_dir'],
                 input_modelS = self.eqt_dict['eqcc_S_model_dir'],
                 stations_json=os.path.join(self.eqt_dict['eqt_data_dir'],
-                                        'station_list.json'),
+                                        self.json_filename),
                 output_dir = self.eqt_dict['eqt_output_dir'],
                 #detection_threshold = self.eqt_dict['eqt_detection_threshold'],
                 P_threshold = self.eqt_dict['eqt_P_threshold'],
@@ -628,7 +634,7 @@ class Cwav_EQTransformer(object):
                                             'mseed'),
                     input_model=self.eqt_dict['eqt_model_dir'],
                     stations_json=os.path.join(self.eqt_dict['eqt_data_dir'],
-                                            'station_list.json'),
+                                            self.json_filename),
                     output_dir=self.eqt_dict['eqt_output_dir'],
                     detection_threshold=self.eqt_dict['eqt_detection_threshold'],
                     P_threshold=self.eqt_dict['eqt_P_threshold'], 

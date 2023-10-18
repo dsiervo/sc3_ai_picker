@@ -7,6 +7,7 @@ Created on Jul 2020
 """
 import os
 from obspy import UTCDateTime
+import uuid
 from datetime import timedelta
 from utils.cwav import Cwav_PhaseNet, Cwav_EQTransformer
 from utils.merge_xml_picks import merge_xml_picks
@@ -180,7 +181,7 @@ def prep_Cwav_params(inp_file):
     pnet_dict = prep_pnet_params(params)
     eqt_dict = prep_eqt_params(params)
 
-    return client_dict, download_data,filter_data, picker, pnet_dict, eqt_dict, mysqldb_dict
+    return client_dict, download_data,filter_data, picker, pnet_dict, eqt_dict, mysqldb_dict, params
 
 def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict):
     STARTTIME= client_dict['starttime']
@@ -243,40 +244,54 @@ def run_PhaseNet(client_dict, download_data,filter_data,pnet_dict, mysqldb_dict)
                     quadrant=mysqldb_dict['check_quadrant'])
 
 
-def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict):
+def run_EQTransformer(client_dict, download_data,eqt_dict, picker, mysqldb_dict, json_filename=None, predict=True):
 
+    if json_filename is None:
+        # Generate a random unique name for the json file
+        json_filename = f'{uuid.uuid4()}.json'
+    
+    print(f'\n\033[92m\033[1m json_filename: {json_filename}\033[0m\n')
+    
     cwav_eqt = Cwav_EQTransformer(download_data,eqt_dict,client_dict,
                                 picker=picker,
-                                mysqldb_dict=mysqldb_dict)
+                                mysqldb_dict=mysqldb_dict,
+                                json_filename=json_filename)
     
     print(f'\ncwav_eqt object:\n\t{cwav_eqt.__dict__}\n')
-    cwav_eqt.create_json()
-    cwav_eqt.download_mseed()
-    if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):
-        cwav_eqt.mseedpredictor()
-        pass
-    elif eqt_dict['eqt_predictor'] in ('hdf5','HDF5'):
-        cwav_eqt.preprocessor()
-        cwav_eqt.predictor()
-    cwav_eqt.picks2xml()
-    cwav_eqt.playback(eval(client_dict['locator_dict']))
-    
-    OUTPUT_PATH = eqt_dict['eqt_output_dir']
-    # mergin all seiscomp .xml events
-    events_dir = os.path.join(OUTPUT_PATH, 'xml_events')
-    evf_path = os.path.join(OUTPUT_PATH, "events_final.xml")
-    merge_xml_picks(events_dir, evf_path)
 
-    # pruning origins that are not the prefered
-    pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
-    print(f'\n\n\033[95m check_db in main_picker_temp: {mysqldb_dict["check_db"]}\033[0m')
-    origins_pruning(evf_path, pref_orig_path, check_db=mysqldb_dict["check_db"],
-                    quadrant=mysqldb_dict['check_quadrant'])
+    cwav_eqt.create_json()
+    # read download_data entry in ai_picker.inp
+    cwav_eqt.download_mseed()
+    
+    if predict:
+        if eqt_dict['eqt_predictor'] in ('mseed','MSEED'):
+            cwav_eqt.mseedpredictor()
+            pass
+        elif eqt_dict['eqt_predictor'] in ('hdf5','HDF5'):
+            cwav_eqt.preprocessor()
+            cwav_eqt.predictor()
+        cwav_eqt.picks2xml()
+        cwav_eqt.playback(eval(client_dict['locator_dict']))
+        
+        OUTPUT_PATH = eqt_dict['eqt_output_dir']
+        # mergin all seiscomp .xml events
+        events_dir = os.path.join(OUTPUT_PATH, 'xml_events')
+        evf_path = os.path.join(OUTPUT_PATH, "events_final.xml")
+        merge_xml_picks(events_dir, evf_path)
+
+        # pruning origins that are not the prefered
+        pref_orig_path = os.path.join(OUTPUT_PATH, "origenes_preferidos.xml")
+        print(f'\n\n\033[95m check_db in main_picker_temp: {mysqldb_dict["check_db"]}\033[0m')
+        origins_pruning(evf_path, pref_orig_path, check_db=mysqldb_dict["check_db"],
+                        quadrant=mysqldb_dict['check_quadrant'])
+    else:
+        print(f'\n\033[92m\033[1m No predictions were made, predict = False\033[0m\n')
+
 
 
 def run(inp_file):
 
-    client_dict, download_data,filter_data, picker, pnet_dict, eqt_dict, mysqldb_dict = prep_Cwav_params(inp_file)
+    client_dict, download_data,filter_data, picker, pnet_dict, eqt_dict, mysqldb_dict, params = prep_Cwav_params(inp_file)
 
     if picker in ('PhaseNet','pnet','phasenet'):
         run_PhaseNet(client_dict, download_data, filter_data, pnet_dict, mysqldb_dict=mysqldb_dict)

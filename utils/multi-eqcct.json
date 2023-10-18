@@ -1,0 +1,14 @@
+{
+    "EQCCT Culberson": {
+        "dir": "/home/siervod/projects/realtime/delaware_culberson",
+        "data_minutes": 40
+    },
+    "EQCCT Coalson": {
+        "dir": "/home/siervod/projects/realtime/delaware_coalson",
+        "data_minutes": 40
+    },
+    "EQCCT Range Hill": {
+        "dir": "/home/siervod/projects/realtime/midland_range_hill",
+        "data_minutes": 40
+    }
+}
