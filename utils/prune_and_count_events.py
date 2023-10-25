@@ -56,7 +56,7 @@ def join_xml(xml_paths, output_filename):
         Name of merged xml event file
     """
     xmls = ' '.join(xml_paths)
-    cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scxmlmerge {xmls} > {output_filename}'
+    cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scxmlmerge {xmls} --debug > {output_filename}'
     print(cmd)
     os.system(cmd)
 
@@ -66,6 +66,7 @@ def change_xml_version(ev_file='events_final.xml'):
     lines[1] = '<seiscomp xmlns="http://geofon.gfz-potsdam.de/ns/seiscomp3-schema/0.10" version="0.10">\n'
     with open(ev_file, 'w') as f:
         f.write(''.join(lines))
+
 
 def event_summary(joined_xml_path):
     """Load the joined xml file and creates a dataframe with the
@@ -100,7 +101,17 @@ def prune_and_count(main_path):
     events_pruned_list = get_xml_path(main_path, events_pruned_name)
     
     main_events_name = 'main_events_pruned.xml'
-    join_xml(events_pruned_list, main_events_name)
+    
+    # split the list in 2 chunks
+    N = len(events_pruned_list)
+    events_list_1 = events_pruned_list[:N//2]
+    events_list_2 = events_pruned_list[N//2:]
+    split_list = [events_list_1, events_list_2]
+    split_names = [f'main_events_pruned_{i}.xml' for i in range(len(split_list))]
+    for events_list, split_name in zip(split_list, split_names):
+        join_xml(events_list, split_name)
+    
+    join_xml(split_names, main_events_name)
     
     change_xml_version(main_events_name)
     
