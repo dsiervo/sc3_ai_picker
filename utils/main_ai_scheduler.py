@@ -160,12 +160,12 @@ class EventTypeChanger:
 
     def __init__(self, host, ev_type='earthquake', orig_ids_file='reported_origins.txt',
                  user='sysop', passwd='sysop', database='seiscomp3',
-                 scroot=os.environ["SEISCOMP_ROOT"]):
+                 #scroot=os.environ["SEISCOMP_ROOT"]):
+                 scroot='/home/siervod/seiscomp3'):
         self.host = host
-        self._mydb = mysql.connector.connect(host=host,
-                                    user=user,
-                                    passwd=passwd,
-                                    database=database)
+        self.user = user
+        self.passwd = passwd
+        self.database = database
         self.ev_type = ev_type
         self.orig_ids_file = orig_ids_file
         self.scroot = scroot
@@ -178,17 +178,27 @@ class EventTypeChanger:
             lines = f.readlines()
         return [line.strip().strip('\n') for line in lines]
     
+    def mysql_connect(self):
+        self._mydb = mysql.connector.connect(host=self.host,
+                                            user=self.user,
+                                            passwd=self.passwd,
+                                            database=self.database)
+        ic(self.host)
+        ic(self.user)
+        ic(self.database)
+        return self._mydb.cursor()
+
     def get_event_id(self, origin_id):
-        mycursor = self._mydb.cursor()
+        mycursor = self.mysql_connect()
         mycursor.execute(self.query_str_evID.format(origin_id=origin_id))
         myresult = mycursor.fetchall()
         # if myresult is empty, return None
         if not myresult:
             return None, None
         return myresult[0]
-    
+
     def get_eval_mode(self, event_id):
-        mycursor = self._mydb.cursor()
+        mycursor = self.mysql_connect()
         mycursor.execute(self.query_str_eval_mode.format(event_id=event_id))
         # the query returns a tuple with the evaluation mode and the author
         myresult = mycursor.fetchall()
@@ -211,60 +221,97 @@ class EventTypeChanger:
         ic(self.reported_origins)
         for origin_id in self.reported_origins:
             ic(origin_id)
-            print(f'\n\n\033[1;31m Origin {origin_id} \033[0m\n\n')
+            #print_ic(f'\n\n\033[1;31m Origin {origin_id} \033[0m\n\n')
             # Check if origin_id is not an empty string
             if not origin_id:
                 continue
-            try:
-                event_id, orig_phases, mag = ic(self.get_event_id(origin_id))
-            except ValueError:
-                ic(print(f'\n\n\033[1;31m Origin {origin_id} not found in the database. Skiping.. \033[0m\n\n'))
+            
+            not_found = False
+            # get event_id, origin phases and magnitude
+            max_tries = 20
+            for i in range(max_tries):
+                try:
+                    event_id, orig_phases, mag = ic(self.get_event_id(origin_id))
+                    break
+                except ValueError:
+                    if i == max_tries - 1:
+                        msg = f'\n\n\033[1;31m Origin {origin_id} not found in the database after {max_tries} attempts. Skipping.. \033[0m\n\n'
+                        msg_2 = f'Origin {origin_id} not found in the database after {max_tries} attempts. Skipping..'
+                        print_ic(msg_2)
+                        not_found = True
+                        break
+                    else:
+                        msg = f'\n\n\033[1;31m Origin {origin_id} not found in the database. Retrying in 10 seconds.. \033[0m\n\n'
+                        msg_2 = f'Origin {origin_id} not found in the database after {i} attempts. Retrying in 10 seconds..'
+                        print_ic(msg_2)
+                        time.sleep(10)
+
+            ic(not_found)
+            print_ic(f'\ni: {i}\n')
+            if not_found:
                 continue
+
             # print in blue and bold the origin_id and origin phases
-            ic(print(f'\n\033[1;34m{origin_id} {orig_phases}\033[0m\n'))
+            #print_ic(f'\n\033[1;34m{origin_id} {orig_phases}\033[0m\n')
+            #print_ic(f'\n{origin_id} {orig_phases}\n')
             # if event_id is not None, change event type
             if event_id:
                 # get preferred origin values
-                eval_mode, author, pref_phases, pref_status, ev_type, pref_mag = ic(self.get_eval_mode(event_id))
+                eval_mode, author, pref_phases, pref_status, ev_type, pref_mag = self.get_eval_mode(event_id)
                 # print evaluation mode and event_id in red and bold
-                ic(print(f'\n\n\033[1;31m{eval_mode} {event_id} {author} {pref_phases} {ev_type} \033[0m\n\n'))
+                #print_ic(f'\n\n\033[1;31m{eval_mode} {event_id} {author} {pref_phases} {ev_type} \033[0m\n\n')
+                #print_ic(f'{eval_mode} {event_id} {author} {pref_phases} {ev_type}')
+                ic(eval_mode)
+                ic(event_id)
+                ic(author)
+                ic(pref_phases)
+                ic(ev_type)
                 if eval_mode == 'manual' or pref_status == 'reported':
                     ic(orig_phases)
-                    ic(pref_phases)
                     ic(pref_mag)
                     ic(mag)
                     if author == 'EQCCT':
                         # probably the EQCCT origin is the only one for this event
                         if ev_type != self.ev_type:
-                            ic(print(f'\033[1;32mChanging event type to {self.ev_type} on {event_id}. New event added!\033[0m'))
+                            #print_ic(f'\033[1;32mChanging event type to {self.ev_type} on {event_id}. New event added!\033[0m')
+                            print_ic(f'Changing event type to {self.ev_type} on {event_id}. New event added!')
                             self.change_event_type(event_id)
                         if float(pref_mag) < 1.9:
-                            ic(print(f'\033[1;31mPreferred EQCCT origin {origin_id} has magnitude less than 1.9, checking phases {event_id}\033[0m'))
+                            #print_ic(f'\033[1;31mPreferred EQCCT origin {origin_id} has magnitude less than 1.9, checking phases {event_id}\033[0m')
+                            print_ic(f'Preferred EQCCT origin {origin_id} has magnitude less than 1.9, checking phases {event_id}')
                             if (ic(int(orig_phases) > int(pref_phases))):
-                                ic(print(f'\033[1;31mEQCCT origin {origin_id} has more phases than previous EQCCT one, setting it as preferred on {event_id}\033[0m'))
+                                #print_ic(f'\033[1;31mEQCCT origin {origin_id} has more phases than previous EQCCT one, setting it as preferred on {event_id}\033[0m')
+                                print_ic(f'EQCCT origin {origin_id} has more phases than previous EQCCT one, setting it as preferred on {event_id}')
                                 self.fix_as_prefered(origin_id, event_id)
                         else:
-                            ic(print(f'\033[1;31mPreferred EQCCT origin {origin_id} has magnitude greater or equal to 1.9 {event_id}\033[0m'))
+                            #print_ic(f'\033[1;31mPreferred EQCCT origin {origin_id} has magnitude greater or equal to 1.9 {event_id}\033[0m')
+                            print_ic(f'Preferred EQCCT origin {origin_id} has magnitude greater or equal to 1.9 {event_id}')
                             # if the magnitude of the prefered EQCCT origin is greater or equal to 1.9,
                             # the new origin will be set as preferred only if it has a magnitude greater or equal to 1.9
                             if (ic(int(orig_phases) > int(pref_phases))) and (float(mag) >= 1.9):
-                                ic(print(f'\033[1;31mEQCCT origin {origin_id} has more phases than previous EQCCT one, setting it as preferred on {event_id}\033[0m'))
+                                #print_ic(f'\033[1;31mEQCCT origin {origin_id} has more phases than previous EQCCT one, setting it as preferred on {event_id}\033[0m')
+                                print_ic(f'EQCCT origin {origin_id} has more phases than previous EQCCT one, setting it as preferred on {event_id}')
                                 self.fix_as_prefered(origin_id, event_id)
                             else:
-                                print(f'\033[1;31m{origin_id} has less phases or magnitude less than 1.9, not setting it as preferred on {event_id}\033[0m')
-                    print(f'\033[1;31m{event_id} has a manual solution already, skiping...\033[0m')
+                                #print_ic(f'\033[1;31m{origin_id} has less phases or magnitude less than 1.9, not setting it as preferred on {event_id}\033[0m')
+                                print_ic(f'{origin_id} has less phases or magnitude less than 1.9, not setting it as preferred on {event_id}')
+                    #print_ic(f'\033[1;31m{event_id} has a manual solution already, skiping...\033[0m')
+                    print_ic(f'{event_id} has a manual solution already, skiping...')
                     continue
                 # the status is rejected and the event type is duplicate skip
                 elif pref_status == 'rejected' and ev_type in ('duplicate', 'not existing'):
-                    print(f'\033[1;31m{event_id} has a rejected solution, skiping...\033[0m')
+                    #print_ic(f'\033[1;31m{event_id} has a rejected solution, skiping...\033[0m')
+                    print_ic(f'{event_id} has a rejected solution, skiping...')
                     continue
                 # print in green and bold that the event type is being changed to earthquake
-                print(f'\n\n\033[1;32mChanging event type to {self.ev_type} on {event_id}\033[0m\n\n')
+                #print_ic(f'\n\n\033[1;32mChanging event type to {self.ev_type} on {event_id}\033[0m\n\n')
+                print_ic(f'Changing event type to {self.ev_type} on {event_id}')
                 self.change_event_type(event_id)
                 self.fix_as_prefered(origin_id, event_id)
             else:
                 # print in red and bold that the origin_id was not found in the database
-                print(f'\033[1;31m{origin_id} not found in the database\033[0m')
+                #print_ic(f'\033[1;31m{origin_id} not found in the database\033[0m')
+                print_ic(f'{origin_id} not found in the database')
 
 
 def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
@@ -292,50 +339,56 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
                  t.strftime("%Y-%m-%d %H:%M:%S"),
                  (every_m)*60)
 
-    print(f'\n\n\trunning from {t_i} to {t}\n\n')
+    print_ic(f'\nrunning from {t_i} to {t}\\n')
     os.system('head -10 ai_picker.inp')
     cmd = f'time {ai_picker}'
-    ic(os.system(cmd))
+    print_ic(cmd)
+    os.system(cmd)
 
     # getting the origins path
     output_path = get_origins_path(main_path, 'origenes_preferidos.xml')
     # getting the picks path
-    #picks_path = get_origins_path(main_path, 'picks.xml')
+    picks_path = get_origins_path(main_path, 'picks.xml')
 
-    #cmd_picks = 'scdispatch -i %s -H %s -u ai_texnet' % (picks_path, db)
-    #print(cmd_picks)
-    #os.system(cmd_picks)
+    cmd_picks = 'scdispatch -i %s -H %s -u aitx' % (picks_path, db)
+    print_ic(cmd_picks)
+    os.system(cmd_picks)
+    num = random.randint(1, 100)
+    send_to_sc5(picks_path, f'aitx{num}')
 
     if output_path is not None:
         # if the file is not empty
         if os.path.getsize(output_path):
-            print('xml a modificar:', output_path)
+            print_ic(f'xml a modificar: {output_path}')
             # changing the xml version of the origins file
             change_xml_version(output_path)
 
-            print('\n\n\tUploading to db\n\n')
             os.system('head -3 %s' % output_path)
 
             # random number to avoid repetead users
-            num = random.randint(1, 10)
-            cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -i %s -H %s -u aitexnet%d' % (output_path, db, num)
-            ic(os.system(cmd))
+            num = random.randint(1, 100)
+            #cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -i %s -H %s -u aitexnet%d' % (output_path, db, num)
+            cmd = f'/home/siervod/seiscomp3/bin/seiscomp exec scdispatch -i %s -H %s -u aitx%d' % (output_path, db, num)
+            print_ic(cmd)
+            os.system(cmd)
             # send to sc5
-            send_to_sc5(output_path, f'eqcct{num}')
+            send_to_sc5(output_path, f'aitx{num}')
 
-            # wait 15 seconds
-            ic(time.sleep(30))
+            # wait 30 seconds
+            waiting_time = 45
+            print_ic(f'waiting {waiting_time} seconds before changing event type')
+            time.sleep(waiting_time)
             
             # change the event type to earthquake in sc3
-            EventTypeChanger(db).run()
+            EventTypeChanger(db, scroot='/home/siervod/seiscomp3').run()
             # change the event type to earthquake in sc5
             EventTypeChanger('scdb.beg.utexas.edu', user='sysro', passwd='0niReady', database='seiscomp',
                               scroot='/home/siervod/seiscomp').run()
         else:
-            print('\n\n\tArchivo vacio!\n\n')
+            print_ic('\n\n\tEmpty file!\n\n')
     else:
-        print('\n\n\tNo existe mag.xml!\n\n')
-    print('\n\tSiguiente ejecucion a las: ',
+        print_ic('\n\n\tmag.xml not found!\n\n')
+    print('\n\tNext run: ',
           t + datetime.timedelta(minutes=(every_m)), 'UT\n')
 
     now = datetime.datetime.utcnow()
@@ -343,16 +396,20 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
     logger(end, now, t_i, t)
 
 
+def print_ic(msg):
+    ic(msg)
+    print(msg)
+
+
 def send_to_sc5(xml_path, usr='aitexnet'):
     """Sends picks or origins xml files to sc5.
     """
     cmd = f"/home/siervod/seiscomp/bin/seiscomp exec scdispatch -i {xml_path} -H scdb.beg.utexas.edu -u {usr}"
-    print(cmd)
+    print_ic(cmd)
     os.system(cmd)
 
 
 if __name__ == "__main__":
-
     every_minutes = 30  # period of excecution in minutes
     #every_minutes = 1  # period of excecution in minutes
 

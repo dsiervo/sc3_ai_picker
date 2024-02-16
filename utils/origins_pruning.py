@@ -232,6 +232,9 @@ def pass_reported_quality(origin):
     if origin.depth > 20000 or origin.longitude_errors.uncertainty > 20 \
         or origin.latitude_errors.uncertainty > 20 or origin.depth_errors.uncertainty > 20000:
         return False
+    # if azimuthal gap is greater than 270 return False
+    if origin.quality.azimuthal_gap > 270:
+        return False
     return True
 
 

@@ -2,7 +2,7 @@
 import os
 import time
 from typing import List
-import sys
+#import sys
 
 
 def get_xml_path(path: str, xmlfile: str) -> List[str]:
@@ -122,6 +122,7 @@ def dispatch_walk(path: str, xmlfile: str, host: str, new_author=None, sleep_tim
 
 if __name__ == '__main__':
     path = '.'
-    xmlfile = sys.argv[1]  # 'origenes_preferidos.xml'
-    host = 'sc3primary.beg.utexas.edu'
-    dispatch_walk(path, xmlfile, host, new_author='EQCCT_mid_20-21', sleep_time=60)
+    xmlfile = 'origenes_preferidos.xml'
+    #host = 'sc3primary.beg.utexas.edu'
+    host = 'scdb.beg.utexas.edu'
+    dispatch_walk(path, xmlfile, host, new_author='EQCCT', sleep_time=30)

@@ -88,6 +88,7 @@ import math
 from tensorflow.keras.regularizers import l2
 warnings.filterwarnings("ignore")
 from tensorflow.python.util import deprecation
+from obspy.io.mseed import InternalMSEEDError
 deprecation._PRINT_DEPRECATION_WARNINGS = False
 
 
@@ -1016,8 +1017,10 @@ def mseed_predictor_two(input_dir='downloads_mseeds',
             matching = [s for s in file_list if month in s]
             matching.sort()
             #print(matching)
-            meta, time_slots, comp_types, data_set = _mseed2nparry(args, matching, time_slots, comp_types, st)
-
+            try:
+                meta, time_slots, comp_types, data_set = _mseed2nparry(args, matching, time_slots, comp_types, st)
+            except InternalMSEEDError:
+                continue
             params_pred = {'batch_size': args['batch_size'],
                            'norm_mode': args['normalization_mode']}  
                 
