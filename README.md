@@ -1,6 +1,6 @@
 # sc3_ai_picker
 
-![GitHub last commit](https://img.shields.io/github/last-commit/dsiervo/sgc_ai_picker)
+![GitHub last commit](https://img.shields.io/github/last-commit/dsiervo/sc3_ai_picker)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 --------------
@@ -23,8 +23,8 @@ No se recomienda usar este script directamente, en su lugar se recomienda usar l
 
 ### Descargue el ai_picker
 ```bash
-(eqt) $ git clone https://github.com/dsiervo/sgc_ai_picker.git
-(eqt) $ cd sgc_ai_picker
+(eqt) $ git clone https://github.com/dsiervo/sc3_ai_picker.git
+(eqt) $ cd sc3_ai_picker
 ```
 
 ### Instale EQTransformer
@@ -69,7 +69,7 @@ n_processor = len(station_dic)
 ```
 
 ## Configure los entornos virtuales en el ai_picker.py
-1. Abra el archivo `<su ruta a sgc_ai_picker>/anaconda_path.txt`
+1. Abra el archivo `<su ruta a sc3_ai_picker>/anaconda_path.txt`
 2. Modifique el valor de la variable `anaconda_path` por la ruta hacia su anaconda3.
 ```
 anaconda_path = '<su ruta a anaconda3>'
@@ -77,11 +77,11 @@ anaconda_path = '<su ruta a anaconda3>'
 3. Modifique la ruta hacia el directorio anaconda3 en los archivos prune_and_count_evnets.py. run_dashboard.sh y discontinuos_picker.py
 
 
-## Agregue sgc_ai_picker y sgc_ai_picker/utils a su PATH
+## Agregue sc3_ai_picker y sc3_ai_picker/utils a su PATH
 1. Edite el archivo `~/.bashrc` y agregue la siguientes 2 líneas:
 ```bash
-export PATH="<su ruta a sgc_ai_picker>:$PATH"
-export PATH="<su ruta a sgc_ai_picker>/utils:$PATH"
+export PATH="<su ruta a sc3_ai_picker>:$PATH"
+export PATH="<su ruta a sc3_ai_picker>/utils:$PATH"
 ```
 
 2. En tu terminal ejecute `source ~/.bashrc` para recargar el entorno.
@@ -164,7 +164,7 @@ Los parámetros de solo EQTransformer: eqt_detection_threshold, eqt_P_threshold,
  Ambos pueden usarse para picar sismicidad en archivos de formas de onda de estaciones portátiles o para reprocesar formas de onda asociadas a ejambres sísmicos o réplicas.
 
 ### Uso discontinuous_picker.py
-Para ejecutar el programa debe tener configurado previamente en el directorio de ejecución el archivo de configuración `temp_ai_picker.inp` (toma todos los parámetros excepto las fechas inicial y final, por lo que puede dejar las que estén por defecto). Para esto copie en su directorio de trabajo el archivo `ai_picker.inp` que se encuentra en la ruta `<su ruta a sgc_ai_picker>/ai_picker.inp`, luego cámbiele el nombre por `temp_ai_picker.inp` y finalmente edite los parámetros dentro de éste según sus preferencias  (estaciones a picar, ruta de los directorios donde se guardarán las formas de onda y donde se generarán los archivos de salida, etc). Una vez ubicado en su directorio de trabajo ejecute el programa de a acuerdo al rego de fechas que desee. Si por ejemplo desea picar entre el 1/1/2020 al 31/7/2020 puede ejecutar en consola el siguiente comando: 
+Para ejecutar el programa debe tener configurado previamente en el directorio de ejecución el archivo de configuración `temp_ai_picker.inp` (toma todos los parámetros excepto las fechas inicial y final, por lo que puede dejar las que estén por defecto). Para esto copie en su directorio de trabajo el archivo `ai_picker.inp` que se encuentra en la ruta `<su ruta a sc3_ai_picker>/ai_picker.inp`, luego cámbiele el nombre por `temp_ai_picker.inp` y finalmente edite los parámetros dentro de éste según sus preferencias  (estaciones a picar, ruta de los directorios donde se guardarán las formas de onda y donde se generarán los archivos de salida, etc). Una vez ubicado en su directorio de trabajo ejecute el programa de a acuerdo al rego de fechas que desee. Si por ejemplo desea picar entre el 1/1/2020 al 31/7/2020 puede ejecutar en consola el siguiente comando: 
 
     $ discontinuous_picker.py -s "2020-01-01 00:00:00" -e "2020-07-31 23:59:59"
 
@@ -196,8 +196,8 @@ Los scripts **ai_scheduler.py** y **ai_scheduler_sc4.py** permiten picar en tiem
 #### Copie los archivos necesarios
 Primero debe hacer una copia de los archivos **ai_scheduler.py** y **ai_picker_scdl.inp** a su directorio de trabajo, para ello úbiquese en su directorio de trabajo desde la terminal y ejecute:
     
-        $ cp <ruta hacia sgc_ai_picker>/utils/ai_scheduler.py .
-        $ cp <ruta hacia sgc_ai_picker>/utils/ai_picker_scdl.inp .
+        $ cp <ruta hacia sc3_ai_picker>/utils/ai_scheduler.py .
+        $ cp <ruta hacia sc3_ai_picker>/utils/ai_picker_scdl.inp .
 
 #### Modifique ai_picker_scdl.inp y ai_scheduler.py
 Edite el los parámetros de ai_picker_scdl.inp según sus preferencias (se recomienda usar como picker a EQTransformer, para mas información puede mirar [guía parámetros de configuración](#parámetros-generales)) y luego abra el archivo **ai_scheduler.py** y en el bloque `if __name__ == "__main__"` edite el valor de las variables `every_minutes`, `minutes` y `db` según sus preferencias. A continuación se explicará en que consiste cada una de éstas (no se explica la variable `buffer` pues se recomienda siempre dejarla en 0):
@@ -214,8 +214,8 @@ Debido a que no fue posible arreglar el problema de conexión en SeisComP4 para 
 #### Copie los archivos necesarios
 Primero debe hacer una copia de los archivos **ai_scheduler_sc4.py** y **ai_picker_scdl.inp** a su directorio de trabajo, para ello úbiquese en su directorio de trabajo desde la terminal y ejecute:
     
-        $ cp <ruta hacia sgc_ai_picker>/utils/ai_scheduler_sc4.py .
-        $ cp <ruta hacia sgc_ai_picker>/utils/ai_picker_scdl.inp .
+        $ cp <ruta hacia sc3_ai_picker>/utils/ai_scheduler_sc4.py .
+        $ cp <ruta hacia sc3_ai_picker>/utils/ai_picker_scdl.inp .
 
 #### Modifique ai_picker_scdl.inp y ai_scheduler_sc4.py
 Edite el los parámetros de ai_picker_scdl.inp según sus preferencias (se recomienda usar como picker a EQTransformer, para mas información puede mirar [guía parámetros de configuración](#parámetros-generales)) y luego abra el archivo **ai_scheduler_sc4.py** y en el bloque `if __name__ == "__main__"` edite el valor de las variables `every_minutes`, `minutes`, `ip_db`, `usr_db` y `psw_db` según sus preferencias. A continuación se explicará en que consisten las últimas 3 (para las primeras 2 puede mirar la sección [Modifique ai_picker_scdl.inp y ai_scheduler.py](#modifique_ai_picker_scdl.inp_y_ai_scheduler.py)):

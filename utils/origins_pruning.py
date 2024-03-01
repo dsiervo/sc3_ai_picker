@@ -115,7 +115,7 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
         output_auto_fn = output_fn.replace('.xml', '_auto.xml')
         write_and_remove_id_prefix(cat2, output_auto_fn)
         # change xml version
-        change_xml_version(output_auto_fn)
+        #change_xml_version(output_auto_fn)
 
         # merge the xmls
         merge_xmls(output_auto_fn, output_rep_fn, output_fn)
@@ -124,7 +124,7 @@ def origins_pruning(xml_name, output_fn='origenes_preferidos.xml',
     else:
         write_and_remove_id_prefix(cat2, output_fn)
         # change xml version
-        change_xml_version(output_fn)
+        #change_xml_version(output_fn)
     print('\n\tFiles with preferred origins to migrate to SeisComP3:\n\n\t  %s\n' % output_fn)
 
 
@@ -234,6 +234,12 @@ def pass_reported_quality(origin):
         return False
     # if azimuthal gap is greater than 270 return False
     if origin.quality.azimuthal_gap > 270:
+        return False
+    try:
+        # if the number of used phases is less than 8 return False
+        if origin.quality.used_phase_count < 8:
+            return False
+    except TypeError:
         return False
     return True
 
