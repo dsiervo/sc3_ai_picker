@@ -1,0 +1,85 @@
+##############################------------ SECTION 1): Client Dict and Picker Mode ------------############################
+
+#-->picker 'pnet', 'eqt' o ('eqcc' o 'eqcctps')
+picker = eqcc
+
+ip = http://rtserve.beg.utexas.edu,http://sc3primary.beg.utexas.edu/
+port =
+starttime = 2023-08-16 04:39:00
+endtime = 2023-08-16 07:39:00
+dt = 5400
+
+# if true, the preferred origins that have depth < 20 km and hypocentral uncertainties < 20 km
+# will be written as evaluation status 'reported' and evaluation mode 'manual'
+# and reported_origins.txt will be created with the preferred origins IDs of the reported origins 
+write_reported = false
+
+# localizadores y modelos de velocidades que se usarán para localizar los eventos.
+# Si hay mas de un elemento en el diccionario se unirán los orígenes que se encuentren
+# con cada localizador para que luego el scevent una en un mismo evento a aquellos
+# origenes que son el mismo sismo.
+#locator_dict = {"LOCSAT": "iasp91", "Hypo71":"RSNC" }
+locator_dict = {"LOCSAT": "iasp91"}
+
+# base de datos de SeisComP3 desde donde se tomará la configuración de las estaciones y 
+# se calcularán las amplitudes en las trazas para el cálculo de magnitud
+db_sc = mysql://sysop:sysop@sc3primary.beg.utexas.edu/seiscomp3
+
+#check_db = no
+# lat_min, lat_max, lon_min, lon_max, or bna file
+check_quadrant = snyder_eqcct.bna
+# latitude BETWEEN 32.4 AND 32.6 AND longitude BETWEEN -101.3 AND -101.2
+#check_quadrant = 31.5722,31.68,-104.083,-103.9269
+##############################------------ SECTION 2): Stations to download ------------############################
+# PB28, PB37, PB35, PB36, PB29, PB38, SA02, SA07
+#download_data = TX.PB28.00.HH*, TX.PB37.00.HH*, TX.PB35.00.HH*, TX.PB36.00.HH*, TX.PB29.00.HH*, TX.PB38.00.HH*, 4O.SA02.00.HH*, 4O.SA07.00.HH*
+# PB24, WB03, PB40, PB34, PB20, PB23, PB25, PB31, WB01, WB02, WB04, PB43
+#download_data = TX.PB24.00.HH*, TX.PB40.00.HH*, TX.PB34.00.HH*, TX.PB20.00.HH*, TX.PB23.00.HH*, TX.PB25.00.HH*, TX.PB31.00.HH*, 4O.WB01.00.HH*, 4O.WB02.00.HH*, 4O.WB03.00.HH*, 4O.WB04.00.HH*, TX.PB43.00.HH*, TX.PB13.01.HH*, TX.PB33.00.HH*, TX.PB24.00.HH*, TX.PECS.00.HH*, TX.PB12.00.HH*, TX.VHRN.00.HH*
+download_data = TX.SN07.00.HH*, TX.SN10.00.HH*, TX.SN02.00.HH*, TX.SN03.00.HH*, TX.SN04.00.HH*, TX.SN08.00.HH*, TX.SN09.00.HH*, TX.SN10.00.HH*, N4.ABTX.00.HH*, 4O.CF01.00.HH*, TX.POST.00.HH*
+#download_data = no
+#download_data = all 
+
+##############################------------ SECTION 3): Stations to filter (ONLY FOR PhaseNet)  ------------############################
+
+#filter_data = CM.TAPM, CM.PIRM, CM.MACC, CM.PRA, CM.BELO, CM.CVER, CM.CHI, CM.ORTC, CM.VIL
+filter_data = CM.RUS, CM.PTB, CM.OCA, CM.SPBC, CM.YPLC
+#filter_data = CM.RUS
+#filter_data = no
+
+##############################------------ SECTION 4): Picker dirs ------------############################
+
+general_data_dir = test/data
+general_output_dir = test/16082023-043900_16082023-073900
+
+#########------------ PhaseNet Dict  ------------#######
+
+pnet_repository_dir = /home/daniel/PhaseNet
+pnet_model_dir = /home/daniel/PhaseNet/model/190703-214543
+pnet_mode = pred
+pnet_batch_size = 40
+pnet_plot_figure = False
+pnet_save_result = False
+
+#########------------ EQTransformer Dict  ------------##########
+##-->eqt_predictor:  mseed or hdf5
+
+eqt_create_json = True
+eqt_predictor = mseed
+#eqcc_P_model_dir = /home/siervod/sc3_ai_picker/model/EQCCT_TF_Delaware/test_trainer_011.h5
+#eqcc_S_model_dir = /home/siervod/sc3_ai_picker/model/EQCCT_TF_Delaware/test_trainer_S_005.h5
+
+eqt_overlap = 0.4
+eqt_n_processor = 50
+eqt_detection_threshold = 0.003
+
+eqt_P_threshold = 0.001
+eqt_S_threshold = 0.02
+
+eqt_number_of_plots = 0
+eqt_plot_mode = time
+
+
+##-->si eqt_predictor= mseed entonces:
+eqt_batch_size = 10
+##-->si eqt_predictor= hdf5 entonces:
+eqt_create_hdf5 = True
