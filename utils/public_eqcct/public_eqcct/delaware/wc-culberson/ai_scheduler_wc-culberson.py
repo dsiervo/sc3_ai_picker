@@ -13,16 +13,18 @@ import time
 # append /home/siervod/sc3_ai_picker/utils/ to sys.path
 sys.path.append('/home/siervod/sc3_ai_picker/utils/')
 from main_ai_scheduler import runner
+#from main_ai_scheduler_at import runner_at
 
 if __name__ == "__main__":
 
     every_minutes = 30  # period of excecution in minutes
     #every_minutes = 1  # period of excecution in minutes
 
-    minutes = 40  # 40 minutes of data
+    minutes = 50  # 40 minutes of data
     #delay = 30    # delay in minutes
     delay = 0    # delay in minutes
 
+    #runner_at(every_minutes, delay, db='sc3primary.beg.utexas.edu', interval_min=every_minutes)
     schedule.every(every_minutes).minutes.do(runner,
                                              every_m=minutes,
                                              delay=delay,

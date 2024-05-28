@@ -1,0 +1,84 @@
+##############################------------ SECTION 1): Client Dict and Picker Mode ------------############################
+
+#-->picker 'pnet', 'eqt' o ('eqcc' o 'eqcctps')
+picker = eqcc
+
+ip = http://sc3primary.beg.utexas.edu/,http://rtserve.beg.utexas.edu
+#ip = http://sc3primary.beg.utexas.edu/,http://begws142.beg.utexas.edu:8880
+port =
+starttime = 2024-02-17 21:00:00
+endtime = 2024-02-17 23:00:00
+# 4 hours
+dt = 1890
+
+# if true, the preferred origins that have depth < 20 km and hypocentral uncertainties < 20 km
+# will be written as evaluation status 'reported' and evaluation mode 'manual'
+# and reported_origins.txt will be created with the preferred origins IDs of the reported origins 
+write_reported = true
+
+# localizadores y modelos de velocidades que se usarán para localizar los eventos.
+# Si hay mas de un elemento en el diccionario se unirán los orígenes que se encuentren
+# con cada localizador para que luego el scevent una en un mismo evento a aquellos
+# origenes que son el mismo sismo.
+#locator_dict = {"LOCSAT": "iasp91", "Hypo71":"RSNC" }
+locator_dict = {"LOCSAT": "iasp91"}
+
+# base de datos de SeisComP3 desde donde se tomará la configuración de las estaciones y 
+# se calcularán las amplitudes en las trazas para el cálculo de magnitud
+db_sc = mysql://sysop:sysop@sc3primary.beg.utexas.edu/seiscomp3
+
+#check_db = yes
+# lat_min, lat_max, lon_min, lon_max, or bna file
+#check_quadrant = texnet_NMidlandM5.4_aoi.bna
+# latitude BETWEEN 32.4 AND 32.6 AND longitude BETWEEN -101.3 AND -101.2
+#check_quadrant = 32.1,32.3,-102.27,-102
+##############################------------ SECTION 2): Stations to download ------------############################
+download_data = 2T.EF*.00.HH*,TX.833A.00.HH*,TX.HNDO.*.HH*,TX.INDO.00.HH*,TX.ELG6.00.CH*,TX.DRIO.00.CH*,TX.FLRS.1K.HH*,TX.EF0*.00.HH*,TX.MLDN.00.HH*,TX.HBVL.00.HH*
+
+##############################------------ SECTION 3): Stations to filter (ONLY FOR PhaseNet)  ------------############################
+
+#filter_data = CM.TAPM, CM.PIRM, CM.MACC, CM.PRA, CM.BELO, CM.CVER, CM.CHI, CM.ORTC, CM.VIL
+filter_data = CM.RUS, CM.PTB, CM.OCA, CM.SPBC, CM.YPLC
+#filter_data = CM.RUS
+#filter_data = no
+
+##############################------------ SECTION 4): Picker dirs ------------############################
+
+general_data_dir = test/data
+general_output_dir = test/
+
+#########------------ PhaseNet Dict  ------------#######
+
+pnet_repository_dir = /home/daniel/PhaseNet
+pnet_model_dir = /home/daniel/PhaseNet/model/190703-214543
+pnet_mode = pred
+pnet_batch_size = 40
+pnet_plot_figure = False
+pnet_save_result = False
+
+#########------------ EQTransformer Dict  ------------##########
+##-->eqt_predictor:  mseed or hdf5
+
+eqt_create_json = True
+eqt_predictor = mseed
+eqcc_P_model_dir = /home/siervod/sc3_ai_picker/model/EagleFord/test_trainer_001.h5
+eqcc_S_model_dir = /home/siervod/sc3_ai_picker/model/EagleFord/test_trainer_S_007.h5
+#eqcc_P_model_dir = /home/sallesv/git/sc3_ai_picker/model/EQCCT_TF_TEXAS/test_trainer_005.h5
+#eqcc_S_model_dir = /home/sallesv/git/sc3_ai_picker/model/EQCCT_TF_TEXAS/test_trainer_S_010.h5
+#eqt_model_dir = model/EqT_model.h5
+eqt_overlap = 0.3
+eqt_n_processor = 2
+eqt_detection_threshold = 0.003
+eqt_P_threshold = 0.1
+eqt_S_threshold = 0.1
+eqt_number_of_plots = 0
+eqt_plot_mode = time
+# threshold for the P pick in each station. If the probability of the P pick
+# is higher than the threshold, the pick will be saved.
+#eqt_station_thr_dict = {'M044': 0.02, 'M048': 0.047}
+
+
+##-->si eqt_predictor= mseed entonces:
+eqt_batch_size = 5
+##-->si eqt_predictor= hdf5 entonces:
+eqt_create_hdf5 = True

@@ -410,8 +410,8 @@ def send_to_sc5(xml_path, usr='aitexnet'):
 
 
 if __name__ == "__main__":
-    every_minutes = 30  # period of excecution in minutes
-    #every_minutes = 1  # period of excecution in minutes
+    #every_minutes = 30  # period of excecution in minutes
+    every_minutes = 1  # period of excecution in minutes
 
     minutes = 40  # period of excecution in minutes
     #delay = 30    # delay in minutes

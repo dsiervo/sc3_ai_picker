@@ -60,6 +60,18 @@ $ conda activate pnet
 
 
 
+## optimización de descargas de formas de onda
+El siguiente paso es necesario para mejorar el desempeño al descargar formas de onda usando EQTransformer.
+Edite el archivo `<su ruta a anaconda3>/envs/eqcc/lib/python3.7/site-packages/EQTransformer/utils/downloader.py` y edite la siguiente línea dentro de la función **get_w** dentro del bloque try en `mdl.download` agregando `threads_per_client=10`
+
+```python
+            mdl.download(domain, 
+                         restrictions,
+                         mseed_storage = save_dir,
+                         stationxml_storage = save_dir2,
+                         threads_per_client=10)
+```
+
 ## Configure la optimización de descaga de formas de onda
 El siguiente paso es necesario para mejorar el desempeño al descargar señales usando EQTransformer.
 Edite el archivo `<su ruta a anaconda3>/envs/eqt/lib/python3.7/site-packages/EQTransformer/utils/downloader.py` y agregue la siguiente línea dentro de la función **downloadMseeds** justo antes de la línea `with ThreadPool(n_processor) as p:`
@@ -67,6 +79,14 @@ Edite el archivo `<su ruta a anaconda3>/envs/eqt/lib/python3.7/site-packages/EQT
 ```python
 n_processor = len(station_dic)
 ```
+
+## Configure los entornos virtuales en el ai_picker.py
+1. Abra el archivo `<su ruta a sc3_ai_picker>/anaconda_path.txt`
+2. Modifique el valor de la variable `anaconda_path` por la ruta hacia su anaconda3.
+```
+anaconda_path = '<su ruta a anaconda3>'
+```
+
 
 ## Configure los entornos virtuales en el ai_picker.py
 1. Abra el archivo `<su ruta a sc3_ai_picker>/anaconda_path.txt`

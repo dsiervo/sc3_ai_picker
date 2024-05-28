@@ -57,8 +57,10 @@ if __name__ == "__main__":
 
     # working directory
     working_dir = os.getcwd()
+    
+    events_dir = os.path.join(working_dir, main_folder)
     # move to working directory
-    os.chdir(working_dir)
+    os.chdir(events_dir)
     
     # Run the prune and count script
     os.system("timeout -180 prune_and_count_events.py")
