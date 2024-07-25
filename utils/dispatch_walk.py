@@ -2,7 +2,7 @@
 import os
 import time
 from typing import List
-#import sys
+import sys
 
 
 def get_xml_path(path: str, xmlfile: str) -> List[str]:
@@ -46,7 +46,7 @@ def dispatch(xml_path: str, host: str) -> None:
     None
     """
     print(xml_path)
-    cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -H {host} -i {xml_path}'
+    cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -H {host} -i {xml_path} -u gaiapbck --debug'
     print(cmd)
     os.system(cmd)
 
@@ -121,8 +121,13 @@ def dispatch_walk(path: str, xmlfile: str, host: str, new_author=None, sleep_tim
 
 
 if __name__ == '__main__':
-    path = '.'
-    xmlfile = 'origenes_preferidos.xml'
-    #host = 'sc3primary.beg.utexas.edu'
-    host = 'scdb.beg.utexas.edu'
-    dispatch_walk(path, xmlfile, host, new_author='EQCCT', sleep_time=30)
+    path = sys.argv[1]
+    xmlfile = sys.argv[2]
+    host = sys.argv[3]
+    new_author = sys.argv[4] if len(sys.argv) == 5 else None
+    
+    # path = '.'
+    # xmlfile = 'origenes_preferidos.xml'
+    # #host = 'sc3primary.beg.utexas.edu'
+    # host = 'scdb.beg.utexas.edu'
+    dispatch_walk(path, xmlfile, host, new_author=new_author, sleep_time=30)

@@ -6,8 +6,8 @@ picker = eqcc
 ip = http://sc3primary.beg.utexas.edu/,http://rtserve.beg.utexas.edu
 #ip = http://sc3primary.beg.utexas.edu/,http://begws142.beg.utexas.edu:8880
 port =
-starttime = 2024-04-03 20:41:50
-endtime = 2024-04-03 21:31:50
+starttime = 2024-07-25 03:52:50
+endtime = 2024-07-25 04:42:50
 # 4 hours
 dt = 3000
 

@@ -5,8 +5,8 @@ picker = eqcc
 
 ip = http://rtserve.beg.utexas.edu,http://sc3primary.beg.utexas.edu/
 port =
-starttime = 2024-05-28 04:03:42
-endtime = 2024-05-28 04:43:42
+starttime = 2024-07-25 04:08:50
+endtime = 2024-07-25 04:48:50
 dt = 2400
 
 # if true, the preferred origins that have depth < 20 km and hypocentral uncertainties < 20 km
@@ -70,7 +70,7 @@ eqt_predictor = mseed
 #eqcc_S_model_dir = /home/siervod/sc3_ai_picker/model/EQCCT_TF_Delaware/test_trainer_S_005.h5
 
 eqt_overlap = 0.4
-eqt_n_processor = 50
+eqt_n_processor = 10
 eqt_detection_threshold = 0.003
 
 eqt_P_threshold = 0.001
@@ -81,6 +81,6 @@ eqt_plot_mode = time
 
 
 ##-->si eqt_predictor= mseed entonces:
-eqt_batch_size = 10
+eqt_batch_size = 5
 ##-->si eqt_predictor= hdf5 entonces:
 eqt_create_hdf5 = True
