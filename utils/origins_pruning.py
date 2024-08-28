@@ -281,10 +281,10 @@ def pass_origin_quality(origin, magnitude):
 class Watcher:
     origin: obs.core.event.Origin
     mydb = mysql.connector.connect(
-        host="sc3primary.beg.utexas.edu",
-        user="sysop",
-        passwd="sysop",
-        database="seiscomp3"
+        host='scdb.beg.utexas.edu',
+        user='sysro',
+        passwd='0niReady',
+        database='seiscomp'
     )
 
     def __init__(self, origin):

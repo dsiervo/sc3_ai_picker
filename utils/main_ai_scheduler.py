@@ -350,9 +350,9 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
     # getting the picks path
     picks_path = get_origins_path(main_path, 'picks.xml')
 
-    cmd_picks = 'scdispatch -i %s -H %s -u aitx' % (picks_path, db)
-    print_ic(cmd_picks)
-    os.system(cmd_picks)
+    #cmd_picks = 'scdispatch -i %s -H %s -u aitx' % (picks_path, db)
+    #print_ic(cmd_picks)
+    #+os.system(cmd_picks)
     num = random.randint(1, 100)
     send_to_sc5(picks_path, f'aitx{num}')
 
@@ -368,9 +368,9 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
             # random number to avoid repetead users
             num = random.randint(1, 100)
             #cmd = f'{os.environ["SEISCOMP_ROOT"]}/bin/seiscomp exec scdispatch -i %s -H %s -u aitexnet%d' % (output_path, db, num)
-            cmd = f'/home/siervod/seiscomp3/bin/seiscomp exec scdispatch -i %s -H %s -u aitx%d' % (output_path, db, num)
-            print_ic(cmd)
-            os.system(cmd)
+            #cmd = f'/home/siervod/seiscomp3/bin/seiscomp exec scdispatch -i %s -H %s -u aitx%d' % (output_path, db, num)
+            #print_ic(cmd)
+            #os.system(cmd)
             # send to sc5
             send_to_sc5(output_path, f'aitx{num}')
 
@@ -380,7 +380,7 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
             time.sleep(waiting_time)
             
             # change the event type to earthquake in sc3
-            EventTypeChanger(db, scroot='/home/siervod/seiscomp3').run()
+            #EventTypeChanger(db, scroot='/home/siervod/seiscomp3').run()
             # change the event type to earthquake in sc5
             EventTypeChanger('scdb.beg.utexas.edu', user='sysro', passwd='0niReady', database='seiscomp',
                               scroot='/home/siervod/seiscomp').run()

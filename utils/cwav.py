@@ -545,7 +545,7 @@ class Cwav_EQTransformer(object):
                             end_time=self.client_dict['endtime'], 
                             channel_list=[], filter_network=[], filter_station=[])
                     break
-                except (header.FDSNNoDataException):
+                except (header.FDSNNoDataException, header.FDSNNoServiceException):
                     if i == len(clients)-1:
                         print('No station data available for these parameters')
                         print(f'clients: {clients}')
