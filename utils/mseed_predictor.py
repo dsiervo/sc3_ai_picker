@@ -1029,11 +1029,9 @@ def mseed_predictor_two(input_dir='downloads_mseeds',
             try:
                 predP,predS = model.predict_generator(pred_generator)
             except ValueError:
-                # print in yellow and bold a warning that a zero batch encountered and skipped
                 print(f"\n\n\033[1;33m WARNING: Zero batch encountered in station {st} on {month} and skipped \033[0m")
                 continue
             
-            #print(np.shape(predP))
             detection_memory = []
             prob_memory=[]
             for ix in range(len(predP)):
