@@ -926,7 +926,7 @@ def mseed_predictor_two(input_dir='downloads_mseeds',
     modelS = Model(inputs=[inputs], outputs=[logits])
 
     model = Model(inputs=[inputs], outputs=[logitp,logits])
-    model.summary()
+    #model.summary()
 
     sgd = optimizers.Adam()
     model.compile(optimizer=sgd,
@@ -1026,7 +1026,12 @@ def mseed_predictor_two(input_dir='downloads_mseeds',
                 
             pred_generator = PreLoadGeneratorTest(meta["trace_start_time"], data_set, **params_pred)
 
-            predP,predS = model.predict_generator(pred_generator)
+            try:
+                predP,predS = model.predict_generator(pred_generator)
+            except ValueError:
+                # print in yellow and bold a warning that a zero batch encountered and skipped
+                print(f"\n\n\033[1;33m WARNING: Zero batch encountered in station {st} on {month} and skipped \033[0m")
+                continue
             
             #print(np.shape(predP))
             detection_memory = []

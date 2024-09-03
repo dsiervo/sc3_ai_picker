@@ -3,10 +3,10 @@
 #-->picker 'pnet', 'eqt' o ('eqcc' o 'eqcctps')
 picker = eqcc
 
-ip = http://rtserve.beg.utexas.edu:8080,http://scarchive.beg.utexas.edu:8880
+ip = http://rtserve.beg.utexas.edu, http://scarchive.beg.utexas.edu
 port =
-starttime = 2024-08-28 04:02:25
-endtime = 2024-08-28 04:42:25
+starttime = 2024-09-03 03:52:04
+endtime = 2024-09-03 04:32:04
 dt = 2400
 
 # if true, the preferred origins that have depth < 20 km and hypocentral uncertainties < 20 km
@@ -23,7 +23,7 @@ locator_dict = {"LOCSAT": "iasp91"}
 
 # base de datos de SeisComP3 desde donde se tomará la configuración de las estaciones y 
 # se calcularán las amplitudes en las trazas para el cálculo de magnitud
-db_sc = mysql://sysop:sysop@scarchive.beg.utexas.edu/seiscomp
+db_sc = mysql://userro:Itr0nly@scarchive.beg.utexas.edu/seiscomp
 
 #check_db = no
 # lat_min, lat_max, lon_min, lon_max, or bna file
