@@ -17,7 +17,7 @@ from main_ai_scheduler import runner
 
 if __name__ == "__main__":
 
-    every_minutes = 30  # period of excecution in minutes
+    every_minutes = 10
     #every_minutes = 1  # period of excecution in minutes
 
     minutes = 50  # 40 minutes of data

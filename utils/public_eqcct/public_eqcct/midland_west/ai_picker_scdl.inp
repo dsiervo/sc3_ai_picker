@@ -72,7 +72,7 @@ eqt_predictor = mseed
 #eqcc_S_model_dir = /home/siervod/sc3_ai_picker/model/EQCCT_TF_Midland/test_trainer_S_005.h5
 
 eqt_overlap = 0.3
-eqt_n_processor = 10
+eqt_n_processor = 5
 eqt_detection_threshold = 0.05
 eqt_P_threshold = 0.15
 eqt_S_threshold = 0.15
@@ -80,6 +80,6 @@ eqt_number_of_plots = 0
 eqt_plot_mode = time
 
 ##-->si eqt_predictor= mseed entonces:
-eqt_batch_size = 10
+eqt_batch_size = 5
 ##-->si eqt_predictor= hdf5 entonces:
 eqt_create_hdf5 = True

@@ -10,7 +10,7 @@ Excecutes ai_picker.py in a periodic time
 import os
 import sys
 import logging
-import schedule
+import glob
 import time
 import datetime
 import random
@@ -317,7 +317,7 @@ class EventTypeChanger:
                 print_ic(f'{origin_id} not found in the database')
 
 
-def runner(starttime: str, endtime: str, ai_scheduler_file: str, every_m: int = 40):
+def runner(starttime: str, endtime: str, ai_scheduler_file: str, every_m: int = 40, dispatch: bool = False):
     """Excecute ai_picker.py between starttime and endtime using the parameters in ai_scheduler_file
 
     Parameters
@@ -373,8 +373,16 @@ def runner(starttime: str, endtime: str, ai_scheduler_file: str, every_m: int = 
     #cmd_picks = 'scdispatch -i %s -H %s -u aitx' % (picks_path, db)
     #print_ic(cmd_picks)
     #+os.system(cmd_picks)
-    num = random.randint(1, 100)
-    send_to_sc5(picks_path, f'aitx{num}')
+    if dispatch:
+        # print in green and bold that the picks file will be sent to sc5
+        print_ic(f'\033[1;32mSending picks file to sc5\033[0m')
+        num = random.randint(1, 100)
+        send_to_sc5(picks_path, f'aitx{num}')
+    else:
+        # print in red and bold that the picks file won't be sent to sc5
+        print_ic(f'\033[1;31mPicks file will not be sent to sc5\033[0m')
+        # print that to send the dispatch option in the eqcct_playback.cfg file has to be True
+        print_ic(f'\033[1;31mTo send the picks file to sc5, set dispatch to True in eqcct_playback.cfg\033[0m')
 
     if output_path is not None:
         # if the file is not empty
@@ -392,18 +400,21 @@ def runner(starttime: str, endtime: str, ai_scheduler_file: str, every_m: int = 
             #print_ic(cmd)
             #os.system(cmd)
             # send to sc5
-            send_to_sc5(output_path, f'aitx{num}')
-
-            # wait 30 seconds
-            waiting_time = 45
-            print_ic(f'waiting {waiting_time} seconds before changing event type')
-            time.sleep(waiting_time)
-            
-            # change the event type to earthquake in sc3
-            #EventTypeChanger(db, scroot='/home/siervod/seiscomp3').run()
-            # change the event type to earthquake in sc5
-            EventTypeChanger('scdb.beg.utexas.edu', user='sysro', passwd='0niReady', database='seiscomp',
-                              scroot='/home/siervod/seiscomp').run()
+            if dispatch:
+                print_ic(f'\033[1;32mSending origins file to sc5\033[0m')
+                send_to_sc5(output_path, f'aitx{num}')
+                
+                # wait 45 seconds
+                waiting_time = 45
+                print_ic(f'waiting {waiting_time} seconds before changing event type')
+                time.sleep(waiting_time)
+                
+                # change the event type to earthquake in sc5
+                EventTypeChanger('scdb.beg.utexas.edu', user='sysro', passwd='0niReady', database='seiscomp',
+                                scroot='/home/siervod/seiscomp').run()
+            else:
+                print_ic(f'\033[1;31mOrigins file will not be sent to sc5\033[0m')
+                print_ic(f'\033[1;31mTo send the origins file to sc5, set dispatch to True in eqcct_playback.cfg\033[0m')
         else:
             print_ic('\n\n\tEmpty file!\n\n')
     else:
@@ -426,6 +437,9 @@ def send_to_sc5(xml_path, usr='aitexnet'):
 
 if __name__ == "__main__":
 
+    # if SEISCOMP_ROOT is not set, set it to /home/siervod/seiscomp
+    if 'SEISCOMP_ROOT' not in os.environ:
+        os.environ['SEISCOMP_ROOT'] = '/home/siervod/seiscomp'
     import configparser
     config = configparser.ConfigParser()
     try:
@@ -439,6 +453,8 @@ if __name__ == "__main__":
     endtime = config['playback']['endtime']
     every_m = config.getint('playback', 'every_m')
     playback_dir = config['playback']['playback_dir']
+    # get the dispatch option, default is False
+    dispatch = config.getboolean('playback', 'dispatch', fallback=False)
     
     print(f'Running from {starttime} to {endtime} every {every_m} minutes')
     print(f'Playback dir: {playback_dir}')
@@ -453,11 +469,13 @@ if __name__ == "__main__":
 
     # run runner function for every subfolder in playback_dir
     # knowing that there should be a ai_picker_scdl.inp file in each subfolder
-    for subfolder in os.listdir(playback_dir):
-        scheduler_inp_file = os.path.join(playback_dir, subfolder, 'ai_picker_scdl.inp')
+    scheduler_inp_files = glob.glob(os.path.join(playback_dir, '*', 'ai_picker_scdl.inp'))
+    scheduler_inp_files += [os.path.join(playback_dir, 'ai_picker_scdl.inp')]
+    for scheduler_inp_file in scheduler_inp_files:
         if os.path.exists(scheduler_inp_file):
+            subfolder = os.path.dirname(scheduler_inp_file)
             print(f'Running on {subfolder}')
-            runner(starttime=starttime, endtime=endtime, every_m=every_m, ai_scheduler_file=scheduler_inp_file)
+            runner(starttime=starttime, endtime=endtime, every_m=every_m, ai_scheduler_file=scheduler_inp_file, dispatch=dispatch)
     
         
     

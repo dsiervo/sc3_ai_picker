@@ -16,10 +16,10 @@ from main_ai_scheduler import runner
 
 if __name__ == "__main__":
 
-    every_minutes = 30  # period of excecution in minutes
+    every_minutes = 10
     #every_minutes = 1  # period of excecution in minutes
 
-    minutes = 40  # 40 minutes of data
+    minutes = 13  # 40 minutes of data
     #delay = 30    # delay in minutes
     delay = 0    # delay in minutes
 

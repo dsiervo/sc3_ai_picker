@@ -3,11 +3,11 @@
 #-->picker 'pnet', 'eqt' o ('eqcc' o 'eqcctps')
 picker = eqcc
 
-ip = http://rtserve.beg.utexas.edu,http://scarchive.beg.utexas.edu:8880
+ip = http://rtserve.beg.utexas.edu, http://scarchive.beg.utexas.edu
 port =
-starttime = 2024-08-28 18:10:23
-endtime = 2024-08-28 18:50:23
-dt = 2400
+starttime = 2024-11-12 05:46:45
+endtime = 2024-11-12 05:59:45
+dt = 780
 
 # if true, the preferred origins that have depth < 20 km and hypocentral uncertainties < 20 km
 # will be written as evaluation status 'reported' and evaluation mode 'manual'
@@ -66,8 +66,8 @@ eqt_predictor = mseed
 #eqcc_P_model_dir = /home/siervod/sc3_ai_picker/model/EQCCT_TF_Delaware/test_trainer_011.h5
 #eqcc_S_model_dir = /home/siervod/sc3_ai_picker/model/EQCCT_TF_Delaware/test_trainer_S_005.h5
 
-eqt_overlap = 0.4
-eqt_n_processor = 10
+eqt_overlap = 0.3
+eqt_n_processor = 5
 eqt_detection_threshold = 0.003
 
 eqt_P_threshold = 0.01

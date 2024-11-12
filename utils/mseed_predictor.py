@@ -1106,8 +1106,12 @@ def _mseed2nparry(args, matching, time_slots, comp_types, st_name):
         st += temp_st
         
     #print(st)          
+    # st.filter(type='bandpass', freqmin = 1.0, freqmax = 45, corners=2, zerophase=True)
+    # st.taper(max_percentage=0.001, type='cosine', max_length=2)
+    st.taper(max_percentage=0.05, type='cosine')
+    st.trim(min([tr.stats.starttime for tr in st])-10, max([tr.stats.endtime for tr in st])+10, pad=True, fill_value=0)
     st.filter(type='bandpass', freqmin = 1.0, freqmax = 45, corners=2, zerophase=True)
-    st.taper(max_percentage=0.001, type='cosine', max_length=2)
+    st.trim(min([tr.stats.starttime for tr in st])+10, max([tr.stats.endtime for tr in st])-10)
     if len([tr for tr in st if tr.stats.sampling_rate != 100.0]) != 0:
         try:
             st.interpolate(100, method="linear")
@@ -1179,7 +1183,7 @@ def _mseed2nparry(args, matching, time_slots, comp_types, st_name):
         meta["network_code"]=0
         meta["receiver_latitude"]=0
         meta["receiver_longitude"]=0
-        meta["receiver_elevation_m"]=s0
+        meta["receiver_elevation_m"]=0
     except Exception:
         meta["receiver_code"]=st_name
         meta["instrument_type"]=0

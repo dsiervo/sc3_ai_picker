@@ -340,7 +340,7 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
                  (every_m)*60)
 
     print_ic(f'\nrunning from {t_i} to {t}\\n')
-    os.system('head -10 ai_picker.inp')
+    #os.system('head -10 ai_picker.inp')
     cmd = f'time {ai_picker}'
     print_ic(cmd)
     os.system(cmd)
@@ -363,7 +363,7 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
             # changing the xml version of the origins file
             change_xml_version(output_path)
 
-            os.system('head -3 %s' % output_path)
+            #os.system('head -3 %s' % output_path)
 
             # random number to avoid repetead users
             num = random.randint(1, 100)
