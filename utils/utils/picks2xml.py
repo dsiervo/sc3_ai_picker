@@ -152,6 +152,7 @@ def read_eqcc_picks(nets, stations, chs, locs, p_times, p_probs, s_times, s_prob
         thr_dict = None
 
     lines_list = []
+    event_id = read_params()['event_id']
     for i in range(len(s_times)):
         net, station, ch, loc = nets[i], stations[i], chs[i], locs[i]
         s_pick = None
@@ -184,17 +185,21 @@ def read_eqcc_picks(nets, stations, chs, locs, p_times, p_probs, s_times, s_prob
 
         #print(f'{i}. {station}, p_t:{p_t}, p_prob:{p_prob}, s_t:{s_t}, s_prob:{s_prob}')
         # create a csv file with the above information
-        lines_list.append([station, p_t, p_prob, s_t, s_prob])
+        lines_list.append([event_id, station, p_t, p_prob, s_t, s_prob])
     
     # check if the directory eqcct_picks exist, if not create it
-    if not os.path.exists(os.path.join('eqcct_picks')):
-        os.makedirs(os.path.join('eqcct_picks'))
+    picks_dir = read_params()['picks_dir']
+    if not os.path.exists(os.path.join(picks_dir)):
+        os.makedirs(os.path.join(picks_dir))
     # create a prefix for the file name using the current date and time
-    event_id = read_params()['event_id']
     eqcct_picks_file_name = f'{event_id}_picks.csv'
+    picks_path = os.path.join(picks_dir, eqcct_picks_file_name)
+    header = ['event_id', 'station', 'p_t', 'p_prob', 's_t', 's_prob']
     # write the lines_list in a csv file called eqcct_picks.csv
-    with open(os.path.join('eqcct_picks', eqcct_picks_file_name), 'w') as f:
+    print(f'Writting {len(lines_list)} picks')
+    with open(picks_path, 'w') as f:
         wr = csv.writer(f)
+        wr.writerow(header)
         wr.writerows(lines_list)
         f.close()
         

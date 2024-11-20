@@ -5,8 +5,8 @@ picker = eqcc
 
 ip = http://rtserve.beg.utexas.edu, http://scarchive.beg.utexas.edu
 port =
-starttime = 2024-11-12 05:42:02
-endtime = 2024-11-12 05:55:02
+starttime = 2024-11-19 05:36:06
+endtime = 2024-11-19 05:49:06
 dt = 780
 
 # if true, the preferred origins that have depth < 20 km and hypocentral uncertainties < 20 km

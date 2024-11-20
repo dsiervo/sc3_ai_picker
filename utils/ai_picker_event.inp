@@ -33,6 +33,7 @@ db_sc = mysql://userro:Itr0nly@scarchive.beg.utexas.edu/seiscomp
 check_quadrant = /home/siervod/buffer_bna_delaware/bna1003_C_Culberson_V2.bna
 
 event_id = placeholder
+picks_dir = placeholder
 
 ##############################------------ SECTION 2): Stations to download ------------############################
 download_data = TX.PB29.00.HH*, TX.PB37.00.HH*, TX.PB28.00.HH*, TX.PB38.00.HH*

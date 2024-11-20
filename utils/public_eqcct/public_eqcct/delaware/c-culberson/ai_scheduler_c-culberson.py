@@ -26,7 +26,8 @@ if __name__ == "__main__":
     schedule.every(every_minutes).minutes.do(runner,
                                              every_m=minutes,
                                              delay=delay,
-                                             db='sc3primary.beg.utexas.edu')
+                                             db='sc3primary.beg.utexas.edu',
+                                             save_picks=True)
 
     while True:
         schedule.run_pending()

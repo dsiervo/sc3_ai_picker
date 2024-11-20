@@ -314,7 +314,7 @@ class EventTypeChanger:
                 print_ic(f'{origin_id} not found in the database')
 
 
-def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
+def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py', save_picks=False):
     """Excecute ai_picker.py every every_m hours with a 5 min buffer
 
     Parameters
@@ -327,6 +327,7 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
 
     params = read_params('ai_picker_scdl.inp')
     main_path = params['general_output_dir']
+
     os.system('rm -fr %s' % main_path)
 
     # taking current time in UTC - delay
@@ -350,6 +351,19 @@ def runner(every_m, delay=0, db='10.100.100.13:4803', ai_picker='ai_picker.py'):
     # getting the picks path
     picks_path = get_origins_path(main_path, 'picks.xml')
 
+        # Create folder named picks_enddate (like picks_20241112_125859) in /texnet/eqcct_test_picks_origins
+        # if it doesn't exist
+    if save_picks:
+        test_dir_orig_picks = '/texnet/eqcct_test_picks_origins'
+        if not os.path.exists(test_dir_orig_picks):
+            os.makedirs(test_dir_orig_picks)
+        #picks_test_path = f'/texnet/eqcct_test_picks_origins/picks_{t.strftime("%Y%m%d_%H%M%S")}.xml'
+        picks_test_path = os.path.join(test_dir_orig_picks, f'picks_{t.strftime("%Y%m%d_%H%M%S")}.xml')
+        origins_test_path = os.path.join(test_dir_orig_picks, f'origins_{t.strftime("%Y%m%d_%H%M%S")}.xml')
+        # copy picks.xml to picks_test_path
+        os.system(f'cp {picks_path} {picks_test_path}')
+        os.system(f'cp {output_path} {origins_test_path}')
+        
     #cmd_picks = 'scdispatch -i %s -H %s -u aitx' % (picks_path, db)
     #print_ic(cmd_picks)
     #+os.system(cmd_picks)

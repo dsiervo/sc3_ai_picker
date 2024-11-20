@@ -1,4 +1,8 @@
 #!/home/siervod/anaconda3/envs/eqcc/bin/python
+"""
+Author: Daniel Siervo, emetdan@gmail.com
+Date: 2024-11-12
+"""
 import os
 import pandas as pd
 import mysql.connector # pip install mysql-connector-python
@@ -8,7 +12,7 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from main_picker import prep_Cwav_params
 
-def get_stations_start_and_end_times(eventID):
+def get_stations_start_and_end_times(eventID: str, picks_dir: str):
     """
     From a given eventID, gets the time window to download the waveforms,
     the station list to download and the difference in seconds between
@@ -55,10 +59,11 @@ def get_stations_start_and_end_times(eventID):
     
     delta_time = (end_time - start_time).total_seconds()
     
-    change_inp_file(start_time.strftime('%Y-%m-%d %H:%M:%S'), end_time.strftime('%Y-%m-%d %H:%M:%S'), int(delta_time), stations, eventID)
+    print(f'Downloading {stations} from {start_time} to {end_time} with {delta_time} seconds')
+    change_inp_file(start_time.strftime('%Y-%m-%d %H:%M:%S'), end_time.strftime('%Y-%m-%d %H:%M:%S'), int(delta_time), stations, eventID, picks_dir)
 
 
-def change_inp_file(ti: str, tf: str, dt: int, stations: list, eventID: str):
+def change_inp_file(ti: str, tf: str, dt: int, stations: list, eventID: str, picks_dir: str):
     """Change starttime, endtim, dt stations and ID in the in ai_picker.inp file
 
     Parameters
@@ -74,7 +79,6 @@ def change_inp_file(ti: str, tf: str, dt: int, stations: list, eventID: str):
     eventID : str
         Event ID
     """
-
     stations_str = ','.join(stations)
 
     script_path = os.path.dirname(os.path.abspath(__file__))
@@ -92,6 +96,12 @@ def change_inp_file(ti: str, tf: str, dt: int, stations: list, eventID: str):
             stations_idx = idx
         elif line.startswith('event_id'):
             event_id_idx = idx
+        elif line.startswith('picks_dir'):
+            picks_dir_idx = idx
+        elif line.startswith('general_data_dir'):
+            data_dir_idx = idx
+        elif line.startswith('general_output_dir'):
+            output_dir_idx = idx
 
     # replacing start, end and dt time lines
     f_lines[start_idx] = f'starttime = {ti}\n'
@@ -99,6 +109,9 @@ def change_inp_file(ti: str, tf: str, dt: int, stations: list, eventID: str):
     f_lines[dt_idx] = f'dt = {dt}\n'
     f_lines[stations_idx] = f'download_data = {stations_str}\n'
     f_lines[event_id_idx] = f'event_id = {eventID}\n'
+    f_lines[picks_dir_idx] = f'picks_dir = {picks_dir}\n'
+    f_lines[data_dir_idx] = f'general_data_dir = test/data/{eventID}\n'
+    f_lines[output_dir_idx] = f'general_output_dir = test/{eventID}\n'
 
     # writing new file
     with open('ai_picker.inp', 'w') as f:
@@ -114,15 +127,22 @@ def run_eqcct():
                                 mysqldb_dict=mysqldb_dict)
     
     print(f'\ncwav_eqt object:\n\t{cwav_eqcct.__dict__}\n')
-    #cwav_eqcct.create_json()
-    #cwav_eqcct.download_mseed()
-    #cwav_eqcct.mseedpredictor()
+    cwav_eqcct.create_json()
+    cwav_eqcct.download_mseed()
+    cwav_eqcct.mseedpredictor()
     cwav_eqcct.picks2xml()
 
-def download_and_run_eqcct(eventID):
-    get_stations_start_and_end_times(eventID)
+def download_and_run_eqcct(eventID, picks_dir):
+    get_stations_start_and_end_times(eventID, picks_dir)
     run_eqcct()
 
 if __name__ == "__main__":
-    download_and_run_eqcct('texnet2024kyen')
-    #run_eqcct()
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Download and run EQCCT for a given event ID.")
+    parser.add_argument("event_id", type=str, help="Event ID for which to run EQCCT.")
+    parser.add_argument("picks_dir", type=str, help="Directory where picks are stored.")
+    
+    args = parser.parse_args()
+    
+    download_and_run_eqcct(args.event_id, args.picks_dir)
