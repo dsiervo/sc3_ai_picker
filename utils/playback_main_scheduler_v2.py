@@ -317,7 +317,7 @@ class EventTypeChanger:
                 print_ic(f'{origin_id} not found in the database')
 
 
-def runner(starttime: str, endtime: str, ai_scheduler_file: str, every_m: int = 40, dispatch: bool = False):
+def runner(starttime: str, endtime: str, ai_scheduler_file: str, every_m: int = 40, dispatch: bool = False, overlap: float = 0.3):
     """Excecute ai_picker.py between starttime and endtime using the parameters in ai_scheduler_file
 
     Parameters
@@ -352,7 +352,6 @@ def runner(starttime: str, endtime: str, ai_scheduler_file: str, every_m: int = 
         print_ic(f'every_m must be less than t - t_i: {every_m*60} > {(t - t_i).total_seconds()}')
         raise ValueError(f'every_m must be less than t - t_i: {every_m*60} > {(t - t_i).total_seconds()}')
 
-    overlap = 0.1
     delta = int(every_m * 60 * (1 + overlap))
     while t_i < t:
         tf = (t_i + datetime.timedelta(seconds=delta)).strftime("%Y-%m-%d %H:%M:%S")
@@ -460,6 +459,8 @@ if __name__ == "__main__":
     playback_dir = config['playback']['playback_dir']
     # get the dispatch option, default is False
     dispatch = config.getboolean('playback', 'dispatch', fallback=False)
+    # get the overlap option, default is 0.3
+    overlap = config.getfloat('playback', 'overlap', fallback=0.3)
     
     print(f'Running from {starttime} to {endtime} every {every_m} minutes')
     print(f'Playback dir: {playback_dir}')
@@ -480,4 +481,4 @@ if __name__ == "__main__":
         if os.path.exists(scheduler_inp_file):
             subfolder = os.path.dirname(scheduler_inp_file)
             print(f'Running on {subfolder}')
-            runner(starttime=starttime, endtime=endtime, every_m=every_m, ai_scheduler_file=scheduler_inp_file, dispatch=dispatch)
+            runner(starttime=starttime, endtime=endtime, every_m=every_m, ai_scheduler_file=scheduler_inp_file, dispatch=dispatch, overlap=overlap)
