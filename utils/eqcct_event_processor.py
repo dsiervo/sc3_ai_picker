@@ -53,11 +53,21 @@ def get_stations_start_and_end_times(eventID: str, picks_dir: str):
     stations = df['net.sta.loc.cha'].to_list()
     
     df['pick_time'] = pd.to_datetime(df['pick_time'])
+    
     # P - S time 170 km from the source is 11 seconds, P 20 km from the source to P 170 km from the source is 25 seconds
-    start_time = df['pick_time'].min() - pd.Timedelta(seconds=30)
-    end_time = df['pick_time'].max() + pd.Timedelta(seconds=30)
+    start_time = df['pick_time'].min() - pd.Timedelta(seconds=10)
+    end_time = df['pick_time'].max() + pd.Timedelta(seconds=20)
     
     delta_time = (end_time - start_time).total_seconds()
+    
+    # Ensure that the time window is at least 60 seconds
+    minimum_duration = 60  # seconds
+    if delta_time < minimum_duration:
+        # Calculate the additional time needed
+        additional_time = minimum_duration - delta_time
+        
+        end_time += pd.Timedelta(seconds=additional_time)
+        delta_time = (end_time - start_time).total_seconds()
     
     print(f'Downloading {stations} from {start_time} to {end_time} with {delta_time} seconds')
     change_inp_file(start_time.strftime('%Y-%m-%d %H:%M:%S'), end_time.strftime('%Y-%m-%d %H:%M:%S'), int(delta_time), stations, eventID, picks_dir)
