@@ -12,7 +12,7 @@ dt = 780
 # if true, the preferred origins that have depth < 20 km and hypocentral uncertainties < 20 km
 # will be written as evaluation status 'reported' and evaluation mode 'manual'
 # and reported_origins.txt will be created with the preferred origins IDs of the reported origins (true or false)
-write_reported = true
+write_reported = false
 
 # localizadores y modelos de velocidades que se usarán para localizar los eventos.
 # Si hay mas de un elemento en el diccionario se unirán los orígenes que se encuentren
@@ -67,7 +67,7 @@ eqt_predictor = mseed
 #eqcc_P_model_dir = /home/siervod/sc3_ai_picker/model/EQCCT_TF_Delaware/test_trainer_011.h5
 #eqcc_S_model_dir = /home/siervod/sc3_ai_picker/model/EQCCT_TF_Delaware/test_trainer_S_005.h5
 
-eqt_overlap = 0.4
+eqt_overlap = 0.3
 eqt_n_processor = 10
 eqt_detection_threshold = 0.003
 

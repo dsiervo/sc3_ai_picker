@@ -3,7 +3,7 @@
 #-->picker 'pnet', 'eqt' o ('eqcc' o 'eqcctps')
 picker = eqcc
 
-ip = http://rtserve.beg.utexas.edu, http://scarchive.beg.utexas.edu
+ip = http://rtserve.beg.utexas.edu, http://scarchive.beg.utexas.edu:8880
 port =
 starttime = 2022-11-15 00:00:00
 endtime = 2022-11-17 23:53:00
